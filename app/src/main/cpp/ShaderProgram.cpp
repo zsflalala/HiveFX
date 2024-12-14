@@ -87,7 +87,7 @@ bool CShaderProgram::__dumpShaderCodeFromFile(AAssetManager *vAssetManager, cons
     AAsset* pAsset = AAssetManager_open(vAssetManager, vShaderPath.c_str(), AASSET_MODE_BUFFER);
     if (!pAsset)
     {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SHADER_PROGRAM_TAG, "Failed to open asset: ");
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SHADER_PROGRAM_TAG, "Failed to open asset: %s", vShaderPath.c_str());
         return false;
     }
 
