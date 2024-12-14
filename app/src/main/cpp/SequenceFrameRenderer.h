@@ -42,10 +42,10 @@ namespace hiveVG
         int                             m_NearCurrentFrame  = 0;
         int                             m_FarCurrentFrame   = 1;
         const int                       m_FramePerSecond    = 48;
-        const int                       m_FarFramePerSecond = 48;
+        const int                       m_FarFramePerSecond = 60;
         bool                            m_IsFinished        = false;
 
-        std::vector<std::shared_ptr<CTextureAsset> > m_pTextureHandles;
+        std::vector<std::shared_ptr<CTextureAsset>> m_TextureHandles;
     };
 
 } // hiveVG

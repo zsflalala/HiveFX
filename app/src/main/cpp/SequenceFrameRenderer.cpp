@@ -4,16 +4,15 @@
 #include <memory>
 #include <vector>
 #include <cassert>
-#include <android/imagedecoder.h>
 #include <android/asset_manager.h>
 #include "Common.h"
 #include "TextureAsset.h"
 #include "ShaderSource.h"
-#include "stb_image.h"
+
+#define HIVE_LOGTAG hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG
 
 namespace hiveVG
 {
-#define HIVE_LOGTAG hiveVG::TAG_KEYWORD::SeqFrame_RENDERER_TAG
     CSequenceFrameRenderer::CSequenceFrameRenderer(android_app *vApp) : m_pApp(vApp)
     {
         m_initResources.clear();
@@ -113,13 +112,16 @@ namespace hiveVG
 
     void CSequenceFrameRenderer::__initAlgorithm()
     {
+        GLint maxTextureSize;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+        LOG_INFO("xxxxx","Maximum texture size: %d", maxTextureSize);
         GLuint NearSnowTextureHandle    = __loadTexture("Textures/nearSnow.png");
-        GLuint FarSnowTextureHandle     = __loadTexture("Textures/snowScene_15664x3528.png");
+        GLuint FarSnowTextureHandle     = __loadTexture("Textures/snowScene.png");
 //        GLuint CartoonTextureHandle     = __loadTexture("Textures/houseWithSnow.png");
 //        GLuint BackgroundTextureHandle  = __loadTexture("Textures/background.jpg");
 
-        GLuint NearSnowShaderProgram    = __createProgram(SnowVertexShaderSource, SnowFragmentShaderSource);
-        GLuint FarSnowShaderProgram     = __createProgram(SnowVertexShaderSource, SnowFragmentShaderSource);
+        GLuint NearSnowShaderProgram    = __createProgram(SeqFrameVertexShaderSource, SeqFrameFragmentShaderSource);
+        GLuint FarSnowShaderProgram     = __createProgram(SeqFrameVertexShaderSource, SeqFrameFragmentShaderSource);
 //        GLuint CartoonShaderProgram     = __createProgram(QuadVertexShaderSource, QuadFragmentShaderSource);
 //        GLuint BackgroundShaderProgram  = __createProgram(QuadVertexShaderSource, QuadFragmentShaderSource);
 
@@ -206,7 +208,9 @@ namespace hiveVG
             return 0;
         }
         LOG_INFO(HIVE_LOGTAG, "Load Texture Successfully into TextureID %d", TextureHandle->getTextureID());
-        m_pTextureHandles.push_back(TextureHandle);
+//        auto TextureID = CTextureAsset::loadTextureFromAssets(m_pApp->activity->assetManager, vTexturePath);
+//        return TextureID;
+        m_TextureHandles.push_back(TextureHandle);
         return TextureHandle->getTextureID();
     }
 
@@ -254,7 +258,7 @@ namespace hiveVG
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_pTextureHandles[0]->getTextureID());
+        glBindTexture(GL_TEXTURE_2D, m_TextureHandles[0]->getTextureID());
         __checkGLError();
         glBindVertexArray(m_QuadVAOHandle);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -293,7 +297,7 @@ namespace hiveVG
 //        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         //farsnow
-        if (m_IsFinished) m_FarCurrentFrame = vRow * vColumn - 1;
+//        if (m_IsFinished) m_FarCurrentFrame = vRow * vColumn - 1;
         int  FarRow = m_FarCurrentFrame / vColumn;
         int  FarCol = m_FarCurrentFrame % vColumn;
         float FarU0 = FarCol / (float)vColumn;

@@ -17,6 +17,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags += "-std=c++17"
+                arguments("-DCMAKE_TOOLCHAIN_FILE=conan_android_toolchain.cmake")
             }
         }
     }

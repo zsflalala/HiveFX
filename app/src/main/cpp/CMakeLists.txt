@@ -7,10 +7,15 @@ add_library(hivefx SHARED
         Renderer.cpp
         SequenceFrameRenderer.cpp
         TextureAsset.cpp
-        stb_init.cpp
-    )
+        SingleTexturePlayer.cpp
+        SequenceFramePlayer.cpp
+        ShaderProgram.cpp
+        ScreenQuad.cpp
+        Texture2D.cpp
+)
 
 find_package(game-activity REQUIRED CONFIG)
+find_package(glm REQUIRED)
 
 target_link_libraries(hivefx
         game-activity::game-activity
@@ -19,4 +24,5 @@ target_link_libraries(hivefx
         jnigraphics
         android
         log
+        glm::glm
     )

@@ -251,7 +251,7 @@ RECENT REVISION HISTORY:
 //
 // If you load LDR images through this interface, those images will
 // be promoted to floating point values, run through the inverse of
-// constants corresponding to the above:
+// constants correspond{ing to the above:
 //
 //     stbi_ldr_to_hdr_scale(1.0f);
 //     stbi_ldr_to_hdr_gamma(2.2f);

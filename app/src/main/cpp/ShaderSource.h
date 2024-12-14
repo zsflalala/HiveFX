@@ -1,7 +1,6 @@
 namespace hiveVG
 {
-    std::string TexturePathBackground = "Textures/background4.jpg";
-    const char SnowVertexShaderSource[] = R"vertex(#version 300 es
+    const char SeqFrameVertexShaderSource[] = R"vertex(#version 300 es
         layout (location = 0) in vec2 aPos;
         layout (location = 1) in vec2 aTexCoord;
 
@@ -14,7 +13,7 @@ namespace hiveVG
         }
         )vertex";
 
-    const char SnowFragmentShaderSource[] = R"fragment(#version 300 es
+    const char SeqFrameFragmentShaderSource[] = R"fragment(#version 300 es
         precision mediump float;
         out vec4 FragColor;
 

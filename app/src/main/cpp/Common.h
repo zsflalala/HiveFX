@@ -7,10 +7,12 @@
 #define LOG_WARN(...) __android_log_print(ANDROID_LOG_WARN, __VA_ARGS__)
 #define LOG_ERROR(...) __android_log_print(ANDROID_LOG_ERROR, __VA_ARGS__)
 
-
 namespace hiveVG::TAG_KEYWORD
 {
     const char *const MAIN_TAG = "Main";
     const char *const RENDERER_TAG = "CRenderer";
-    const char *const SeqFrame_RENDERER_TAG = "CSequenceFrameRenderer";
+    const char *const SEQFRAME_RENDERER_TAG = "CSequenceFrameRenderer";
+    const char *const TEXTURE2D_TAG = "CTexture2D";
+    const char *const SHADER_PROGRAM_TAG = "CShaderProgram";
+    const char *const SEQFRAME_PALYER_TAG = "CSequenceFramePlayer";
 }
