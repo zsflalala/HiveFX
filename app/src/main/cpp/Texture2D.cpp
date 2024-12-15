@@ -7,13 +7,31 @@
 
 using namespace hiveVG;
 
-CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
+CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath)
 {
-    int Width, Height, Channels;
-    unsigned char* pData = stbi_load(vTexturePath.c_str(), &Width, &Height, &Channels, 0);
-    if (pData == nullptr)
+    if (!vAssetManager)
     {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load texture asset: %s", vTexturePath.c_str());
+        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "AssetManager is null.");
+        return nullptr;
+    }
+
+    AAsset* pAsset = AAssetManager_open(vAssetManager, vTexturePath.c_str(), AASSET_MODE_BUFFER);
+    if (!pAsset)
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to open asset: %s", vTexturePath.c_str());
+        return nullptr;
+    }
+
+    size_t AssetSize = AAsset_getLength(pAsset);
+    std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
+    AAsset_read(pAsset, pBuffer.get(), AssetSize);
+    AAsset_close(pAsset);
+
+    int Width, Height, Channels;
+    unsigned char* pImageData = stbi_load_from_memory(pBuffer.get(), AssetSize, &Width, &Height, &Channels, 0);
+    if (!pImageData)
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load image from memory: %s", vTexturePath.c_str());
         return nullptr;
     }
 
@@ -31,7 +49,7 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, Format, Width, Height, 0, Format, GL_UNSIGNED_BYTE, pData);
+    glTexImage2D(GL_TEXTURE_2D, 0, Format, Width, Height, 0, Format, GL_UNSIGNED_BYTE, pImageData);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
@@ -40,7 +58,7 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: %s", vTexturePath.c_str());
         return nullptr;
     }
-    stbi_image_free(pData);
+    stbi_image_free(pImageData);
 
     return new CTexture2D(TextureHandle);
 }

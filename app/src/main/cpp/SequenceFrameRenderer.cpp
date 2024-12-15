@@ -114,11 +114,16 @@ namespace hiveVG
     {
         GLint maxTextureSize;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-        LOG_INFO("xxxxx","Maximum texture size: %d", maxTextureSize);
+        LOG_INFO("xxxxx","Users Maximum texture size: %d", maxTextureSize);
+
+//        m_pScreenQuad = CScreenQuad::getOrCreate();
+//        m_pBackGroundTexture = new CSingleTexturePlayer("textures/background.jpg");
+//        m_pBackGroundTexture->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+
         GLuint NearSnowTextureHandle    = __loadTexture("Textures/nearSnow.png");
-        GLuint FarSnowTextureHandle     = __loadTexture("Textures/snowScene.png");
-//        GLuint CartoonTextureHandle     = __loadTexture("Textures/houseWithSnow.png");
-//        GLuint BackgroundTextureHandle  = __loadTexture("Textures/background.jpg");
+        GLuint FarSnowTextureHandle     = __loadTexture("Textures/test.png");
+//        GLuint CartoonTextureHandle     = __loadTexture("Textures2/houseWithSnow.png");
+//        GLuint BackgroundTextureHandle  = __loadTexture("Textures2/background.jpg");
 
         GLuint NearSnowShaderProgram    = __createProgram(SeqFrameVertexShaderSource, SeqFrameFragmentShaderSource);
         GLuint FarSnowShaderProgram     = __createProgram(SeqFrameVertexShaderSource, SeqFrameFragmentShaderSource);
@@ -204,12 +209,18 @@ namespace hiveVG
         auto TextureHandle = CTextureAsset::loadAsset(m_pApp->activity->assetManager, vTexturePath);
         if (TextureHandle == nullptr)
         {
-            LOG_ERROR(HIVE_LOGTAG, "Failed to load texture");
+            LOG_ERROR(HIVE_LOGTAG, "Failed to load texture %s", vTexturePath.c_str());
             return 0;
         }
         LOG_INFO(HIVE_LOGTAG, "Load Texture Successfully into TextureID %d", TextureHandle->getTextureID());
-//        auto TextureID = CTextureAsset::loadTextureFromAssets(m_pApp->activity->assetManager, vTexturePath);
-//        return TextureID;
+        auto TextureID = CTextureAsset::loadTextureFromAssets(m_pApp->activity->assetManager, vTexturePath);
+        if (TextureID == 0)
+        {
+            LOG_ERROR(HIVE_LOGTAG, "Failed to load texture %s", vTexturePath.c_str());
+            return 0;
+        }
+        LOG_INFO(HIVE_LOGTAG, "Load Texture Successfully into TextureID %d", TextureID);
+        return TextureID;
         m_TextureHandles.push_back(TextureHandle);
         return TextureHandle->getTextureID();
     }
@@ -290,6 +301,8 @@ namespace hiveVG
         glClear(GL_COLOR_BUFFER_BIT);
 
         //background
+//        m_pBackGroundTexture->updateShaderAndTexture();
+//        m_pScreenQuad->bindAndDraw();
 //        glUseProgram(m_initResources[7]);
 //        glActiveTexture(GL_TEXTURE0);
 //        glBindTexture(GL_TEXTURE_2D, m_initResources[3]);
@@ -306,7 +319,7 @@ namespace hiveVG
         float FarV1 = (FarRow + 1) / (float)vRow;
 
         glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glUseProgram(m_initResources[3]);
         glUniform2f(glGetUniformLocation(m_initResources[3], "uvOffset"), FarU0, FarV0);
         glUniform2f(glGetUniformLocation(m_initResources[3], "uvScale"), FarU1 - FarU0, FarV1 - FarV0);
@@ -332,7 +345,7 @@ namespace hiveVG
         float V0 = Row / (float)vRow;
         float V1 = (Row + 1) / (float)vRow;
 
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glUseProgram(m_initResources[3]);
         glUniform2f(glGetUniformLocation(m_initResources[3], "uvOffset"), U0, V0);
         glUniform2f(glGetUniformLocation(m_initResources[3], "uvScale"), U1 - U0, V1 - V0);
