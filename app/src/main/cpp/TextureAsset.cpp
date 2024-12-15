@@ -68,7 +68,7 @@ CTextureAsset::loadAsset(AAssetManager *vAssetManager, const std::string &vAsset
     bool isValid = (glIsTexture(TextureId) == GL_TRUE);
     if (!isValid)
     {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Texture type error");
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Texture type error");
         return nullptr;
     }
     // cleanup helpers
@@ -121,13 +121,6 @@ GLuint CTextureAsset::loadTextureFromAssets(AAssetManager* vAssetManager, const 
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(pImageData);
-
-    bool isValid = (glIsTexture(TextureId) == GL_TRUE);
-    if (!isValid)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Texture type error");
-        return 0;
-    }
 
     return TextureId;
 }

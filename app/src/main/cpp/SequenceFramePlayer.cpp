@@ -16,7 +16,7 @@ CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTexturePath, int 
 
 bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetManager)
 {
-    m_pSequenceTexture = CTexture2D::loadTexture(vAssetManager, m_TexturePath);
+    m_pSequenceTexture = CTexture2D::loadTexture(m_TexturePath);
     if (!m_pSequenceTexture)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", m_TexturePath.c_str());

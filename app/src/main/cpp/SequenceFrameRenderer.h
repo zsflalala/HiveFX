@@ -4,8 +4,6 @@
 #include <vector>
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
-#include "SingleTexturePlayer.h"
-#include "ScreenQuad.h"
 
 struct android_app;
 
@@ -44,10 +42,8 @@ namespace hiveVG
         int                             m_NearCurrentFrame  = 0;
         int                             m_FarCurrentFrame   = 1;
         const int                       m_FramePerSecond    = 48;
-        const int                       m_FarFramePerSecond = 10;
+        const int                       m_FarFramePerSecond = 60;
         bool                            m_IsFinished        = false;
-        CSingleTexturePlayer*           m_pBackGroundTexture = nullptr;
-        CScreenQuad*                    m_pScreenQuad        = nullptr;
 
         std::vector<std::shared_ptr<CTextureAsset>> m_TextureHandles;
     };
