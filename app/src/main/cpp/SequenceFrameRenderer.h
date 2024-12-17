@@ -18,7 +18,7 @@ namespace hiveVG
         CSequenceFrameRenderer(android_app *vApp);
         virtual ~CSequenceFrameRenderer();
 
-        void renderBlendingSnow(const int vRow, const int vColumn);
+        void renderBlendingSnow();
 
     private:
         void            __initRenderer();

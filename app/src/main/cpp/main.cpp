@@ -57,7 +57,6 @@ extern "C"
         // Set filters for touch events in your application
         android_app_set_motion_event_filter(vApp, motion_event_filter_func);
 
-        int ROWS = 16, COLS = 8;
         do
         {
             // Process all pending events before running game logic.
@@ -94,7 +93,7 @@ extern "C"
             if (vApp->userData)
             {
                 auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
-                pSeqFrameRenderer->renderBlendingSnow(ROWS,COLS);
+                pSeqFrameRenderer->renderBlendingSnow();
             }
         } while (!vApp->destroyRequested);
     }

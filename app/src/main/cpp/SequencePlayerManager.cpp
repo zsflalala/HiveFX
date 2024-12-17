@@ -49,6 +49,7 @@ void CSequencePlayerManager::updateSequenceState(double vDt)
                 State = __getAnInitState();
                 State._IsAlive = true;
                 Player.setScreenUVOffset(State._UVOffset);
+                Player.setScreenRandScale(State._UVScale);
             }
         }
         else
@@ -106,12 +107,10 @@ SSequenceState CSequencePlayerManager::__getAnInitState()
     SSequenceState State;
     State._IsAlive = IntDistribution(Gen);
 
-    FloatDistribution.param(std::uniform_real_distribution<>::param_type(5.0f, 8.0f));
+    FloatDistribution.param(std::uniform_real_distribution<>::param_type(15.0f, 20.0f));
     State._PlannedLivingTime = FloatDistribution(Gen);
 
-    FloatDistribution.param(std::uniform_real_distribution<>::param_type(0.0f, 0.0f));
-    State._PlannedDeadTime   = FloatDistribution(Gen);
-
+    State._PlannedDeadTime   = 0;
     State._AlreadyDeadTime   = 0;
     State._AlreadyLivingTime = 0;
     State._MovingDirection   = 1;
@@ -121,6 +120,6 @@ SSequenceState CSequencePlayerManager::__getAnInitState()
 
     FloatDistribution.param(std::uniform_real_distribution<>::param_type(-0.5f, 0.5f));
     State._UVOffset = State._MovingDirection > 0 ? glm::vec2(-1.0f - State._UVScale, FloatDistribution(Gen)) : glm::vec2(1.0f + State._UVScale, FloatDistribution(Gen));
-    State._MovingSpeed = (2.0f + 2 * State._UVScale) / State._PlannedLivingTime;
+    State._MovingSpeed = (2.0f + 2 * State._UVScale) / State._PlannedLivingTime;  // TODO : how this 2.0 generate
     return State;
 }
