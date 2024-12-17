@@ -44,9 +44,10 @@ namespace hiveVG
         int                             m_NearCurrentFrame  = 0;
         int                             m_FarCurrentFrame   = 1;
         const int                       m_FramePerSecond    = 48;
-        const int                       m_FarFramePerSecond = 60;
+        const int                       m_FarFramePerSecond = 48;
         bool                            m_IsFinished        = false;
         CSingleTexturePlayer*           m_pBackGroundTexture = nullptr;
+        CSingleTexturePlayer*           m_pCartoonTexture    = nullptr;
         CScreenQuad*                    m_pScreenQuad        = nullptr;
 
         std::vector<std::shared_ptr<CTextureAsset>> m_TextureHandles;

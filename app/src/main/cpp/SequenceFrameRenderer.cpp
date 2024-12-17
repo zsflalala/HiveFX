@@ -112,32 +112,22 @@ namespace hiveVG
 
     void CSequenceFrameRenderer::__initAlgorithm()
     {
-        GLint maxTextureSize;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-        LOG_INFO("xxxxx","Users Maximum texture size: %d", maxTextureSize);
+        m_pScreenQuad = CScreenQuad::getOrCreate();
+        m_pBackGroundTexture = new CSingleTexturePlayer("Textures/background.jpg");
+        m_pBackGroundTexture->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+        m_pCartoonTexture    = new CSingleTexturePlayer("Textures/houseWithSnow.png");
+        m_pCartoonTexture->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 
-//        m_pScreenQuad = CScreenQuad::getOrCreate();
-//        m_pBackGroundTexture = new CSingleTexturePlayer("textures/background.jpg");
-//        m_pBackGroundTexture->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+        GLuint NearSnowTextureHandle = __loadTexture("Textures/nearSnow.png");
+        GLuint FarSnowTextureHandle  = __loadTexture("Textures/farSnow.png");
 
-        GLuint NearSnowTextureHandle    = __loadTexture("Textures/nearSnow.png");
-        GLuint FarSnowTextureHandle     = __loadTexture("Textures/test.png");
-//        GLuint CartoonTextureHandle     = __loadTexture("Textures2/houseWithSnow.png");
-//        GLuint BackgroundTextureHandle  = __loadTexture("Textures2/background.jpg");
-
-        GLuint NearSnowShaderProgram    = __createProgram(SeqFrameVertexShaderSource, SeqFrameFragmentShaderSource);
-        GLuint FarSnowShaderProgram     = __createProgram(SeqFrameVertexShaderSource, SeqFrameFragmentShaderSource);
-//        GLuint CartoonShaderProgram     = __createProgram(QuadVertexShaderSource, QuadFragmentShaderSource);
-//        GLuint BackgroundShaderProgram  = __createProgram(QuadVertexShaderSource, QuadFragmentShaderSource);
+        GLuint NearSnowShaderProgram = __createProgram(SeqFrameVertexShaderSource, SeqFrameFragmentShaderSource);
+        GLuint FarSnowShaderProgram  = __createProgram(SeqFrameVertexShaderSource, SeqFrameFragmentShaderSource);
 
         m_initResources.push_back(NearSnowTextureHandle);
         m_initResources.push_back(FarSnowTextureHandle);
-//        m_initResources.push_back(CartoonTextureHandle);
-//        m_initResources.push_back(BackgroundTextureHandle);
         m_initResources.push_back(NearSnowShaderProgram);
         m_initResources.push_back(FarSnowShaderProgram);
-//        m_initResources.push_back(CartoonShaderProgram);
-//        m_initResources.push_back(BackgroundShaderProgram);
     }
 
     GLuint CSequenceFrameRenderer::__compileShader(GLenum vType, const char *vShaderCode)
@@ -206,13 +196,13 @@ namespace hiveVG
 
     GLuint CSequenceFrameRenderer::__loadTexture(const std::string& vTexturePath)
     {
-        auto TextureHandle = CTextureAsset::loadAsset(m_pApp->activity->assetManager, vTexturePath);
-        if (TextureHandle == nullptr)
-        {
-            LOG_ERROR(HIVE_LOGTAG, "Failed to load texture %s", vTexturePath.c_str());
-            return 0;
-        }
-        LOG_INFO(HIVE_LOGTAG, "Load Texture Successfully into TextureID %d", TextureHandle->getTextureID());
+//        auto TextureHandle = CTextureAsset::loadAsset(m_pApp->activity->assetManager, vTexturePath);
+//        if (TextureHandle == nullptr)
+//        {
+//            LOG_ERROR(HIVE_LOGTAG, "Failed to load texture %s", vTexturePath.c_str());
+//            return 0;
+//        }
+//        LOG_INFO(HIVE_LOGTAG, "Load Texture Successfully into TextureID %d", TextureHandle->getTextureID());
         auto TextureID = CTextureAsset::loadTextureFromAssets(m_pApp->activity->assetManager, vTexturePath);
         if (TextureID == 0)
         {
@@ -221,8 +211,8 @@ namespace hiveVG
         }
         LOG_INFO(HIVE_LOGTAG, "Load Texture Successfully into TextureID %d", TextureID);
         return TextureID;
-        m_TextureHandles.push_back(TextureHandle);
-        return TextureHandle->getTextureID();
+//        m_TextureHandles.push_back(TextureHandle);
+//        return TextureHandle->getTextureID();
     }
 
     void CSequenceFrameRenderer::__createScreenVAO()
@@ -286,31 +276,25 @@ namespace hiveVG
         {
             m_NearLastFrameTime = CurrentTime;
             m_NearCurrentFrame = (m_NearCurrentFrame + 1) % (vRow * vColumn);
-            if (m_NearCurrentFrame == 0) m_IsFinished = true;
         }
 
         double FarDeltaTime = CurrentTime - m_FarLastFrameTime;
         if(FarDeltaTime >= 1.0 / m_FarFramePerSecond)
         {
             m_FarLastFrameTime = CurrentTime;
+            if (m_FarCurrentFrame + 1 == vRow * vColumn) m_IsFinished = true;
             m_FarCurrentFrame = (m_FarCurrentFrame + 1) % (vRow * vColumn);
-            if (m_FarCurrentFrame == 0) m_IsFinished = true;
         }
 
         glClearColor(0.1f,0.1f,0.1f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         //background
-//        m_pBackGroundTexture->updateShaderAndTexture();
-//        m_pScreenQuad->bindAndDraw();
-//        glUseProgram(m_initResources[7]);
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, m_initResources[3]);
-//        glBindVertexArray(m_QuadVAOHandle);
-//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        m_pBackGroundTexture->updateShaderAndTexture();
+        m_pScreenQuad->bindAndDraw();
 
         //farsnow
-//        if (m_IsFinished) m_FarCurrentFrame = vRow * vColumn - 1;
+        if (m_IsFinished) m_FarCurrentFrame = vRow * vColumn - 1;
         int  FarRow = m_FarCurrentFrame / vColumn;
         int  FarCol = m_FarCurrentFrame % vColumn;
         float FarU0 = FarCol / (float)vColumn;
@@ -329,13 +313,8 @@ namespace hiveVG
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         //cartoon
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//        glUseProgram(m_initResources[6]);
-//        glUniform1i(glGetUniformLocation(m_initResources[6], "quadTexture"), 0);
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, m_initResources[2]);
-//        glBindVertexArray(m_QuadVAOHandle);
-//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        m_pCartoonTexture->updateShaderAndTexture();
+        m_pScreenQuad->bindAndDraw();
 
         //nearSnow
         int  Row = m_NearCurrentFrame / vColumn;
@@ -345,15 +324,14 @@ namespace hiveVG
         float V0 = Row / (float)vRow;
         float V1 = (Row + 1) / (float)vRow;
 
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glUseProgram(m_initResources[3]);
-        glUniform2f(glGetUniformLocation(m_initResources[3], "uvOffset"), U0, V0);
-        glUniform2f(glGetUniformLocation(m_initResources[3], "uvScale"), U1 - U0, V1 - V0);
-//        glUniform1i(glGetUniformLocation(m_initResources[4], "snowTexture"), 0);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_initResources[0]);
-        glBindVertexArray(m_QuadVAOHandle);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//        glUseProgram(m_initResources[3]);
+//        glUniform2f(glGetUniformLocation(m_initResources[3], "uvOffset"), U0, V0);
+//        glUniform2f(glGetUniformLocation(m_initResources[3], "uvScale"), U1 - U0, V1 - V0);
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, m_initResources[0]);
+//        glBindVertexArray(m_QuadVAOHandle);
+//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
         assert(SwapResult == EGL_TRUE);

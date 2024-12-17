@@ -4,7 +4,6 @@
 
 namespace hiveVG
 {
-
     class CScreenQuad
     {
     public:
@@ -21,5 +20,4 @@ namespace hiveVG
         GLuint m_VertexBufferHandle;
         GLuint m_IndexBufferHandle;
     };
-
 }

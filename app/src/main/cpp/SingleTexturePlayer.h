@@ -4,11 +4,12 @@
 #include <vector>
 #include <GLES3/gl3.h>
 #include <android/asset_manager.h>
-#include "Texture2D.h"
-#include "ShaderProgram.h"
 
 namespace hiveVG
 {
+    class CTexture2D;
+    class CShaderProgram;
+
     class CSingleTexturePlayer
     {
     public:

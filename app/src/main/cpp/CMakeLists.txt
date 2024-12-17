@@ -15,7 +15,14 @@ add_library(hivefx SHARED
 )
 
 find_package(game-activity REQUIRED CONFIG)
-find_package(glm REQUIRED)
+
+set(REQUIRED_PACKAGES
+        glm
+)
+
+foreach(PACKAGE ${REQUIRED_PACKAGES})
+    find_package(${PACKAGE} REQUIRED)
+endforeach()
 
 target_link_libraries(hivefx
         game-activity::game-activity
