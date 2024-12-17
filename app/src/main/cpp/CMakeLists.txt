@@ -4,9 +4,7 @@ project("hivefx")
 
 add_library(hivefx SHARED
         main.cpp
-        Renderer.cpp
         SequenceFrameRenderer.cpp
-        TextureAsset.cpp
         SingleTexturePlayer.cpp
         SequenceFramePlayer.cpp
         ShaderProgram.cpp

@@ -1,8 +1,8 @@
 #pragma once
 
+#include <GLES3/gl3.h>
 #include <vector>
 #include <unordered_map>
-#include <GLES3/gl3.h>
 #include <glm/glm.hpp>
 #include <android/asset_manager.h>
 

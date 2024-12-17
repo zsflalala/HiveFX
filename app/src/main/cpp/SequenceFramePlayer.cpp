@@ -24,8 +24,8 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetMana
     }
     m_pSequenceShaderProgram = CShaderProgram::createProgram(
             vAssetManager,
-            "./shaders/sequenceTexturePlayer.vert",
-            "./shaders/sequenceTexturePlayer.frag"
+            "shaders/sequenceTexturePlayer.vert",
+            "shaders/sequenceTexturePlayer.frag"
     );
     assert(m_pSequenceShaderProgram != nullptr);
     m_LastFrameTime = __getCurrentTime();
@@ -39,11 +39,8 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight)
     if (CurrentTime - m_LastFrameTime >= FrameTime)
     {
         m_LastFrameTime = CurrentTime;
+        if (m_CurrentFrame == m_SequenceRows * m_SequenceCols - 1) m_IsFinished = true;
         m_CurrentFrame  = (m_CurrentFrame + 1) % m_ValidFrames;
-        if (m_CurrentFrame == 0)
-            m_IsFinished = true;
-        else
-            m_IsFinished = false;
     }
     float RotationAngle   = m_RotationAngle * M_PI / 180.0f;
     int   CurrentFrameRow = m_CurrentFrame / m_SequenceCols;
@@ -57,10 +54,10 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight)
     glm::vec2 OrthoBounds     = glm::vec2(vWindowWidth, vWindowHeight);
 
     m_pSequenceShaderProgram->useProgram();
-    m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
-    m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
-    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
-    m_pSequenceShaderProgram->setUniform("orthoBounds", OrthoBounds);
+//    m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
+//    m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
+//    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
+//    m_pSequenceShaderProgram->setUniform("orthoBounds", OrthoBounds);
     m_pSequenceShaderProgram->setUniform("texUVOffset", TextureUVOffset);
     m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
     m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);
