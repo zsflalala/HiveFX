@@ -33,6 +33,7 @@ CSequenceFrameRenderer::~CSequenceFrameRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
+    delete m_pScreenQuad;
 }
 
 void CSequenceFrameRenderer::__initRenderer()
@@ -165,14 +166,12 @@ void CSequenceFrameRenderer::renderBlendingSnow()
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
 
-    EGLint Width, Height;
-    eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);
-    eglQuerySurface(m_Display, m_Surface, EGL_HEIGHT, &Height);
+    __updateRenderArea();
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    m_pSequencePlayerManager->updateFrameAndUV(Width, Height, Dt);
+    m_pSequencePlayerManager->updateFrameAndUV(m_WindowWidth, m_WindowHeight, Dt);
     m_pSequencePlayerManager->updateSequenceState(Dt);
-    m_pSequencePlayerManager->setPlayingSpeed(20.0f);
+    m_pSequencePlayerManager->setPlayingSpeed(24.0f);
     static int PlayersNum = m_pSequencePlayerManager->getSequencePlayerLength();
     static std::vector<glm::vec2> ScreenUVScale(PlayersNum, glm::vec2(1.0f, 1.0f));
 
@@ -192,4 +191,18 @@ double CSequenceFrameRenderer::__getCurrentTime()
     struct timeval tv;
     gettimeofday(&tv, nullptr);
     return tv.tv_sec + tv.tv_usec / 1000000.0;
+}
+
+void CSequenceFrameRenderer::__updateRenderArea()
+{
+    EGLint Width, Height;
+    eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);
+    eglQuerySurface(m_Display, m_Surface, EGL_HEIGHT, &Height);
+
+    if (Width != m_WindowWidth || Height != m_WindowHeight)
+    {
+        m_WindowWidth = Width;
+        m_WindowHeight = Height;
+        glViewport(0, 0, m_WindowWidth, m_WindowHeight);
+    }
 }

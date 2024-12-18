@@ -31,6 +31,7 @@ void CSequencePlayerManager::draw(CScreenQuad* vQuad)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
+        if (!m_SequenceState[i]._IsAlive) continue;
         m_SequencePlayers[i].draw(vQuad);
     }
 }
@@ -107,10 +108,11 @@ SSequenceState CSequencePlayerManager::__getAnInitState()
     SSequenceState State;
     State._IsAlive = IntDistribution(Gen);
 
-    FloatDistribution.param(std::uniform_real_distribution<>::param_type(15.0f, 20.0f));
+    FloatDistribution.param(std::uniform_real_distribution<>::param_type(30.0f, 40.0f));
     State._PlannedLivingTime = FloatDistribution(Gen);
 
-    State._PlannedDeadTime   = 0;
+    FloatDistribution.param(std::uniform_real_distribution<>::param_type(1.0f, 2.0f));
+    State._PlannedDeadTime   = FloatDistribution(Gen);
     State._AlreadyDeadTime   = 0;
     State._AlreadyLivingTime = 0;
     State._MovingDirection   = 1;

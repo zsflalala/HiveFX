@@ -6,6 +6,13 @@ android {
     namespace = "com.hive.hivefx"
     compileSdk = 34
 
+    applicationVariants.all {
+        outputs.all {
+            val outputImpl = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            outputImpl.outputFileName = "MyCustomAppName-${buildType.name}-${versionName}.apk"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.hive.hivefx"
         minSdk = 30
