@@ -8,6 +8,7 @@ add_library(hivefx SHARED
         SingleTexturePlayer.cpp
         SequenceFramePlayer.cpp
         SequencePlayerManager.cpp
+        AsyncSequenceFrameRenderer.cpp
         ShaderProgram.cpp
         ScreenQuad.cpp
         Texture2D.cpp

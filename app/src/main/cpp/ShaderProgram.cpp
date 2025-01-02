@@ -6,6 +6,7 @@ using namespace hiveVG;
 
 CShaderProgram* CShaderProgram::createProgram(AAssetManager *vAssetManager, const std::string& vVertFilePath, const std::string& vFragFilePath)
 {
+    LOG_INFO(hiveVG::TAG_KEYWORD::SHADER_PROGRAM_TAG,"filePath : %s", std::filesystem::current_path().c_str());
     std::string VertCode, FragCode;
     if (!__dumpShaderCodeFromFile(vAssetManager, vVertFilePath, VertCode)) return nullptr;
     if (!__dumpShaderCodeFromFile(vAssetManager, vFragFilePath, FragCode)) return nullptr;
@@ -99,24 +100,6 @@ bool CShaderProgram::__dumpShaderCodeFromFile(AAssetManager *vAssetManager, cons
     pBuffer[AssetSize] = '\0';
     voShaderCode = std::string(pBuffer.get());
     return true;
-
-    // TODO : if above code runs succeed, delete it below.
-//    std::ifstream ShaderFile;
-//    ShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-//    try
-//    {
-//        ShaderFile.open(vShaderPath);
-//        std::stringstream ShaderStream;
-//        ShaderStream << ShaderFile.rdbuf();
-//        ShaderFile.close();
-//        voShaderCode = ShaderStream.str();
-//        return true;
-//    }
-//    catch (std::ifstream::failure& Error)
-//    {
-//        LOG_ERROR(hiveVG::TAG_KEYWORD::SHADER_PROGRAM_TAG, "Failed to read shader file: %s; Reason: %s", vShaderPath.c_str(), Error.what());
-//        return false;
-//    }
 }
 
 bool CShaderProgram::__compileShader(GLenum vType, const std::string& vShaderPath, const std::string& vShaderCode, GLuint& voShaderHandle)

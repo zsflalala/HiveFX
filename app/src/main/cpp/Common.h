@@ -15,4 +15,5 @@ namespace hiveVG::TAG_KEYWORD
     const char *const TEXTURE2D_TAG = "CTexture2D";
     const char *const SHADER_PROGRAM_TAG = "CShaderProgram";
     const char *const SEQFRAME_PALYER_TAG = "CSequenceFramePlayer";
+    const char *const ASYNC_SEQFRAME_PALYER_TAG = "CAsyncSequenceFramePlayer";
 }
