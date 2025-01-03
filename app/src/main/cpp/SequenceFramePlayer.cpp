@@ -15,6 +15,20 @@ CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTexturePath, int 
     m_ValidFrames = m_SequenceRows * m_SequenceCols;
 }
 
+CSequenceFramePlayer::~CSequenceFramePlayer()
+{
+    if (m_pSequenceTexture)
+    {
+        delete m_pSequenceTexture; // 释放 CTexture2D
+        m_pSequenceTexture = nullptr;
+    }
+    if (m_pSequenceShaderProgram)
+    {
+        delete m_pSequenceShaderProgram; // 释放 CShaderProgram
+        m_pSequenceShaderProgram = nullptr;
+    }
+}
+
 bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetManager)
 {
     m_pSequenceTexture = CTexture2D::loadTexture(vAssetManager, m_TexturePath, m_SequeceWidth, m_SequeceHeight);

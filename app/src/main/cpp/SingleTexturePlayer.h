@@ -17,7 +17,7 @@ namespace hiveVG
         ~CSingleTexturePlayer() = default;
 
         bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
-        void updateShaderAndTexture();
+        void updateFrame();
 
     private:
         std::string m_TexturePath;

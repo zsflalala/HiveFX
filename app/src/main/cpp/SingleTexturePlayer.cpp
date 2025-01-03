@@ -24,7 +24,7 @@ bool CSingleTexturePlayer::initTextureAndShaderProgram(AAssetManager *vAssetMana
     return true;
 }
 
-void CSingleTexturePlayer::updateShaderAndTexture()
+void CSingleTexturePlayer::updateFrame()
 {
     m_pSingleShaderProgram->useProgram();
     m_pSingleTexture->bindTexture();
