@@ -5,11 +5,12 @@
 #include "ScreenQuad.h"
 #include "Common.h"
 #include "stb_image.h"
+#include "webp/decode.h"
 
 using namespace hiveVG;
 
 CAsyncSequenceFramePlayer::CAsyncSequenceFramePlayer(const std::string &vTextureRootPath,
-                                                     int vTextureCount):m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount)
+                                                     int vTextureCount, EPictureType vPictureType):m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType)
 {
     m_LoadedTextures = std::vector<STextureData>(vTextureCount);
     m_FrameLoadedGPU = std::vector<std::atomic<bool>>(vTextureCount);
@@ -33,9 +34,13 @@ CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
 bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAssetManager)
 {
     m_CPULoadedTime = __getCurrentTime();
+    std::string PictureSuffix;
+    if (m_TextureType == EPictureType::PNG) PictureSuffix = ".png";
+    else if (m_TextureType == EPictureType::JPG) PictureSuffix = ".jpg";
+    else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
     for (int i = 0;i < m_TextureCount;i++)
     {
-        std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
+        std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
         std::thread([this, i, TexturePath, vAssetManager]()
                     {
                         __loadTextureDataAsync(vAssetManager, i, TexturePath, m_LoadedTextures, m_TextureMutex, m_FramesToUploadGPU);
@@ -134,18 +139,25 @@ CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, 
     AAsset_close(pAsset);
 
     double StartTime = __getCurrentTime();
-    int Width, Height, Channels;
+    int Width, Height, Channels = 4;
+    uint8_t* pDecodeRgba = WebPDecodeRGBA(pBuffer.get(), AssetSize, &Width, &Height);
+    if (!pDecodeRgba)
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+        return;
+    }
+
     unsigned char* pTexData = stbi_load_from_memory(pBuffer.get(), AssetSize, &Width, &Height, &Channels, 0);
-    if (pTexData)
+    if (pDecodeRgba)
     {
         std::lock_guard<std::mutex> Lock(vTextureMutex);
         auto& Texture = vLoadedTextures[vFrameIndex];
-        Texture._ImageData.assign(pTexData, pTexData + (Width * Height * Channels));
+        Texture._ImageData.assign(pDecodeRgba, pDecodeRgba + (Width * Height * Channels));
         Texture._Width  = Width;
         Texture._Height = Height;
         Texture._Channels = Channels;
         Texture._IsLoaded.store(true);
-        stbi_image_free(pTexData);
+//        stbi_image_free(pTexData);
         vFramesToUploadGPU.push(vFrameIndex);
         double EndTime = __getCurrentTime();
         double Duration = EndTime - StartTime;

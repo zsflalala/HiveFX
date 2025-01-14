@@ -20,10 +20,15 @@ namespace hiveVG
         std::atomic<bool> _IsLoaded { false };
     };
 
+    enum class EPictureType : std::uint8_t
+    {
+        PNG = 0, JPG, WEBP
+    };
+
     class CAsyncSequenceFramePlayer
     {
     public:
-        CAsyncSequenceFramePlayer(const std::string& vTextureRootPath, int vTextureCount);
+        CAsyncSequenceFramePlayer(const std::string& vTextureRootPath, int vTextureCount, EPictureType vPictureType = EPictureType::PNG);
         ~CAsyncSequenceFramePlayer();
 
         bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
@@ -35,7 +40,9 @@ namespace hiveVG
         double __getCurrentTime();
         double __getCostTime(std::vector<double> &vCostTime);
 
+
         int                                  m_TextureCount;
+        EPictureType                         m_TextureType            = EPictureType::PNG;
         int                                  m_Frame                  = 0;
         int                                  m_LastLoadedFrame        = -1;
         double                               m_LastFrameTime          = 0;

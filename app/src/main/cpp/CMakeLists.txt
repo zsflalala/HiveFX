@@ -19,6 +19,7 @@ find_package(game-activity REQUIRED CONFIG)
 
 set(REQUIRED_PACKAGES
         glm
+        WebP
 )
 
 foreach(PACKAGE ${REQUIRED_PACKAGES})
@@ -33,4 +34,5 @@ target_link_libraries(hivefx
         android
         log
         glm::glm
+        libwebp::libwebp
     )

@@ -109,14 +109,15 @@ void CAsyncSequenceFrameRenderer::__initRenderer()
 void CAsyncSequenceFrameRenderer::__initAlgorithm()
 {
     int TextureCount = 64;
+    EPictureType PictureType = EPictureType::WEBP;
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pAsyncSeqFramePlayer = new CAsyncSequenceFramePlayer("Textures/BigRain",TextureCount);
+    m_pAsyncSeqFramePlayer = new CAsyncSequenceFramePlayer("Textures/BigRainWebp",TextureCount, PictureType);
     m_pAsyncSeqFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 }
 
 void CAsyncSequenceFrameRenderer::renderScene()
 {
-    glClearColor(1.0f,0.1f,0.1f, 0.0f);
+    glClearColor(0.3f,0.5f,0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
