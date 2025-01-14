@@ -36,5 +36,6 @@ namespace hiveVG
         EGLContext   m_Context       = EGL_NO_CONTEXT;
         CScreenQuad* m_pScreenQuad   = nullptr;
         std::unique_ptr<CSequencePlayerManager> m_pSequencePlayerManager = nullptr;
+        CSequenceFramePlayer* m_pSequenceFramePlayer = nullptr;
     };
 }

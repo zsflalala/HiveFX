@@ -9,7 +9,7 @@ android {
     applicationVariants.all {
         outputs.all {
             val outputImpl = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            outputImpl.outputFileName = "BillBoard.apk"
+            outputImpl.outputFileName = "SequenceFramePlayer.apk"
         }
     }
 

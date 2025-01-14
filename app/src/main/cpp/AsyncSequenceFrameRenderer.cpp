@@ -108,104 +108,25 @@ void CAsyncSequenceFrameRenderer::__initRenderer()
 
 void CAsyncSequenceFrameRenderer::__initAlgorithm()
 {
+    int TextureCount = 64;
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pAsyncSeqFramePlayer = new CAsyncSequenceFramePlayer("Textures/SnowScene",FRAME_COUNT);
+    m_pAsyncSeqFramePlayer = new CAsyncSequenceFramePlayer("Textures/BigRain",TextureCount);
     m_pAsyncSeqFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
-//    m_pSingleShaderProgram = CShaderProgram::createProgram(
-//            m_pApp->activity->assetManager,
-//            "shaders/singleTexturePlayer.vert",
-//            "shaders/singleTexturePlayer.frag"
-//    );
-//    double Start = __getCurrentTime();
-//    glGenTextures(FRAME_COUNT, m_pTextureIDs);
-//    __recordTime(Start, "glGenTextures");
-//
-//    for (int i = 0;i < FRAME_COUNT;i++)
-//    {
-//        std::string TexturePath = "Textures/SnowScene/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
-//        std::thread([this, i, TexturePath]()
-//                    {
-//                        __loadTextureDataAsync(m_pApp->activity->assetManager, i, TexturePath, m_LoadedTextures, m_TextureMutex, m_FramesToUploadGPU);
-//                    }).detach();
-//    }
 }
 
 void CAsyncSequenceFrameRenderer::renderScene()
 {
-    glClearColor(0.1f,0.1f,0.1f, 0.0f);
+    glClearColor(1.0f,0.1f,0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     __updateRenderArea();
-
-//    if (!m_FramesToUploadGPU.empty())
-//    {
-//        int FrameToUpload = m_FramesToUploadGPU.front();
-//        m_FramesToUploadGPU.pop();
-//        __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureIDs, m_pFrameLoadedGPU);
-//    }
-//
-//    if (m_CPUCostTime.size() == FRAME_COUNT && m_GPUCostTime.size() == FRAME_COUNT)
-//    {
-//        double SumCPUTime = std::accumulate(m_CPUCostTime.begin(), m_CPUCostTime.end(), 0.0);
-//        double AverageCPUTime = SumCPUTime / m_CPUCostTime.size();
-//        LOG_INFO(TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "CPU Frames %d Cost Avg Time: %f", FRAME_COUNT, AverageCPUTime);
-//        double SumGPUTime = std::accumulate(m_GPUCostTime.begin(), m_GPUCostTime.end(), 0.0);
-//        double AverageGPUTime = SumGPUTime / m_GPUCostTime.size();
-//        LOG_INFO(TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "GPU Frames %d Cost Avg Time: %f", FRAME_COUNT, AverageGPUTime);
-//        m_CPUCostTime.clear();
-//        m_GPUCostTime.clear();
-//    }
-//
-//// If the current frame is not loaded, determine whether the time exceeds the threshold
-//    double Now = __getCurrentTime();
-//    if (m_pFrameLoadedGPU[m_Frame].load())
-//    {
-//        m_LastLoadedFrame = m_Frame; // Update the last loaded frame
-//        m_Frame = (m_Frame + 1) % FRAME_COUNT;
-//        m_LastFrameTime = Now;       // Update last render time
-//    }
-//    else
-//    {
-//        double TimeElapsed = Now - m_LastFrameTime;
-//        // If the threshold is exceeded, skip the current frame
-//        if (TimeElapsed > m_Threshold)
-//        {
-//            LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d  is not loaded for too long, skipping to next frame.", m_Frame);
-//            m_Frame = (m_Frame + 1) % FRAME_COUNT;
-//            m_LastFrameTime = Now;
-//        }
-//        else if (m_LastLoadedFrame != -1)
-//        {
-//            LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d is not loaded, showing last loaded frame: %d.", m_Frame, m_LastLoadedFrame);
-//        }
-//        else
-//        {
-//            LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "No frame is loaded yet.");
-//            auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
-//            assert(SwapResult == EGL_TRUE);
-//            return;
-//        }
-//    }
-
-//    m_pSingleShaderProgram->useProgram();
-//    m_pSingleShaderProgram->setUniform("quadTexture", 0);
-//    glBindTexture(GL_TEXTURE_2D, m_pTextureIDs[m_LastLoadedFrame]);
-//    glActiveTexture(GL_TEXTURE0);
-
     m_pAsyncSeqFramePlayer->updateFrames();
     m_pScreenQuad->bindAndDraw();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
-}
-
-double CAsyncSequenceFrameRenderer::__getCurrentTime()
-{
-    struct timeval tv;
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }
 
 void CAsyncSequenceFrameRenderer::__updateRenderArea()
@@ -216,92 +137,8 @@ void CAsyncSequenceFrameRenderer::__updateRenderArea()
 
     if (Width != m_WindowWidth || Height != m_WindowHeight)
     {
-        m_WindowWidth = Width;
+        m_WindowWidth  = Width;
         m_WindowHeight = Height;
         glViewport(0, 0, m_WindowWidth, m_WindowHeight);
     }
-}
-
-void
-CAsyncSequenceFrameRenderer::__loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath,
-                                                    std::vector<STextureData> &vLoadedTextures,
-                                                    std::mutex &vTextureMutex,
-                                                    std::queue<int> &vFramesToUploadGPU)
-{
-    double Start = __getCurrentTime();
-    if (!vAssetManager)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "AssetManager is null.");
-        return;
-    }
-    AAsset* pAsset = AAssetManager_open(vAssetManager, vTexturePath.c_str(), AASSET_MODE_BUFFER);
-    if (!pAsset)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Failed to open asset: %s", vTexturePath.c_str());
-        return;
-    }
-    size_t AssetSize = AAsset_getLength(pAsset);
-    std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    AAsset_read(pAsset, pBuffer.get(), AssetSize);
-    AAsset_close(pAsset);
-
-    int Width, Height, Channels;
-    unsigned char* pTexData = stbi_load_from_memory(pBuffer.get(), AssetSize, &Width, &Height, &Channels, 0);
-    if (pTexData)
-    {
-        std::lock_guard<std::mutex> Lock(vTextureMutex);
-        auto& Texture = vLoadedTextures[vFrameIndex];
-        Texture._ImageData.assign(pTexData, pTexData + (Width * Height * Channels));
-        Texture._Width  = Width;
-        Texture._Height = Height;
-        Texture._Channels = Channels;
-        Texture._IsLoaded.store(true);
-        stbi_image_free(pTexData);
-        vFramesToUploadGPU.push(vFrameIndex);
-        double CurrentTime = __getCurrentTime();
-        double Duration = CurrentTime - Start;
-        LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG,"CPU load frame %d costs time: %f",vFrameIndex, Duration);
-        m_CPUCostTime.push_back(Duration);
-    }
-    else
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Failed to load texture: %s", vTexturePath.c_str());
-    }
-}
-
-void CAsyncSequenceFrameRenderer::__uploadTexturesToGPU(int vTextureIndex,
-                                                        std::vector<STextureData> &vLoadedTextures,
-                                                        unsigned int *vTextureIDs,
-                                                        std::atomic<bool> *vFrameLoadedCPU)
-{
-    double Start = __getCurrentTime();
-    auto& Texture = vLoadedTextures[vTextureIndex];
-    if (Texture._IsLoaded.load())
-    {
-        glBindTexture(GL_TEXTURE_2D, vTextureIDs[vTextureIndex]);
-        GLenum Format = (Texture._Channels == 4) ? GL_RGBA : GL_RGB;
-        glTexImage2D(GL_TEXTURE_2D, 0, Format, Texture._Width, Texture._Height, 0, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        vFrameLoadedCPU[vTextureIndex].store(true);
-        double CurrentTime = __getCurrentTime();
-        double Duration = CurrentTime - Start;
-        LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG,"GPU load frame %d costs time: %f",vTextureIndex, Duration);
-        m_GPUCostTime.push_back(Duration);
-    }
-    else
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "%d hasn't loaded yet.", vTextureIndex);
-    }
-}
-
-void
-CAsyncSequenceFrameRenderer::__recordTime(const double &vLastTime, const std::string &vProcessName)
-{
-    double CurrentTime = __getCurrentTime();
-    double Duration = CurrentTime - vLastTime;
-    LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG,"%s cost time: %f", vProcessName.c_str(), Duration);
 }

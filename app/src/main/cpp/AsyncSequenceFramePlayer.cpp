@@ -1,5 +1,6 @@
 #include "AsyncSequenceFramePlayer.h"
 #include <thread>
+#include <numeric>
 #include "ShaderProgram.h"
 #include "ScreenQuad.h"
 #include "Common.h"
@@ -31,6 +32,7 @@ CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
 
 bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAssetManager)
 {
+    m_CPULoadedTime = __getCurrentTime();
     for (int i = 0;i < m_TextureCount;i++)
     {
         std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
@@ -47,6 +49,7 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAsse
     );
     assert(m_pAsyncShaderProgram != nullptr);
 
+    m_GPULoadedTime = __getCurrentTime();
     glGenTextures(m_TextureCount, m_pTextureHandles);
     return true;
 }
@@ -59,27 +62,40 @@ void CAsyncSequenceFramePlayer::updateFrames()
         m_FramesToUploadGPU.pop();
         __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureHandles, m_FrameLoadedGPU);
     }
+    double CurrentTime = __getCurrentTime();
+    if (m_CPUCostTime.size() == m_TextureCount)
+    {
+        double CPUAverageTime = __getCostTime(m_CPUCostTime);
+        LOG_INFO(TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Loading all textures in CPU costs average time : %f, costs sum time : %f, actually costs time : %f", CPUAverageTime, CPUAverageTime * m_TextureCount, CurrentTime - m_CPULoadedTime);
+        m_CPUCostTime.clear();
+    }
+    if (m_GPUCostTime.size() == m_TextureCount)
+    {
+        double GPUAverageTime = __getCostTime(m_GPUCostTime);
+        LOG_INFO(TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Loading all textures in GPU costs average time : %f and costs sum time : %f, actually costs time : %f", GPUAverageTime, GPUAverageTime * m_TextureCount, CurrentTime - m_GPULoadedTime);
+        m_GPUCostTime.clear();
+    }
 
-    double Now = __getCurrentTime();
     if (m_FrameLoadedGPU[m_Frame].load())
     {
-        m_LastLoadedFrame = m_Frame; // Update the last loaded frame
+        m_LastLoadedFrame = m_Frame;
         m_Frame = (m_Frame + 1) % m_TextureCount;
-        m_LastFrameTime = Now;       // Update last render time
+        m_LastFrameTime = CurrentTime;
     }
     else
     {
-        double TimeElapsed = Now - m_LastFrameTime;
+        double TimeElapsed = CurrentTime - m_LastFrameTime;
         // If the threshold is exceeded, skip the current frame
         if (TimeElapsed > m_FrameLoadTimeThreshold)
         {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d  is not loaded for too long, skipping to next frame.", m_Frame);
+            LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d is not loaded for too long, skipping to next frame.", m_Frame);
             m_Frame = (m_Frame + 1) % m_TextureCount;
-            m_LastFrameTime = Now;
+            m_LastFrameTime = CurrentTime;
         }
         else if (m_LastLoadedFrame != -1)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d is not loaded, showing last loaded frame: %d.", m_Frame, m_LastLoadedFrame);
+            return;
         }
         else
         {
@@ -117,6 +133,7 @@ CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, 
     AAsset_read(pAsset, pBuffer.get(), AssetSize);
     AAsset_close(pAsset);
 
+    double StartTime = __getCurrentTime();
     int Width, Height, Channels;
     unsigned char* pTexData = stbi_load_from_memory(pBuffer.get(), AssetSize, &Width, &Height, &Channels, 0);
     if (pTexData)
@@ -130,6 +147,10 @@ CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, 
         Texture._IsLoaded.store(true);
         stbi_image_free(pTexData);
         vFramesToUploadGPU.push(vFrameIndex);
+        double EndTime = __getCurrentTime();
+        double Duration = EndTime - StartTime;
+        m_CPUCostTime.push_back(Duration);
+        LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG,"CPU load frame %d costs time: %f",vFrameIndex, Duration);
     }
     else
     {
@@ -145,6 +166,7 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
     auto& Texture = vLoadedTextures[vTextureIndex];
     if (Texture._IsLoaded.load())
     {
+        double StartTime = __getCurrentTime();
         glBindTexture(GL_TEXTURE_2D, vTextureHandles[vTextureIndex]);
         GLenum Format = (Texture._Channels == 4) ? GL_RGBA : GL_RGB;
         glTexImage2D(GL_TEXTURE_2D, 0, Format, Texture._Width, Texture._Height, 0, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
@@ -154,6 +176,10 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glGenerateMipmap(GL_TEXTURE_2D);
         vFrameLoadedCPU[vTextureIndex].store(true);
+        double EndTime = __getCurrentTime();
+        double Duration = EndTime - StartTime;
+        m_GPUCostTime.push_back(Duration);
+        LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG,"GPU load frame %d costs time: %f",vTextureIndex, Duration);
     }
     else
     {
@@ -166,4 +192,12 @@ double CAsyncSequenceFramePlayer::__getCurrentTime()
     struct timeval tv;
     gettimeofday(&tv, nullptr);
     return tv.tv_sec + tv.tv_usec / 1000000.0;
+}
+
+double CAsyncSequenceFramePlayer::__getCostTime(std::vector<double> &vCostTime)
+{
+    if (vCostTime.empty()) return 0.0;
+    double Sum = std::accumulate(vCostTime.begin(), vCostTime.end(), 0.0);  // 计算总和
+    double Average = Sum / vCostTime.size();  // 计算平均值
+    return Average;
 }

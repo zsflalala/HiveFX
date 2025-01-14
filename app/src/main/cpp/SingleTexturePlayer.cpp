@@ -7,12 +7,27 @@ using namespace hiveVG;
 
 CSingleTexturePlayer::CSingleTexturePlayer(const std::string &vTexturePath) : m_TexturePath(vTexturePath){}
 
+CSingleTexturePlayer::~CSingleTexturePlayer()
+{
+    if (m_pSingleTexture)
+    {
+        delete m_pSingleTexture;
+        m_pSingleTexture = nullptr;
+    }
+    if (m_pSingleShaderProgram)
+    {
+        delete m_pSingleShaderProgram;
+        m_pSingleShaderProgram = nullptr;
+    }
+}
+
 bool CSingleTexturePlayer::initTextureAndShaderProgram(AAssetManager *vAssetManager)
 {
     m_pSingleTexture = CTexture2D::loadTexture(vAssetManager, m_TexturePath);
     if (!m_pSingleTexture)
     {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", m_TexturePath.c_str());
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG,
+                  "Error loading texture from path [%s].", m_TexturePath.c_str());
         return false;
     }
     m_pSingleShaderProgram = CShaderProgram::createProgram(

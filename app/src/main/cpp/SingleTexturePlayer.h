@@ -14,7 +14,7 @@ namespace hiveVG
     {
     public:
         CSingleTexturePlayer(const std::string& vTexturePath);
-        ~CSingleTexturePlayer() = default;
+        ~CSingleTexturePlayer();
 
         bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
         void updateFrame();
@@ -26,4 +26,3 @@ namespace hiveVG
         CShaderProgram*   m_pSingleShaderProgram = nullptr;
     };
 }
-

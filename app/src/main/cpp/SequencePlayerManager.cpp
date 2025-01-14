@@ -12,17 +12,17 @@ void CSequencePlayerManager::initSequenceState()
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
-        m_SequenceState.emplace_back(__getAnInitState());
+        m_SequenceState.emplace_back(__initSequenceParams());
     }
 }
 
-void CSequencePlayerManager::updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDt)
+void CSequencePlayerManager::updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
         if (m_SequencePlayers[i].getLoopState() || (!m_SequencePlayers[i].getLoopState() && !m_SequencePlayers[i].getFinishState()))
         {
-            m_SequencePlayers[i].updateFrameAndUV(vWindowWidth, vWindowHeight, vDt);
+            m_SequencePlayers[i].updateFrameAndUV(vWindowWidth, vWindowHeight, vDeltaTime);
         }
     }
 }
@@ -36,7 +36,7 @@ void CSequencePlayerManager::draw(CScreenQuad* vQuad)
     }
 }
 
-void CSequencePlayerManager::updateSequenceState(double vDt)
+void CSequencePlayerManager::updateSequenceState(double vDeltaTime)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
@@ -44,10 +44,10 @@ void CSequencePlayerManager::updateSequenceState(double vDt)
         auto& State = m_SequenceState[i];
         if (!State._IsAlive)
         {
-            State._AlreadyDeadTime += vDt;
+            State._AlreadyDeadTime += vDeltaTime;
             if (State._AlreadyDeadTime > State._PlannedDeadTime)
             {
-                State = __getAnInitState();
+                State = __initSequenceParams();
                 State._IsAlive = true;
                 Player.setScreenUVOffset(State._UVOffset);
                 Player.setScreenRandScale(State._UVScale);
@@ -55,12 +55,12 @@ void CSequencePlayerManager::updateSequenceState(double vDt)
         }
         else
         {
-            State._AlreadyLivingTime += vDt;
-            State._UVOffset += glm::dvec2(State._MovingDirection, 0.0f) * (double)State._MovingSpeed * vDt;
+            State._AlreadyLivingTime += vDeltaTime;
             if (State._AlreadyLivingTime > State._PlannedLivingTime)
             {
                 State._IsAlive = false;
             }
+            State._UVOffset += glm::dvec2(State._MovingDirection, 0.0f) * (double)State._MovingSpeed * vDeltaTime;
             Player.setScreenUVOffset(State._UVOffset);
         }
     }
@@ -74,11 +74,11 @@ void CSequencePlayerManager::setLoop(bool vLoop)
     }
 }
 
-void CSequencePlayerManager::setPlayingSpeed(int vPlayingSpeed)
+void CSequencePlayerManager::setFrameRate(int vFrameRate)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
-        m_SequencePlayers[i].setFramePerSecond(vPlayingSpeed);
+        m_SequencePlayers[i].setFrameRate(vFrameRate);
     }
 }
 
@@ -98,7 +98,7 @@ void CSequencePlayerManager::setScreenUvOffset(glm::vec2 vUVOffset)
     }
 }
 
-SSequenceState CSequencePlayerManager::__getAnInitState()
+SSequenceState CSequencePlayerManager::__initSequenceParams()
 {
     std::random_device Rd;
     std::mt19937 Gen(Rd());
@@ -122,6 +122,8 @@ SSequenceState CSequencePlayerManager::__getAnInitState()
 
     FloatDistribution.param(std::uniform_real_distribution<>::param_type(-0.5f, 0.5f));
     State._UVOffset = State._MovingDirection > 0 ? glm::vec2(-1.0f - State._UVScale, FloatDistribution(Gen)) : glm::vec2(1.0f + State._UVScale, FloatDistribution(Gen));
-    State._MovingSpeed = (2.0f + 2 * State._UVScale) / State._PlannedLivingTime;  // TODO : how this 2.0 generate
+
+    float MovingDistance = 2.0f + 2 * State._UVScale; // 2.0f is from -1.0 ~ 1.0; * 2 is from left to right
+    State._MovingSpeed = MovingDistance / State._PlannedLivingTime;
     return State;
 }

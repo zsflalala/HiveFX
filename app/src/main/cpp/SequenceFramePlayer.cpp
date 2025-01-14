@@ -9,64 +9,80 @@
 
 using namespace hiveVG;
 
-CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTexturePath, int vSequenceRows, int vSequenceCols)
-        : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TexturePath(vTexturePath)
+CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount)
+        : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount)
 {
     m_ValidFrames = m_SequenceRows * m_SequenceCols;
 }
 
 CSequenceFramePlayer::~CSequenceFramePlayer()
 {
-    if (m_pSequenceTexture)
+    for (int i = m_SeqTextures.size() - 1; i >= 0; i--)
     {
-        delete m_pSequenceTexture; // 释放 CTexture2D
-        m_pSequenceTexture = nullptr;
+        if (m_SeqTextures[i])
+        {
+            delete m_SeqTextures[i];
+            m_SeqTextures[i] = nullptr;
+            m_SeqTextures.pop_back();
+        }
     }
+
     if (m_pSequenceShaderProgram)
     {
-        delete m_pSequenceShaderProgram; // 释放 CShaderProgram
+        delete m_pSequenceShaderProgram;
         m_pSequenceShaderProgram = nullptr;
     }
 }
 
 bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetManager)
 {
-    m_pSequenceTexture = CTexture2D::loadTexture(vAssetManager, m_TexturePath, m_SequeceWidth, m_SequeceHeight);
+    for (int i = 0; i < m_TextureCount; i++)
+    {
+        std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
+        CTexture2D* pSequenceTexture = CTexture2D::loadTexture(vAssetManager, TexturePath, m_SequeceWidth, m_SequeceHeight);
+        if (!pSequenceTexture)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+            return false;
+        }
+        m_SeqTextures.push_back(pSequenceTexture);
+    }
     m_SequeceSingleWidth  = m_SequeceWidth  / m_SequenceCols;
     m_SequeceSingleHeight = m_SequeceHeight / m_SequenceRows;
-    if (!m_pSequenceTexture)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", m_TexturePath.c_str());
-        return false;
-    }
     m_pSequenceShaderProgram = CShaderProgram::createProgram(
             vAssetManager,
             "shaders/sequenceTexturePlayer.vert",
             "shaders/sequenceTexturePlayer.frag"
     );
     assert(m_pSequenceShaderProgram != nullptr);
-    LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "%s load Succeed. Program Created Succeed.", m_TexturePath.c_str());
+    LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TextureRootPath.c_str());
     return true;
 }
 
-void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDt)
+void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime)
 {
     double FrameTime = 1.0 / m_FramePerSecond;
-    m_AccumFrameTime += vDt;
+    m_AccumFrameTime += vDeltaTime;
     if (m_AccumFrameTime >= FrameTime)
     {
-        m_AccumFrameTime -= FrameTime;
-        m_CurrentFrame  = (m_CurrentFrame + 1) % m_ValidFrames;
-        if (m_CurrentFrame == 0)
-            m_IsFinished = true;
-        else
-            m_IsFinished = false;
+        m_AccumFrameTime = 0.0f;
+        if (m_CurrentFrame == m_ValidFrames - 1)
+        {
+            if (m_CurrentTexture == m_TextureCount - 1) m_IsFinished = true;
+            m_CurrentTexture = (m_CurrentTexture + 1) % m_TextureCount;
+        }
+        m_CurrentFrame = (m_CurrentFrame + 1) % m_ValidFrames;
     }
     m_WindowSize = glm::vec2(vWindowWidth, vWindowHeight);
 }
 
 void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
 {
+    if (!m_IsLoop && m_IsFinished)
+    {
+        m_CurrentFrame   = m_ValidFrames - 1;
+        m_CurrentTexture = m_TextureCount - 1;
+    }
     float RotationAngle   = m_RotationAngle * M_PI / 180.0f;
     int   CurrentFrameRow = m_CurrentFrame / m_SequenceCols;
     int   CurrentFrameCol = m_CurrentFrame % m_SequenceCols;
@@ -86,6 +102,6 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
     m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);
     glActiveTexture(GL_TEXTURE0);
-    m_pSequenceTexture->bindTexture();
+    m_SeqTextures[m_CurrentTexture]->bindTexture();
     vQuad->bindAndDraw();
 }

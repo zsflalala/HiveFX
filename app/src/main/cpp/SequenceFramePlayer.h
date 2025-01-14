@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include <vector>
 #include <android/asset_manager.h>
 
 namespace hiveVG
@@ -13,14 +14,14 @@ namespace hiveVG
     class CSequenceFramePlayer
     {
     public:
-        CSequenceFramePlayer(const std::string& vTexturePath, int vSequenceRows, int vSequenceCols);
+        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount);
         ~CSequenceFramePlayer();
 
         void setLoopPlayback(bool vLoopTag) { m_IsLoop = vLoopTag; }
         void setScreenUVScale(const glm::vec2& vScreenScale) { m_ScreenUVScale = vScreenScale; }
         void setScreenUVOffset(const glm::vec2& vScreenOffset) { m_ScreenUVOffset = vScreenOffset; }
         void setScreenRandScale(const float& vRandScle) { m_ScreenRandScale = vRandScle; }
-        void setFramePerSecond(int vFramePerSecond) { m_FramePerSecond = static_cast<float>(vFramePerSecond); }
+        void setFrameRate(int vFrameRate) { m_FramePerSecond = static_cast<float>(vFrameRate); }
         void setValidFrames(int vValidFrames) { m_ValidFrames = vValidFrames; }
         void setRotationAngle(float vAngle) { m_RotationAngle = vAngle; }
 
@@ -31,7 +32,7 @@ namespace hiveVG
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
 
         bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
-        void updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDt);
+        void updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
         void draw(CScreenQuad* vQuad);
 
     private:
@@ -48,13 +49,15 @@ namespace hiveVG
         float             m_RotationAngle  = 0.0f;
         int               m_CurrentFrame   = 0;
         double            m_AccumFrameTime = 0.0f;
-        std::string       m_TexturePath;
+        std::string       m_TextureRootPath;
+        int               m_CurrentTexture = 0;
+        int               m_TextureCount;
         float			  m_ScreenRandScale = 1.0f;
         glm::vec2         m_ScreenUVScale   = glm::vec2(1.0f, 1.0f);
         glm::vec2         m_ScreenUVOffset  = glm::vec2(0.0f, 0.0f);
         glm::vec2		  m_WindowSize      = glm::vec2(0.0f, 0.0f);
 
-        CTexture2D*	      m_pSequenceTexture       = nullptr;
-        CShaderProgram*   m_pSequenceShaderProgram = nullptr;
+        std::vector<CTexture2D*> m_SeqTextures;
+        CShaderProgram*          m_pSequenceShaderProgram = nullptr;
     };
 }

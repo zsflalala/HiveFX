@@ -104,84 +104,88 @@ void CSequenceFrameRenderer::__initRenderer()
 void CSequenceFrameRenderer::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
-
-    std::string TexPath = "Textures/Clouds/cloud1.png";
-    CSequenceFramePlayer CloudSequencePlayer0(TexPath, 32, 16);
-    if (!CloudSequencePlayer0.initTextureAndShaderProgram(m_pApp->activity->assetManager))
+    m_pSequenceFramePlayer = new CSequenceFramePlayer("Textures/SnowScene_4x4x4", 4, 4, 4);
+    m_pSequenceFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pSequenceFramePlayer->setFrameRate(24.0f);
     {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
-        return ;
+//    std::string TexPath = "Textures/Clouds/cloud1.png";
+//    CSequenceFramePlayer CloudSequencePlayer0(TexPath, 32, 16);
+//    if (!CloudSequencePlayer0.initTextureAndShaderProgram(m_pApp->activity->assetManager))
+//    {
+//        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
+//        return ;
+//    }
+//
+//    TexPath = "Textures/Clouds/cloud2.png";
+//    CSequenceFramePlayer CloudSequencePlayer1(TexPath, 21, 15);
+//    if (!CloudSequencePlayer1.initTextureAndShaderProgram(m_pApp->activity->assetManager))
+//    {
+//        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
+//        return ;
+//    }
+//
+//    TexPath = "Textures/Clouds/cloud3.png";
+//    CSequenceFramePlayer CloudSequencePlayer2(TexPath, 31, 16);
+//    if (!CloudSequencePlayer2.initTextureAndShaderProgram(m_pApp->activity->assetManager))
+//    {
+//        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
+//        return ;
+//    }
+//
+//    TexPath = "Textures/Clouds/cloud4.png";
+//    CSequenceFramePlayer CloudSequencePlayer3(TexPath, 28, 12);
+//    if (!CloudSequencePlayer3.initTextureAndShaderProgram(m_pApp->activity->assetManager))
+//    {
+//        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
+//        return ;
+//    }
+//
+//    TexPath = "Textures/Clouds/cloud5.png";
+//    CSequenceFramePlayer CloudSequencePlayer4(TexPath, 10, 12);
+//    if (!CloudSequencePlayer4.initTextureAndShaderProgram(m_pApp->activity->assetManager))
+//    {
+//        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
+//        return ;
+//    }
+
+//    m_pSequencePlayerManager = std::make_unique<CSequencePlayerManager>();
+//    m_pSequencePlayerManager->pushBack(CloudSequencePlayer0);
+//    m_pSequencePlayerManager->pushBack(CloudSequencePlayer1);
+//    m_pSequencePlayerManager->pushBack(CloudSequencePlayer2);
+//    m_pSequencePlayerManager->pushBack(CloudSequencePlayer3);
+//    m_pSequencePlayerManager->pushBack(CloudSequencePlayer4);
+//    m_pSequencePlayerManager->initSequenceState();
     }
-
-    TexPath = "Textures/Clouds/cloud2.png";
-    CSequenceFramePlayer CloudSequencePlayer1(TexPath, 21, 15);
-    if (!CloudSequencePlayer1.initTextureAndShaderProgram(m_pApp->activity->assetManager))
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
-        return ;
-    }
-
-    TexPath = "Textures/Clouds/cloud3.png";
-    CSequenceFramePlayer CloudSequencePlayer2(TexPath, 31, 16);
-    if (!CloudSequencePlayer2.initTextureAndShaderProgram(m_pApp->activity->assetManager))
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
-        return ;
-    }
-
-    TexPath = "Textures/Clouds/cloud4.png";
-    CSequenceFramePlayer CloudSequencePlayer3(TexPath, 28, 12);
-    if (!CloudSequencePlayer3.initTextureAndShaderProgram(m_pApp->activity->assetManager))
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
-        return ;
-    }
-
-    TexPath = "Textures/Clouds/cloud5.png";
-    CSequenceFramePlayer CloudSequencePlayer4(TexPath, 10, 12);
-    if (!CloudSequencePlayer4.initTextureAndShaderProgram(m_pApp->activity->assetManager))
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
-        return ;
-    }
-
-    m_pSequencePlayerManager = std::make_unique<CSequencePlayerManager>();
-    m_pSequencePlayerManager->pushBack(CloudSequencePlayer0);
-    m_pSequencePlayerManager->pushBack(CloudSequencePlayer1);
-    m_pSequencePlayerManager->pushBack(CloudSequencePlayer2);
-    m_pSequencePlayerManager->pushBack(CloudSequencePlayer3);
-    m_pSequencePlayerManager->pushBack(CloudSequencePlayer4);
-
-    m_pSequencePlayerManager->initSequenceState();
     m_LastFrameTime = __getCurrentTime();
 }
 
 void CSequenceFrameRenderer::renderBlendingSnow()
 {
     m_CurrentTime = __getCurrentTime();
-    double Dt = m_CurrentTime - m_LastFrameTime;
+    double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime = m_CurrentTime;
 
+    __updateRenderArea();
     glClearColor(0.1f,0.1f,0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
 
-    __updateRenderArea();
-
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    m_pSequencePlayerManager->updateFrameAndUV(m_WindowWidth, m_WindowHeight, Dt);
-    m_pSequencePlayerManager->updateSequenceState(Dt);
-    m_pSequencePlayerManager->setPlayingSpeed(24.0f);
-    static int PlayersNum = m_pSequencePlayerManager->getSequencePlayerLength();
-    static std::vector<glm::vec2> ScreenUVScale(PlayersNum, glm::vec2(1.0f, 1.0f));
-
-    for (int i = 0; i < PlayersNum; i++)
+    m_pSequenceFramePlayer->updateFrameAndUV(m_WindowWidth,m_WindowHeight,DeltaTime);
+    m_pSequenceFramePlayer->draw(m_pScreenQuad);
     {
-        ScreenUVScale[i].y = ScreenUVScale[i].x / m_pSequencePlayerManager->getImageAspectRatioAt(i);
-        m_pSequencePlayerManager->setImageAspectRatioAt(i, ScreenUVScale[i]);
+        //    m_pSequencePlayerManager->updateFrameAndUV(m_WindowWidth, m_WindowHeight, DeltaTime);
+//    m_pSequencePlayerManager->updateSequenceState(DeltaTime);
+//    m_pSequencePlayerManager->setFrameRate(24.0f);
+//    static int PlayersNum = m_pSequencePlayerManager->getSequencePlayerLength();
+//    static std::vector<glm::vec2> ScreenUVScale(PlayersNum, glm::vec2(1.0f, 1.0f));
+//    for (int i = 0; i < PlayersNum; i++)
+//    {
+//        ScreenUVScale[i].y = ScreenUVScale[i].x / m_pSequencePlayerManager->getImageAspectRatioAt(i);
+//        m_pSequencePlayerManager->setImageAspectRatioAt(i, ScreenUVScale[i]);
+//    }
+//    m_pSequencePlayerManager->draw(m_pScreenQuad);
     }
-    m_pSequencePlayerManager->draw(m_pScreenQuad);
-
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
@@ -201,7 +205,7 @@ void CSequenceFrameRenderer::__updateRenderArea()
 
     if (Width != m_WindowWidth || Height != m_WindowHeight)
     {
-        m_WindowWidth = Width;
+        m_WindowWidth  = Width;
         m_WindowHeight = Height;
         glViewport(0, 0, m_WindowWidth, m_WindowHeight);
     }
