@@ -36,7 +36,7 @@ void CSequencePlayerManager::draw(CScreenQuad* vQuad)
     }
 }
 
-void CSequencePlayerManager::updateSequenceState(double vDeltaTime)
+void CSequencePlayerManager::updateSequenceState(float vDeltaTime)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
@@ -60,7 +60,7 @@ void CSequencePlayerManager::updateSequenceState(double vDeltaTime)
             {
                 State._IsAlive = false;
             }
-            State._UVOffset += glm::dvec2(State._MovingDirection, 0.0f) * (double)State._MovingSpeed * vDeltaTime;
+            State._UVOffset += glm::vec2(State._MovingDirection, 0.0f) * State._MovingSpeed * vDeltaTime;
             Player.setScreenUVOffset(State._UVOffset);
         }
     }

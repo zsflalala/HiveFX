@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "Texture2D.h"
+#include <GLES3/gl3ext.h>
+#include <iostream>
 #include "Common.h"
+#include "webp/decode.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -27,6 +30,7 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     AAsset_read(pAsset, pBuffer.get(), AssetSize);
     AAsset_close(pAsset);
 
+    double StartTime = __getCurrentTime();
     int Width, Height, Channels;
     unsigned char* pImageData = stbi_load_from_memory(pBuffer.get(), AssetSize, &Width, &Height, &Channels, 0);
     if (!pImageData)
@@ -34,12 +38,18 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load image from memory: %s", vTexturePath.c_str());
         return nullptr;
     }
+    else
+    {
+        double EndTime = __getCurrentTime();
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to CPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
+    }
 
     GLint Format = GL_RGB;
     if (Channels == 3) Format = GL_RGB;
     else if (Channels == 4) Format = GL_RGBA;
     else if (Channels == 1) Format = GL_RED;
 
+    StartTime = __getCurrentTime();
     GLuint TextureHandle;
     glGenTextures(1, &TextureHandle);
     glBindTexture(GL_TEXTURE_2D, TextureHandle);
@@ -58,12 +68,17 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: %s", vTexturePath.c_str());
         return nullptr;
     }
+    else
+    {
+        double EndTime = __getCurrentTime();
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
+    }
     stbi_image_free(pImageData);
 
     return new CTexture2D(TextureHandle);
 }
 
-CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight)
+CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType& vPictureType)
 {
     if (!vAssetManager)
     {
@@ -83,12 +98,48 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     AAsset_read(pAsset, pBuffer.get(), AssetSize);
     AAsset_close(pAsset);
 
+    double StartTime = __getCurrentTime();
     int Channels;
-    unsigned char* pImageData = stbi_load_from_memory(pBuffer.get(), AssetSize, &voWidth, &voHeight, &Channels, 0);
+    unsigned char* pImageData;
+    if (vPictureType == EPictureType::PNG)
+    {
+        pImageData = stbi_load_from_memory(pBuffer.get(), AssetSize, &voWidth, &voHeight, &Channels, 0);
+    }
+    else if (vPictureType == EPictureType::WEBP)
+    {
+        WebPBitstreamFeatures Features;
+        VP8StatusCode Status = WebPGetFeatures(pBuffer.get(), AssetSize, &Features);
+        if (Status != VP8_STATUS_OK)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Failed to get %s WebP features.", vTexturePath.c_str());
+            return nullptr;
+        }
+        bool HasAlpha = Features.has_alpha;
+
+        if (HasAlpha)
+        {
+            Channels = 4;
+            pImageData = WebPDecodeRGBA(pBuffer.get(), AssetSize, &voWidth, &voHeight);
+        }
+        else
+        {
+            Channels = 3;
+            pImageData = WebPDecodeRGB(pBuffer.get(), AssetSize, &voWidth, &voHeight);
+        }
+    }
+    else if (vPictureType == EPictureType::ASTC)
+    {
+        pImageData = pBuffer.get();
+    }
     if (!pImageData)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load image from memory: %s", vTexturePath.c_str());
         return nullptr;
+    }
+    else
+    {
+        double EndTime = __getCurrentTime();
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to CPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
     }
 
     GLint Format = GL_RGB;
@@ -96,6 +147,7 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     else if (Channels == 4) Format = GL_RGBA;
     else if (Channels == 1) Format = GL_RED;
 
+    StartTime = __getCurrentTime();
     GLuint TextureHandle;
     glGenTextures(1, &TextureHandle);
     glBindTexture(GL_TEXTURE_2D, TextureHandle);
@@ -105,8 +157,30 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, Format, voWidth, voHeight, 0, Format, GL_UNSIGNED_BYTE, pImageData);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    if (vPictureType == EPictureType::ASTC)
+    {
+        int Width  = (pBuffer[9] << 16)  | (pBuffer[8]  << 8) | pBuffer[7];
+        int Height = (pBuffer[12] << 16) | (pBuffer[11] << 8) | pBuffer[10];
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image Width : %d , Height :  %d", Width, Height);
+
+        GLenum Format = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
+        glCompressedTexImage2D(
+                GL_TEXTURE_2D,       // 纹理目标
+                0,                   // 纹理的级别
+                Format,       // 纹理格式，ETC2 RGBA
+                Width,        // 纹理宽度
+                Height,       // 纹理高度
+                0,                   // 边界，通常为0
+                AssetSize - 16,           // 纹理数据的大小
+                pBuffer.get()        // 压缩纹理数据
+        );
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, Format, voWidth, voHeight, 0, Format, GL_UNSIGNED_BYTE, pImageData);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
 
     bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
     if (!IsValid)
@@ -114,7 +188,12 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: %s", vTexturePath.c_str());
         return nullptr;
     }
-    stbi_image_free(pImageData);
+    else
+    {
+        double EndTime = __getCurrentTime();
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
+    }
+//    stbi_image_free(pImageData);
 
     return new CTexture2D(TextureHandle);
 }
@@ -131,3 +210,10 @@ void CTexture2D::bindTexture() const
 }
 
 CTexture2D::CTexture2D(GLuint vTextureHandle) : m_TextureHandle(vTextureHandle) {}
+
+double CTexture2D::__getCurrentTime()
+{
+    struct timeval tv;
+    gettimeofday(&tv, nullptr);
+    return tv.tv_sec + tv.tv_usec / 1000000.0;
+}

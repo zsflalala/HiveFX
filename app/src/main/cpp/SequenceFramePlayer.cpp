@@ -4,13 +4,14 @@
 #include "ShaderProgram.h"
 #include "ScreenQuad.h"
 #include "Common.h"
+#include "webp/decode.h"
 
 #define M_PI 3.14159265358979323846
 
 using namespace hiveVG;
 
-CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount)
-        : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount)
+CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType vPictureType)
+        : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType)
 {
     m_ValidFrames = m_SequenceRows * m_SequenceCols;
 }
@@ -36,10 +37,15 @@ CSequenceFramePlayer::~CSequenceFramePlayer()
 
 bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetManager)
 {
+    std::string PictureSuffix;
+    if (m_TextureType == EPictureType::PNG) PictureSuffix = ".png";
+    else if (m_TextureType == EPictureType::JPG) PictureSuffix = ".jpg";
+    else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
+    else if (m_TextureType == EPictureType::ASTC) PictureSuffix = ".astc";
     for (int i = 0; i < m_TextureCount; i++)
     {
-        std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
-        CTexture2D* pSequenceTexture = CTexture2D::loadTexture(vAssetManager, TexturePath, m_SequeceWidth, m_SequeceHeight);
+        std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;;
+        CTexture2D* pSequenceTexture = CTexture2D::loadTexture(vAssetManager, TexturePath, m_SequeceWidth, m_SequeceHeight, m_TextureType);
         if (!pSequenceTexture)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <android/asset_manager.h>
+#include "Common.h"
 
 namespace hiveVG
 {
@@ -14,7 +15,7 @@ namespace hiveVG
     class CSequenceFramePlayer
     {
     public:
-        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount);
+        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType vPictureType = EPictureType::PNG);
         ~CSequenceFramePlayer();
 
         void setLoopPlayback(bool vLoopTag) { m_IsLoop = vLoopTag; }
@@ -53,6 +54,7 @@ namespace hiveVG
         int               m_CurrentTexture = 0;
         int               m_TextureCount;
         float			  m_ScreenRandScale = 1.0f;
+        EPictureType      m_TextureType     = EPictureType::PNG;
         glm::vec2         m_ScreenUVScale   = glm::vec2(1.0f, 1.0f);
         glm::vec2         m_ScreenUVOffset  = glm::vec2(0.0f, 0.0f);
         glm::vec2		  m_WindowSize      = glm::vec2(0.0f, 0.0f);

@@ -17,3 +17,11 @@ namespace hiveVG::TAG_KEYWORD
     const char *const SEQFRAME_PALYER_TAG = "CSequenceFramePlayer";
     const char *const ASYNC_SEQFRAME_PALYER_TAG = "CAsyncSequenceFramePlayer";
 }
+
+namespace hiveVG
+{
+    enum class EPictureType : std::uint8_t
+    {
+        PNG = 0, JPG, WEBP, ASTC, ETC1, ETC2
+    };
+}

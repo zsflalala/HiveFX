@@ -30,7 +30,7 @@ namespace hiveVG
         void  draw(CScreenQuad* vQuad);
         int   getSequencePlayerLength() { return m_SequencePlayers.size(); }
         float getImageAspectRatioAt(int i) { return static_cast<float>(m_SequencePlayers[i].getSingleWidth()) / static_cast<float>(m_SequencePlayers[i].getSingleHeight()); }
-        void  updateSequenceState(double vDeltaTime);
+        void  updateSequenceState(float vDeltaTime);
 
         void setLoop(bool vLoop);
         void setFrameRate(int vFrameRate);

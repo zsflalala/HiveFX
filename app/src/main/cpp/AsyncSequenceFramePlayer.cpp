@@ -1,6 +1,8 @@
 #include "AsyncSequenceFramePlayer.h"
 #include <thread>
 #include <numeric>
+#include <utility>
+#include <GLES3/gl3ext.h>
 #include "ShaderProgram.h"
 #include "ScreenQuad.h"
 #include "Common.h"
@@ -33,11 +35,23 @@ CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
 
 bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAssetManager)
 {
+    // TODO : This will be deleted later.
+    const char* Extensions = (const char*)glGetString(GL_EXTENSIONS);
+    if (strstr(Extensions, "GL_KHR_texture_compression_astc_ldr"))
+        LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "ASTC is supported.");
+    else
+        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "ASTC is not supported.");
+    if (strstr(Extensions, "GL_OES_compressed_ETC1_RGB8_texture"))
+        LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "ETC is supported.");
+    else
+        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "ETC is not supported.");
+
     m_CPULoadedTime = __getCurrentTime();
     std::string PictureSuffix;
     if (m_TextureType == EPictureType::PNG) PictureSuffix = ".png";
     else if (m_TextureType == EPictureType::JPG) PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
+    else if (m_TextureType == EPictureType::ASTC) PictureSuffix = ".astc";
     for (int i = 0;i < m_TextureCount;i++)
     {
         std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
@@ -139,30 +153,55 @@ CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, 
     AAsset_close(pAsset);
 
     double StartTime = __getCurrentTime();
-    int Width, Height, Channels = 4;
-    uint8_t* pDecodeRgba = WebPDecodeRGBA(pBuffer.get(), AssetSize, &Width, &Height);
-    if (!pDecodeRgba)
+    int Width, Height, Channels;
+    uint8_t* pTexData = nullptr;
+
+    if (m_TextureType == EPictureType::PNG)
     {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-        return;
+        pTexData = stbi_load_from_memory(pBuffer.get(), AssetSize, &Width, &Height, &Channels, 0);
+    }
+    else if (m_TextureType == EPictureType::WEBP)
+    {
+        WebPBitstreamFeatures Features;
+        VP8StatusCode Status = WebPGetFeatures(pBuffer.get(), AssetSize, &Features);
+        if (Status != VP8_STATUS_OK)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Failed to get %s WebP features.", vTexturePath.c_str());
+            return;
+        }
+        Width  = Features.width;
+        Height = Features.height;
+        bool HasAlpha = Features.has_alpha;
+
+        if (HasAlpha)
+        {
+            Channels = 4;
+            pTexData = WebPDecodeRGBA(pBuffer.get(), AssetSize, &Width, &Height);
+        }
+        else
+        {
+            Channels = 3;
+            pTexData = WebPDecodeRGB(pBuffer.get(), AssetSize, &Width, &Height);
+        }
     }
 
-    unsigned char* pTexData = stbi_load_from_memory(pBuffer.get(), AssetSize, &Width, &Height, &Channels, 0);
-    if (pDecodeRgba)
+    if (pTexData)
     {
         std::lock_guard<std::mutex> Lock(vTextureMutex);
         auto& Texture = vLoadedTextures[vFrameIndex];
-        Texture._ImageData.assign(pDecodeRgba, pDecodeRgba + (Width * Height * Channels));
+        Texture._ImageData.assign(pTexData, pTexData + (Width * Height * Channels));
         Texture._Width  = Width;
         Texture._Height = Height;
         Texture._Channels = Channels;
         Texture._IsLoaded.store(true);
-//        stbi_image_free(pTexData);
         vFramesToUploadGPU.push(vFrameIndex);
         double EndTime = __getCurrentTime();
         double Duration = EndTime - StartTime;
         m_CPUCostTime.push_back(Duration);
         LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG,"CPU load frame %d costs time: %f",vFrameIndex, Duration);
+        if (m_TextureType == EPictureType::WEBP)  WebPFree(pTexData);
+        else if (m_TextureType == EPictureType::PNG) stbi_image_free(pTexData);
+        else free(pTexData);
     }
     else
     {
@@ -173,11 +212,31 @@ CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, 
 void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
                                                       std::vector<STextureData> &vLoadedTextures,
                                                       unsigned int *vTextureHandles,
-                                                      std::vector<std::atomic<bool>> &vFrameLoadedCPU)
+                                                      std::vector<std::atomic<bool>> &vFrameLoadedGPU)
 {
     auto& Texture = vLoadedTextures[vTextureIndex];
     if (Texture._IsLoaded.load())
     {
+        if (m_TextureType == EPictureType::ASTC)
+        {
+            glBindTexture(GL_TEXTURE_2D, vTextureHandles[vTextureIndex]);
+            glCompressedTexImage2D(
+                    GL_TEXTURE_2D,       // 纹理目标
+                    0,                   // 纹理的级别
+                    Texture._Format,       // 纹理格式，ETC2 RGBA
+                    Texture._Width,        // 纹理宽度
+                    Texture._Height,       // 纹理高度
+                    0,                   // 边界，通常为0
+                    Texture._Channels,           // 纹理数据的大小
+                    Texture._Data       // 压缩纹理数据
+            );
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            vFrameLoadedGPU[vTextureIndex].store(true);
+            return;
+        }
+
         double StartTime = __getCurrentTime();
         glBindTexture(GL_TEXTURE_2D, vTextureHandles[vTextureIndex]);
         GLenum Format = (Texture._Channels == 4) ? GL_RGBA : GL_RGB;
@@ -187,7 +246,7 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glGenerateMipmap(GL_TEXTURE_2D);
-        vFrameLoadedCPU[vTextureIndex].store(true);
+        vFrameLoadedGPU[vTextureIndex].store(true);
         double EndTime = __getCurrentTime();
         double Duration = EndTime - StartTime;
         m_GPUCostTime.push_back(Duration);

@@ -5,6 +5,7 @@
 #include <queue>
 #include <GLES3/gl3.h>
 #include <android/asset_manager.h>
+#include "Common.h"
 
 namespace hiveVG
 {
@@ -17,13 +18,15 @@ namespace hiveVG
         int _Width    = 0;
         int _Height   = 0;
         int _Channels = 0;
+        int _Format   = 0;
+        unsigned char* _Data = nullptr;
         std::atomic<bool> _IsLoaded { false };
     };
 
-    enum class EPictureType : std::uint8_t
-    {
-        PNG = 0, JPG, WEBP
-    };
+//    enum class EPictureType : std::uint8_t
+//    {
+//        PNG = 0, JPG, WEBP, ASTC, ETC1, ETC2
+//    };
 
     class CAsyncSequenceFramePlayer
     {
@@ -36,10 +39,9 @@ namespace hiveVG
 
     private:
         void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::queue<int> &vFramesToUploadGPU);
-        void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedCPU);
+        void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedGPU);
         double __getCurrentTime();
         double __getCostTime(std::vector<double> &vCostTime);
-
 
         int                                  m_TextureCount;
         EPictureType                         m_TextureType            = EPictureType::PNG;

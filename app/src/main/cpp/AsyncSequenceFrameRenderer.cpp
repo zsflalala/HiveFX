@@ -9,6 +9,7 @@
 #include "Common.h"
 #include "ScreenQuad.h"
 #include "ShaderProgram.h"
+#include "SingleTexturePlayer.h"
 #include "AsyncSequenceFramePlayer.h"
 #include "stb_image.h"
 
@@ -111,8 +112,10 @@ void CAsyncSequenceFrameRenderer::__initAlgorithm()
     int TextureCount = 64;
     EPictureType PictureType = EPictureType::WEBP;
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pAsyncSeqFramePlayer = new CAsyncSequenceFramePlayer("Textures/BigRainWebp",TextureCount, PictureType);
+    m_pAsyncSeqFramePlayer = new CAsyncSequenceFramePlayer("Textures/BigRainWebp", TextureCount, PictureType);
     m_pAsyncSeqFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pSingleFramePlayer = new CSingleTexturePlayer("Textures/background.png");
+    m_pSingleFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 }
 
 void CAsyncSequenceFrameRenderer::renderScene()
@@ -120,9 +123,12 @@ void CAsyncSequenceFrameRenderer::renderScene()
     glClearColor(0.3f,0.5f,0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     __updateRenderArea();
+    m_pSingleFramePlayer->updateFrame();
+    m_pScreenQuad->bindAndDraw();
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_pAsyncSeqFramePlayer->updateFrames();
     m_pScreenQuad->bindAndDraw();
 

@@ -30,12 +30,14 @@ namespace hiveVG
         int          m_WindowHeight  = -1;
         double       m_LastFrameTime = 0.0f;
         double       m_CurrentTime   = 0.0f;
+        bool         m_WeatherFlag   = false;
         android_app* m_pApp          = nullptr;
         EGLDisplay   m_Display       = EGL_NO_DISPLAY;
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
         CScreenQuad* m_pScreenQuad   = nullptr;
         std::unique_ptr<CSequencePlayerManager> m_pSequencePlayerManager = nullptr;
-        CSequenceFramePlayer* m_pSequenceFramePlayer = nullptr;
+        CSequenceFramePlayer*                   m_pSequenceFramePlayer   = nullptr;
+        CSingleTexturePlayer*                   m_pSingleFramePlayer     = nullptr;
     };
 }

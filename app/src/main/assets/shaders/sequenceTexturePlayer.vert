@@ -37,18 +37,18 @@ void main()
 
     vec2 transformedPos = rotationMatrix * (scaleMatrix * aPos) + screenUVOffset;
 
-    float orthoBoundsLeft = -1.0;
+    float orthoBoundsLeft  = -1.0;
     float orthoBoundsRight = 1.0;
     mat4 orthoMatrix;
     if (orthoBounds.x > orthoBounds.y)
     {
         // 横屏模式，宽度大于高度 // TODO: why need to multiply 2.0
-        orthoMatrix = ortho2D(orthoBoundsLeft, orthoBoundsRight, -orthoBounds.x / (2.0 * orthoBounds.y), orthoBounds.x / (2.0 * orthoBounds.y));
+        orthoMatrix = ortho2D(-orthoBounds.x / (2.0 * orthoBounds.y), orthoBounds.x / (2.0 * orthoBounds.y), orthoBoundsLeft, orthoBoundsRight);
     }
     else
     {
         // 竖屏模式，高度大于宽度
-        orthoMatrix = ortho2D(orthoBoundsLeft, orthoBoundsRight, -orthoBounds.y / orthoBounds.x, orthoBounds.y / orthoBounds.x);
+        orthoMatrix = ortho2D(orthoBoundsLeft, orthoBoundsRight, -orthoBounds.y / (2.0 * orthoBounds.x), orthoBounds.y / (2.0 * orthoBounds.x));
     }
 
     gl_Position = orthoMatrix * vec4(transformedPos, 0.0, 1.0);

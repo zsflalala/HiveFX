@@ -3,6 +3,7 @@
 #include <string>
 #include <GLES3/gl3.h>
 #include <android/asset_manager.h>
+#include "Common.h"
 
 namespace hiveVG
 {
@@ -10,7 +11,7 @@ namespace hiveVG
     {
     public:
         static CTexture2D* loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath);
-        static CTexture2D* loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight);
+        static CTexture2D* loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType& vPictureType);
 
         ~CTexture2D();
 
@@ -20,6 +21,7 @@ namespace hiveVG
 
     private:
         inline explicit CTexture2D(GLuint vTextureHandle);
+        static double __getCurrentTime();
 
         GLuint m_TextureHandle;
     };

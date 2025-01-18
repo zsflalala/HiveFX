@@ -18,14 +18,14 @@ extern "C"
         switch (vCmd)
         {
             case APP_CMD_INIT_WINDOW:
-//                vApp->userData = new hiveVG::CSequenceFrameRenderer(vApp);
-                vApp->userData = new hiveVG::CAsyncSequenceFrameRenderer(vApp);
+                vApp->userData = new hiveVG::CSequenceFrameRenderer(vApp);
+//                vApp->userData = new hiveVG::CAsyncSequenceFrameRenderer(vApp);
                 break;
             case APP_CMD_TERM_WINDOW:
                 if (vApp->userData)
                 {
-//                    auto *pCSequenceFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
-                    auto *pCSequenceFrameRenderer = reinterpret_cast<hiveVG::CAsyncSequenceFrameRenderer*>(vApp->userData);
+                    auto *pCSequenceFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
+//                    auto *pCSequenceFrameRenderer = reinterpret_cast<hiveVG::CAsyncSequenceFrameRenderer*>(vApp->userData);
                     vApp->userData = nullptr;
                     delete pCSequenceFrameRenderer;
                 }
@@ -95,10 +95,10 @@ extern "C"
 
             if (vApp->userData)
             {
-//                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
-//                pSeqFrameRenderer->renderBlendingSnow();
-                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CAsyncSequenceFrameRenderer*>(vApp->userData);
-                pSeqFrameRenderer->renderScene();
+                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
+                pSeqFrameRenderer->renderBlendingSnow();
+//                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CAsyncSequenceFrameRenderer*>(vApp->userData);
+//                pSeqFrameRenderer->renderScene();
             }
         } while (!vApp->destroyRequested);
     }

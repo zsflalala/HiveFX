@@ -37,5 +37,6 @@ namespace hiveVG
         EGLContext                  m_Context              = EGL_NO_CONTEXT;
         CScreenQuad*                m_pScreenQuad          = nullptr;
         CAsyncSequenceFramePlayer*  m_pAsyncSeqFramePlayer = nullptr;
+        CSingleTexturePlayer*       m_pSingleFramePlayer   = nullptr;
     };
 }

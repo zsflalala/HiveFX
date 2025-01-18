@@ -103,8 +103,9 @@ void CSequenceFrameRenderer::__initRenderer()
 
 void CSequenceFrameRenderer::__initAlgorithm()
 {
+    EPictureType PictureType = EPictureType::WEBP;
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pSequenceFramePlayer = new CSequenceFramePlayer("Textures/SnowScene_4x4x4", 4, 4, 4);
+    m_pSequenceFramePlayer = new CSequenceFramePlayer("Textures/BigRainWebp", 1, 1, 64,PictureType);
     m_pSequenceFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pSequenceFramePlayer->setFrameRate(24.0f);
     {
@@ -156,6 +157,8 @@ void CSequenceFrameRenderer::__initAlgorithm()
 //    m_pSequencePlayerManager->pushBack(CloudSequencePlayer4);
 //    m_pSequencePlayerManager->initSequenceState();
     }
+    m_pSingleFramePlayer = new CSingleTexturePlayer("Textures/background.png");
+    m_pSingleFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_LastFrameTime = __getCurrentTime();
 }
 
@@ -163,16 +166,27 @@ void CSequenceFrameRenderer::renderBlendingSnow()
 {
     m_CurrentTime = __getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
-    m_LastFrameTime = m_CurrentTime;
 
     __updateRenderArea();
-    glClearColor(0.1f,0.1f,0.1f, 0.0f);
+    glClearColor(0.3f,0.5f,0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
-
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    m_pSingleFramePlayer->updateFrame();
+    m_pScreenQuad->bindAndDraw();
     m_pSequenceFramePlayer->updateFrameAndUV(m_WindowWidth,m_WindowHeight,DeltaTime);
     m_pSequenceFramePlayer->draw(m_pScreenQuad);
+//    if (DeltaTime >= 10)
+//    {
+//        m_LastFrameTime = m_CurrentTime;
+//        m_WeatherFlag = !m_WeatherFlag;
+//    }
+//    if (m_WeatherFlag)
+//    {
+//        m_pSequenceFramePlayer->updateFrameAndUV(m_WindowWidth,m_WindowHeight,DeltaTime);
+//        m_pSequenceFramePlayer->draw(m_pScreenQuad);
+//    }
     {
         //    m_pSequencePlayerManager->updateFrameAndUV(m_WindowWidth, m_WindowHeight, DeltaTime);
 //    m_pSequencePlayerManager->updateSequenceState(DeltaTime);
