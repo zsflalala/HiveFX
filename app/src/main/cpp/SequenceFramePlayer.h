@@ -1,8 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include <glm/glm.hpp>
 #include <android/asset_manager.h>
 #include "Common.h"
 

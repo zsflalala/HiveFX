@@ -1,9 +1,6 @@
 #pragma once
 
 #include <EGL/egl.h>
-#include <vector>
-#include <queue>
-#include <android/asset_manager.h>
 
 struct android_app;
 

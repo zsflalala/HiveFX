@@ -1,7 +1,6 @@
 #pragma once
 
 #include <EGL/egl.h>
-#include <memory>
 
 struct android_app;
 
@@ -29,6 +28,6 @@ namespace hiveVG
         CScreenQuad* m_pScreenQuad   = nullptr;
         CSequenceFramePlayer*  m_pNearSnowPlayer     = nullptr;
         CSequenceFramePlayer*  m_pFarSnowPlayer      = nullptr;
-        CSingleTexturePlayer*  m_pBackgroundPlayer  = nullptr;
+        CSingleTexturePlayer*  m_pBackgroundPlayer   = nullptr;
     };
 }

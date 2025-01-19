@@ -1,6 +1,5 @@
 #include "SnowFrameRenderer.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
-#include <android/asset_manager.h>
 #include "Common.h"
 #include "ScreenQuad.h"
 #include "SingleTexturePlayer.h"

@@ -1,6 +1,5 @@
 #include "CloudRendererBillBoard.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
-#include <android/asset_manager.h>
 #include "Common.h"
 #include "ScreenQuad.h"
 #include "SequenceFramePlayer.h"
@@ -72,7 +71,7 @@ void CCloudRendererBillBoard::renderScene(int vWindowWidth, int vWindowHeight)
 
     m_pCloudManager->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
     m_pCloudManager->updateSequenceState(DeltaTime);
-    m_pCloudManager->setFrameRate(24.0f);
+    m_pCloudManager->setFrameRate(8.0f);
     static int PlayersNum = m_pCloudManager->getSequencePlayerLength();
     static std::vector<glm::vec2> ScreenUVScale(PlayersNum, glm::vec2(1.0f, 1.0f));
     for (int i = 0; i < PlayersNum; i++)

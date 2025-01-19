@@ -23,11 +23,6 @@ namespace hiveVG
         std::atomic<bool> _IsLoaded { false };
     };
 
-//    enum class EPictureType : std::uint8_t
-//    {
-//        PNG = 0, JPG, WEBP, ASTC, ETC1, ETC2
-//    };
-
     class CAsyncSequenceFramePlayer
     {
     public:
@@ -54,12 +49,11 @@ namespace hiveVG
         std::vector<double>                  m_CPUCostTime;
         std::vector<double>                  m_GPUCostTime;
         std::string                          m_TextureRootPath;
-        std::mutex                           m_TextureMutex;
+        std::mutex                           m_LoadTextureToCPUMutex;
         std::vector<STextureData>            m_LoadedTextures;
         std::vector<std::atomic<bool>>       m_FrameLoadedGPU;
         std::queue<int>                      m_FramesToUploadGPU;
-
-        unsigned int*	  m_pTextureHandles      = nullptr;
-        CShaderProgram*   m_pAsyncShaderProgram  = nullptr;
+        unsigned int*	                     m_pTextureHandles      = nullptr;
+        CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
     };
 }

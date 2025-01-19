@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "Texture2D.h"
-#include <GLES3/gl3ext.h>
-#include <iostream>
 #include "Common.h"
 #include "webp/decode.h"
 
