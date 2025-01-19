@@ -18,16 +18,16 @@ namespace hiveVG
         CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType vPictureType = EPictureType::PNG);
         ~CSequenceFramePlayer();
 
-        void setLoopPlayback(bool vLoopTag) { m_IsLoop = vLoopTag; }
-        void setScreenUVScale(const glm::vec2& vScreenScale) { m_ScreenUVScale = vScreenScale; }
+        void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
+        void setScreenUVScale(const glm::vec2& vScreenScale)   { m_ScreenUVScale = vScreenScale; }
         void setScreenUVOffset(const glm::vec2& vScreenOffset) { m_ScreenUVOffset = vScreenOffset; }
-        void setScreenRandScale(const float& vRandScle) { m_ScreenRandScale = vRandScle; }
-        void setFrameRate(int vFrameRate) { m_FramePerSecond = static_cast<float>(vFrameRate); }
+        void setScreenRandScale(const float& vRandScle)        { m_ScreenRandScale = vRandScle; }
+        void setFrameRate(int vFrameRate)     { m_FramePerSecond = static_cast<float>(vFrameRate); }
         void setValidFrames(int vValidFrames) { m_ValidFrames = vValidFrames; }
-        void setRotationAngle(float vAngle) { m_RotationAngle = vAngle; }
+        void setRotationAngle(float vAngle)   { m_RotationAngle = vAngle; }
 
-        int  getSingleWidth()  { return m_SequeceSingleWidth; }
-        int  getSingleHeight() { return m_SequeceSingleHeight; }
+        int  getSingleTextureWidth()  { return m_SequeceSingleTextureWidth; }
+        int  getSingleTextureHeight() { return m_SequeceSingleTextureHeight; }
 
         [[nodiscard]] bool getLoopState()   const { return m_IsLoop; }
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
@@ -41,10 +41,10 @@ namespace hiveVG
         int               m_SequenceCols;
         int				  m_SequeceWidth;
         int				  m_SequeceHeight;
-        int				  m_SequeceSingleWidth;
-        int				  m_SequeceSingleHeight;
+        int				  m_SequeceSingleTextureWidth;
+        int				  m_SequeceSingleTextureHeight;
         int               m_ValidFrames;
-        float             m_FramePerSecond = 60.0f;
+        float             m_FramePerSecond = 24.0f;
         bool              m_IsLoop         = true;
         bool              m_IsFinished     = false;
         float             m_RotationAngle  = 0.0f;

@@ -8,16 +8,13 @@
 
 namespace hiveVG
 {
-
     class CShaderProgram
     {
     public:
         static CShaderProgram* createProgram(AAssetManager *vAssetManager, const std::string& vVertFilePath, const std::string& vFragFilePath);
-
         ~CShaderProgram();
 
         void useProgram() const;
-
         void setUniform(const std::string& vName, int vValue);
         void setUniform(const std::string& vName, float vValue);
         void setUniform(const std::string& vName, const glm::vec2& vValue);
@@ -28,19 +25,13 @@ namespace hiveVG
 
     private:
         static bool __dumpShaderCodeFromFile(AAssetManager *vAssetManager, const std::string& vShaderPath, std::string& voShaderCode);
-
         static bool __compileShader(GLenum vType, const std::string& vShaderPath, const std::string& vShaderCode, GLuint& voShaderHandle);
-
         static bool __linkProgram(const std::vector<GLuint>& vShaderHandles, GLuint& voProgramHandle);
-
         CShaderProgram(const std::vector<GLuint>& vShaderHandles, GLuint vProgramHandle);
+        GLint  __getOrCreateUniformId(const std::string& vUniformName);
 
-        GLint __getOrCreateUniformId(const std::string& vUniformName);
-
-        std::vector<GLuint> m_ShaderHandles;
-        GLuint m_ProgramHandle;
+        GLuint                                 m_ProgramHandle;
+        std::vector<GLuint>                    m_ShaderHandles;
         std::unordered_map<std::string, GLint> m_UniformIdMap;
     };
-
 }
-

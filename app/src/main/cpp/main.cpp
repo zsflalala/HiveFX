@@ -8,11 +8,6 @@
 
 extern "C"
 {
-    /*!
-     * Handles commands sent to this Android application
-     * @param vApp the app the commands are coming from
-     * @param vCmd the command to handle
-     */
     void handleCmd(android_app* vApp, int32_t vCmd)
     {
         switch (vCmd)
@@ -35,36 +30,21 @@ extern "C"
         }
     }
 
-    /*!
-     * Enable the motion events you want to handle; not handled events are
-     * passed back to OS for further processing. For this example case,
-     * only pointer and joystick devices are enabled.
-     *
-     * @param vMotionEvent the newly arrived GameActivityMotionEvent.
-     * @return true if the event is from a pointer or joystick device,
-     *         false for all other input devices.
-     */
     bool motion_event_filter_func(const GameActivityMotionEvent* vMotionEvent)
     {
         auto sourceClass = vMotionEvent->source & AINPUT_SOURCE_CLASS_MASK;
-        return (sourceClass == AINPUT_SOURCE_CLASS_POINTER ||
-                sourceClass == AINPUT_SOURCE_CLASS_JOYSTICK);
+        return (sourceClass == AINPUT_SOURCE_CLASS_POINTER || sourceClass == AINPUT_SOURCE_CLASS_JOYSTICK);
     }
 
     void android_main(struct android_app* vApp)
     {
         vApp->onAppCmd = handleCmd;
-        // Set input event filters (set it to NULL if the app wants to process all inputs).
-        // Note that for key inputs, this example uses the default default_key_filter()
-        // implemented in android_native_app_glue.c.
-        // Set filters for touch events in your application
         android_app_set_motion_event_filter(vApp, motion_event_filter_func);
 
         do
         {
-            // Process all pending events before running game logic.
             bool Done = false;
-            while (!Done) // Polling Events
+            while (!Done)
             {
                 // 0 is non-blocking.
                 int Timeout = 0;
@@ -96,7 +76,7 @@ extern "C"
             if (vApp->userData)
             {
                 auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
-                pSeqFrameRenderer->renderBlendingSnow();
+                pSeqFrameRenderer->renderScene();
 //                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CAsyncSequenceFrameRenderer*>(vApp->userData);
 //                pSeqFrameRenderer->renderScene();
             }

@@ -127,10 +127,7 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
             pImageData = WebPDecodeRGB(pBuffer.get(), AssetSize, &voWidth, &voHeight);
         }
     }
-    else if (vPictureType == EPictureType::ASTC)
-    {
-        pImageData = pBuffer.get();
-    }
+
     if (!pImageData)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load image from memory: %s", vTexturePath.c_str());
@@ -157,30 +154,8 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    if (vPictureType == EPictureType::ASTC)
-    {
-        int Width  = (pBuffer[9] << 16)  | (pBuffer[8]  << 8) | pBuffer[7];
-        int Height = (pBuffer[12] << 16) | (pBuffer[11] << 8) | pBuffer[10];
-        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image Width : %d , Height :  %d", Width, Height);
-
-        GLenum Format = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
-        glCompressedTexImage2D(
-                GL_TEXTURE_2D,       // 纹理目标
-                0,                   // 纹理的级别
-                Format,       // 纹理格式，ETC2 RGBA
-                Width,        // 纹理宽度
-                Height,       // 纹理高度
-                0,                   // 边界，通常为0
-                AssetSize - 16,           // 纹理数据的大小
-                pBuffer.get()        // 压缩纹理数据
-        );
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, Format, voWidth, voHeight, 0, Format, GL_UNSIGNED_BYTE, pImageData);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
+    glTexImage2D(GL_TEXTURE_2D, 0, Format, voWidth, voHeight, 0, Format, GL_UNSIGNED_BYTE, pImageData);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
     if (!IsValid)
@@ -193,7 +168,7 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
         double EndTime = __getCurrentTime();
         LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
     }
-//    stbi_image_free(pImageData);
+    stbi_image_free(pImageData);
 
     return new CTexture2D(TextureHandle);
 }

@@ -36,6 +36,7 @@ bool CSingleTexturePlayer::initTextureAndShaderProgram(AAssetManager *vAssetMana
             "shaders/singleTexturePlayer.frag"
     );
     assert(m_pSingleShaderProgram != nullptr);
+    LOG_INFO(hiveVG::TAG_KEYWORD::SINGLE_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TexturePath.c_str());
     return true;
 }
 

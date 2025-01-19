@@ -3,7 +3,7 @@
 
 using namespace hiveVG;
 
-void CSequencePlayerManager::pushBack(CSequenceFramePlayer& vSequenceFramePlayer)
+void CSequencePlayerManager::pushBack(CSequenceFramePlayer* vSequenceFramePlayer)
 {
     m_SequencePlayers.push_back(vSequenceFramePlayer);
 }
@@ -20,9 +20,9 @@ void CSequencePlayerManager::updateFrameAndUV(int vWindowWidth, int vWindowHeigh
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
-        if (m_SequencePlayers[i].getLoopState() || (!m_SequencePlayers[i].getLoopState() && !m_SequencePlayers[i].getFinishState()))
+        if (m_SequencePlayers[i]->getLoopState() || (!m_SequencePlayers[i]->getLoopState() && !m_SequencePlayers[i]->getFinishState()))
         {
-            m_SequencePlayers[i].updateFrameAndUV(vWindowWidth, vWindowHeight, vDeltaTime);
+            m_SequencePlayers[i]->updateFrameAndUV(vWindowWidth, vWindowHeight, vDeltaTime);
         }
     }
 }
@@ -32,7 +32,7 @@ void CSequencePlayerManager::draw(CScreenQuad* vQuad)
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
         if (!m_SequenceState[i]._IsAlive) continue;
-        m_SequencePlayers[i].draw(vQuad);
+        m_SequencePlayers[i]->draw(vQuad);
     }
 }
 
@@ -49,8 +49,8 @@ void CSequencePlayerManager::updateSequenceState(float vDeltaTime)
             {
                 State = __initSequenceParams();
                 State._IsAlive = true;
-                Player.setScreenUVOffset(State._UVOffset);
-                Player.setScreenRandScale(State._UVScale);
+                Player->setScreenUVOffset(State._UVOffset);
+                Player->setScreenRandScale(State._UVScale);
             }
         }
         else
@@ -61,7 +61,7 @@ void CSequencePlayerManager::updateSequenceState(float vDeltaTime)
                 State._IsAlive = false;
             }
             State._UVOffset += glm::vec2(State._MovingDirection, 0.0f) * State._MovingSpeed * vDeltaTime;
-            Player.setScreenUVOffset(State._UVOffset);
+            Player->setScreenUVOffset(State._UVOffset);
         }
     }
 }
@@ -70,7 +70,7 @@ void CSequencePlayerManager::setLoop(bool vLoop)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
-        m_SequencePlayers[i].setLoopPlayback(vLoop);
+        m_SequencePlayers[i]->setLoopPlayback(vLoop);
     }
 }
 
@@ -78,7 +78,7 @@ void CSequencePlayerManager::setFrameRate(int vFrameRate)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
-        m_SequencePlayers[i].setFrameRate(vFrameRate);
+        m_SequencePlayers[i]->setFrameRate(vFrameRate);
     }
 }
 
@@ -86,15 +86,15 @@ void CSequencePlayerManager::setRotationAngle(float vRotationAngle)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
-        m_SequencePlayers[i].setRotationAngle(vRotationAngle);
+        m_SequencePlayers[i]->setRotationAngle(vRotationAngle);
     }
 }
 
-void CSequencePlayerManager::setScreenUvOffset(glm::vec2 vUVOffset)
+void CSequencePlayerManager::setScreenUvOffset(glm::vec2& vUVOffset)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
-        m_SequencePlayers[i].setScreenUVOffset(vUVOffset);
+        m_SequencePlayers[i]->setScreenUVOffset(vUVOffset);
     }
 }
 

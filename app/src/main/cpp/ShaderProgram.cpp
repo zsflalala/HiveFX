@@ -6,7 +6,6 @@ using namespace hiveVG;
 
 CShaderProgram* CShaderProgram::createProgram(AAssetManager *vAssetManager, const std::string& vVertFilePath, const std::string& vFragFilePath)
 {
-    LOG_INFO(hiveVG::TAG_KEYWORD::SHADER_PROGRAM_TAG,"filePath : %s", std::filesystem::current_path().c_str());
     std::string VertCode, FragCode;
     if (!__dumpShaderCodeFromFile(vAssetManager, vVertFilePath, VertCode)) return nullptr;
     if (!__dumpShaderCodeFromFile(vAssetManager, vFragFilePath, FragCode)) return nullptr;

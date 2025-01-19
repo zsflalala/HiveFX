@@ -24,25 +24,25 @@ namespace hiveVG
     class CSequencePlayerManager
     {
     public:
-        void  pushBack(CSequenceFramePlayer& vSequenceFramePlayer);
+        void  pushBack(CSequenceFramePlayer* vSequenceFramePlayer);
         void  initSequenceState();
         void  updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
         void  draw(CScreenQuad* vQuad);
         int   getSequencePlayerLength() { return m_SequencePlayers.size(); }
-        float getImageAspectRatioAt(int i) { return static_cast<float>(m_SequencePlayers[i].getSingleWidth()) / static_cast<float>(m_SequencePlayers[i].getSingleHeight()); }
+        float getImageAspectRatioAt(int i) { return static_cast<float>(m_SequencePlayers[i]->getSingleTextureWidth()) / static_cast<float>(m_SequencePlayers[i]->getSingleTextureHeight()); }
         void  updateSequenceState(float vDeltaTime);
 
         void setLoop(bool vLoop);
         void setFrameRate(int vFrameRate);
         void setRotationAngle(float vRotationAngle);
-        void setScreenUvOffset(glm::vec2 vUVOffset);
-        void setImageAspectRatioAt(int i, glm::vec2 vScale) { m_SequencePlayers[i].setScreenUVScale(vScale); }
+        void setScreenUvOffset(glm::vec2& vUVOffset);
+        void setImageAspectRatioAt(int i, glm::vec2& vScale) { m_SequencePlayers[i]->setScreenUVScale(vScale); }
 
     private:
         SSequenceState __initSequenceParams();
 
-        std::vector<CSequenceFramePlayer> m_SequencePlayers;
-        std::vector<SSequenceState>       m_SequenceState;
-        double m_LastFrameTime = 0.0f;
+        double                             m_LastFrameTime = 0.0f;
+        std::vector<SSequenceState>        m_SequenceState;
+        std::vector<CSequenceFramePlayer*> m_SequencePlayers;
     };
 }

@@ -53,8 +53,8 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetMana
         }
         m_SeqTextures.push_back(pSequenceTexture);
     }
-    m_SequeceSingleWidth  = m_SequeceWidth  / m_SequenceCols;
-    m_SequeceSingleHeight = m_SequeceHeight / m_SequenceRows;
+    m_SequeceSingleTextureWidth  = m_SequeceWidth / m_SequenceCols;
+    m_SequeceSingleTextureHeight = m_SequeceHeight / m_SequenceRows;
     m_pSequenceShaderProgram = CShaderProgram::createProgram(
             vAssetManager,
             "shaders/sequenceTexturePlayer.vert",
@@ -103,7 +103,6 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
     m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
     m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale * m_ScreenRandScale);
-    m_pSequenceShaderProgram->setUniform("orthoBounds", m_WindowSize);
     m_pSequenceShaderProgram->setUniform("texUVOffset", TextureUVOffset);
     m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
     m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);
