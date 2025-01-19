@@ -2,8 +2,9 @@
 #include <game-activity/GameActivity.cpp>
 #include <game-activity/native_app_glue/android_native_app_glue.c>
 #include <game-text-input/gametextinput.cpp>
-#include "SequenceFrameRenderer.h"
-#include "AsyncSequenceFrameRenderer.h"
+//#include "SequenceFrameRenderer.h"
+//#include "AsyncSequenceFrameRenderer.h"
+#include "Renderer.h"
 #include "Common.h"
 
 extern "C"
@@ -13,14 +14,16 @@ extern "C"
         switch (vCmd)
         {
             case APP_CMD_INIT_WINDOW:
-                vApp->userData = new hiveVG::CSequenceFrameRenderer(vApp);
+//                vApp->userData = new hiveVG::CSequenceFrameRenderer(vApp);
 //                vApp->userData = new hiveVG::CAsyncSequenceFrameRenderer(vApp);
+                vApp->userData = new hiveVG::CRenderer(vApp);
                 break;
             case APP_CMD_TERM_WINDOW:
                 if (vApp->userData)
                 {
-                    auto *pCSequenceFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
+//                    auto *pCSequenceFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
 //                    auto *pCSequenceFrameRenderer = reinterpret_cast<hiveVG::CAsyncSequenceFrameRenderer*>(vApp->userData);
+                    auto *pCSequenceFrameRenderer = reinterpret_cast<hiveVG::CRenderer*>(vApp->userData);
                     vApp->userData = nullptr;
                     delete pCSequenceFrameRenderer;
                 }
@@ -46,7 +49,6 @@ extern "C"
             bool Done = false;
             while (!Done)
             {
-                // 0 is non-blocking.
                 int Timeout = 0;
                 int Events;
                 android_poll_source* pSource;
@@ -75,10 +77,13 @@ extern "C"
 
             if (vApp->userData)
             {
-                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
-                pSeqFrameRenderer->renderScene();
+//                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CSequenceFrameRenderer*>(vApp->userData);
+//                pSeqFrameRenderer->renderScene();
 //                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CAsyncSequenceFrameRenderer*>(vApp->userData);
 //                pSeqFrameRenderer->renderScene();
+                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CRenderer*>(vApp->userData);
+                pSeqFrameRenderer->handleInput();
+                pSeqFrameRenderer->renderScene();
             }
         } while (!vApp->destroyRequested);
     }

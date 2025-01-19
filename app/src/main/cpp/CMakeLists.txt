@@ -4,11 +4,13 @@ project("hivefx")
 
 add_library(hivefx SHARED
         main.cpp
-        SequenceFrameRenderer.cpp
+        Renderer.cpp
+        SnowFrameRenderer.cpp
+        CloudRendererBillBoard.cpp
+        RainFrameRendererAsync.cpp
         SingleTexturePlayer.cpp
         SequenceFramePlayer.cpp
-        SequencePlayerManager.cpp
-        AsyncSequenceFrameRenderer.cpp
+        BillBoardManager.cpp
         AsyncSequenceFramePlayer.cpp
         ShaderProgram.cpp
         ScreenQuad.cpp
