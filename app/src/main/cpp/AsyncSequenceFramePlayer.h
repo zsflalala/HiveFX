@@ -31,6 +31,7 @@ namespace hiveVG
 
         bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
         void updateFrames();
+        void setFrameRate(int vFrameRate) { m_FrameRate = vFrameRate; }
 
     private:
         void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::queue<int> &vFramesToUploadGPU);
@@ -42,6 +43,7 @@ namespace hiveVG
         EPictureType                         m_TextureType            = EPictureType::PNG;
         int                                  m_Frame                  = 0;
         int                                  m_LastLoadedFrame        = -1;
+        int                                  m_FrameRate              = 60;
         double                               m_LastFrameTime          = 0;
         double                               m_FrameLoadTimeThreshold = 0.1f;
         double                               m_CPULoadedTime;

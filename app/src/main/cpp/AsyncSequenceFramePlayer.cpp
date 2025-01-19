@@ -82,11 +82,16 @@ void CAsyncSequenceFramePlayer::updateFrames()
         m_GPUCostTime.clear();
     }
 
+    // TODO : update loading frame logic.
     if (m_FrameLoadedGPU[m_Frame].load())
     {
         m_LastLoadedFrame = m_Frame;
-        m_Frame = (m_Frame + 1) % m_TextureCount;
-        m_LastFrameTime = CurrentTime;
+        double FrameTime = 1.0 / m_FrameRate;
+        if (CurrentTime - m_LastFrameTime >= FrameTime)
+        {
+            m_Frame = (m_Frame + 1) % m_TextureCount;
+            m_LastFrameTime = CurrentTime;
+        }
     }
     else
     {
@@ -94,9 +99,13 @@ void CAsyncSequenceFramePlayer::updateFrames()
         // If the threshold is exceeded, skip the current frame
         if (TimeElapsed > m_FrameLoadTimeThreshold)
         {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d is not loaded for too long, skipping to next frame.", m_Frame);
-            m_Frame = (m_Frame + 1) % m_TextureCount;
-            m_LastFrameTime = CurrentTime;
+            double FrameTime = 1.0 / m_FrameRate;
+            if (TimeElapsed >= FrameTime)
+            {
+                m_Frame = (m_Frame + 1) % m_TextureCount;
+                m_LastFrameTime = CurrentTime;
+                LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d is not loaded for too long, skipping to next frame.", m_Frame);
+            }
         }
         else if (m_LastLoadedFrame != -1)
         {

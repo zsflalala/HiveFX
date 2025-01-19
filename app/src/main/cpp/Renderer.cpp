@@ -3,9 +3,10 @@
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
-#include "SnowFrameRenderer.h"
-#include "RainFrameRendererAsync.h"
-#include "CloudRendererBillBoard.h"
+#include "Renderers/SnowRenderer.h"
+#include "Renderers/RainRendererAsync.h"
+#include "Renderers/CloudRendererBillBoard.h"
+#include "Renderers/SnowSceneRendererAsync.h"
 #include "Common.h"
 
 using namespace hiveVG;
@@ -34,7 +35,7 @@ CRenderer::~CRenderer()
         m_Display = EGL_NO_DISPLAY;
     }
     if (m_pRainScene) delete m_pRainScene;
-    if (m_pSnowScene) delete m_pSnowScene;
+    if (m_pSnow) delete m_pSnow;
     if (m_pCloudScene) delete m_pCloudScene;
 }
 
@@ -109,18 +110,23 @@ void CRenderer::renderScene()
 
     if (m_SceneID == 0)
     {
-        if (m_pSnowScene == nullptr) m_pSnowScene = new CSnowFrameRenderer(m_pApp);
-        m_pSnowScene->renderScene(m_WindowWidth,m_WindowHeight);
+        if (m_pSnow == nullptr) m_pSnow = new CSnowRenderer(m_pApp);
+        m_pSnow->renderScene(m_WindowWidth, m_WindowHeight);
     }
     else if (m_SceneID == 1)
     {
-        if (m_pRainScene == nullptr) m_pRainScene = new CRainFrameRendererAsync(m_pApp);
+        if (m_pRainScene == nullptr) m_pRainScene = new CRainRendererAsync(m_pApp);
         m_pRainScene->renderScene();
     }
     else if (m_SceneID == 2)
     {
         if (m_pCloudScene == nullptr) m_pCloudScene = new CCloudRendererBillBoard(m_pApp);
         m_pCloudScene->renderScene(m_WindowHeight, m_WindowHeight);
+    }
+    else if (m_SceneID == 3)
+    {
+        if (m_pSnowScene == nullptr) m_pSnowScene = new CSnowSceneRendererAsync(m_pApp);
+        m_pSnowScene->renderScene();
     }
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
@@ -161,12 +167,17 @@ void CRenderer::handleInput()
         {
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
-                if (PointerX < m_WindowWidth / 3.0)
-                    m_SceneID = 0;
-                else if (PointerX < m_WindowWidth * 2.0 / 3.0)
-                    m_SceneID = 1;
+                if (PointerY > m_WindowHeight / 2.0)
+                {
+                    if (PointerX < m_WindowWidth / 3.0)
+                        m_SceneID = 0;
+                    else if (PointerX < m_WindowWidth * 2.0 / 3.0)
+                        m_SceneID = 1;
+                    else
+                        m_SceneID = 2;
+                }
                 else
-                    m_SceneID = 2;
+                    m_SceneID = 3;
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
                 break;
 

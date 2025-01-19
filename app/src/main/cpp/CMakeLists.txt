@@ -5,9 +5,10 @@ project("hivefx")
 add_library(hivefx SHARED
         main.cpp
         Renderer.cpp
-        SnowFrameRenderer.cpp
-        CloudRendererBillBoard.cpp
-        RainFrameRendererAsync.cpp
+        Renderers/SnowRenderer.cpp
+        Renderers/CloudRendererBillBoard.cpp
+        Renderers/RainRendererAsync.cpp
+        Renderers/SnowSceneRendererAsync.cpp
         SingleTexturePlayer.cpp
         SequenceFramePlayer.cpp
         BillBoardManager.cpp
