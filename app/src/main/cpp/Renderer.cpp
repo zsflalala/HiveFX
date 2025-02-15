@@ -121,7 +121,7 @@ void CRenderer::renderScene()
     else if (m_SceneID == 2)
     {
         if (m_pCloudScene == nullptr) m_pCloudScene = new CCloudRendererBillBoard(m_pApp);
-        m_pCloudScene->renderScene(m_WindowHeight, m_WindowHeight);
+        m_pCloudScene->renderScene(m_WindowWidth, m_WindowHeight);
     }
     else if (m_SceneID == 3)
     {
