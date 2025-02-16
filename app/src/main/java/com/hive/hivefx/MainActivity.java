@@ -8,6 +8,7 @@ public class MainActivity extends GameActivity
     static
     {
         System.loadLibrary("hivefx");
+        System.loadLibrary("mylibrary");
     }
 
     @Override

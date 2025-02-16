@@ -1,9 +1,9 @@
 #include "RainRendererAsync.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
-#include "../Common.h"
-#include "../ScreenQuad.h"
-#include "../SingleTexturePlayer.h"
-#include "../AsyncSequenceFramePlayer.h"
+#include "Common.h"
+#include "ScreenQuad.h"
+#include "SingleTexturePlayer.h"
+#include "AsyncSequenceFramePlayer.h"
 
 using namespace hiveVG;
 

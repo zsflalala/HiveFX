@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.22.1)
 
 project("hivefx")
 
+########################## 第三方库 相关配置  开始################################
+
+add_library(mylibrary SHARED IMPORTED)
+set_target_properties(mylibrary PROPERTIES IMPORTED_LOCATION
+        ${PROJECT_SOURCE_DIR}/../jniLibs/${CMAKE_ANDROID_ARCH_ABI}/libmylibrary.so)
+include_directories(${PROJECT_SOURCE_DIR}/third_party/Players/include)
+
+########################## 第三方库 相关配置  结束################################
+
 add_library(hivefx SHARED
         main.cpp
         Renderer.cpp
@@ -9,13 +18,6 @@ add_library(hivefx SHARED
         Renderers/CloudRendererBillBoard.cpp
         Renderers/RainRendererAsync.cpp
         Renderers/SnowSceneRendererAsync.cpp
-        SingleTexturePlayer.cpp
-        SequenceFramePlayer.cpp
-        BillBoardManager.cpp
-        AsyncSequenceFramePlayer.cpp
-        ShaderProgram.cpp
-        ScreenQuad.cpp
-        Texture2D.cpp
 )
 
 find_package(game-activity REQUIRED CONFIG)
@@ -36,6 +38,7 @@ target_link_libraries(hivefx
         jnigraphics
         android
         log
+        mylibrary   # 链接第三方库
         glm::glm
         libwebp::libwebp
     )

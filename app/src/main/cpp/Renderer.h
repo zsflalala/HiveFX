@@ -36,5 +36,4 @@ namespace hiveVG
         CCloudRendererBillBoard* m_pCloudScene     = nullptr;
         CSnowSceneRendererAsync* m_pSnowScene      = nullptr;
     };
-
 }
