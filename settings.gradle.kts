@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "HiveFX"
 include(":app")
+include(":mylibrary")

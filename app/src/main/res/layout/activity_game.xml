@@ -1,33 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Placeholder for rendering content -->
-    <SurfaceView
-        android:id="@+id/game_surface"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!-- 设置 SeekBar 在右侧并居中 -->
+    <com.hive.hivefx.view.VerticalSeekbar
+        android:id="@+id/verticalSeekBar"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center|end"
+        android:max="120"
+        android:maxHeight="5dp"
+        android:progress="50"
+        android:progressDrawable="@drawable/video_seek_bar_bg"
+        android:thumb="@drawable/video_seek_bar_thumb" />
 
-    <!-- Buttons for switching renderers -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="16dp">
+        android:layout_gravity="bottom"
+        tools:ignore="UselessParent">
 
         <Button
-            android:id="@+id/button_renderer_one"
-            android:layout_width="wrap_content"
+            android:id="@+id/btn_speed_up"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Renderer 1" />
+            android:layout_weight="1"
+            android:text="@string/speed_up_x2"
+            android:textColor="#0000ff" />
 
         <Button
-            android:id="@+id/button_renderer_two"
-            android:layout_width="wrap_content"
+            android:id="@+id/btn_speed_reset"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Renderer 2" />
+            android:layout_weight="1"
+            android:text="@string/reset_speed"
+            android:textColor="#0000ff" />
     </LinearLayout>
-</RelativeLayout>
+</FrameLayout>

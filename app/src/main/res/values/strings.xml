@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">HiveFX</string>
+    <string name="speed_up_x2">Speed Up</string>
+    <string name="reset_speed">Speed Reset</string>
 </resources>

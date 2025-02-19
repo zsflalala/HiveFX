@@ -5,8 +5,10 @@ project("hivefx")
 ########################## 第三方库 相关配置  开始################################
 
 add_library(mylibrary SHARED IMPORTED)
+
 set_target_properties(mylibrary PROPERTIES IMPORTED_LOCATION
-        ${PROJECT_SOURCE_DIR}/../jniLibs/${CMAKE_ANDROID_ARCH_ABI}/libmylibrary.so)
+        ${PROJECT_SOURCE_DIR}/../../../libs/${CMAKE_ANDROID_ARCH_ABI}/libmylibrary.so)
+
 include_directories(${PROJECT_SOURCE_DIR}/third_party/Players/include)
 
 ########################## 第三方库 相关配置  结束################################
