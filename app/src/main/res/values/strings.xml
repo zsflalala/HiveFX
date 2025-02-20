@@ -2,4 +2,15 @@
     <string name="app_name">HiveFX</string>
     <string name="speed_up_x2">Speed Up</string>
     <string name="reset_speed">Speed Reset</string>
+    <string name="Top">积雪</string>
+    <string name="Snow">雪</string>
+    <string name="Cloud">云</string>
+    <string name="SmallRainFore">小雨-前景</string>
+    <string name="SmallRainBack">小雨-背景</string>
+    <string name="BigRainFore">大雨-前景</string>
+    <string name="BigRainBack">大雨-背景</string>
+    <string name="SmallSnowFore">小雪-前景</string>
+    <string name="SmallSnowBack">小雪-背景</string>
+    <string name="BigSnowFore">大雪-前景</string>
+    <string name="BigSnowBack">大雪-背景</string>
 </resources>

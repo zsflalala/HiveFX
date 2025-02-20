@@ -26,4 +26,9 @@ namespace hiveVG
     {
         PNG = 0, JPG, WEBP, ASTC, ETC1, ETC2
     };
+
+    enum class ERenderType : std::uint8_t
+    {
+        NONE = 0, SNOW, RAIN, CLOUD, SNOW_SCENE, SMALL_SNOW_FORE, SMALL_SNOW_BACK, BIG_SNOW_FORE, BIG_SNOW_BACK, SMALL_RAIN_FORE, SMALL_RAIN_BACK, BIG_RAIN_FORE, BIG_RAIN_BACK
+    };
 }

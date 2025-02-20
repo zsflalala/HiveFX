@@ -16,29 +16,219 @@
         android:progressDrawable="@drawable/video_seek_bar_bg"
         android:thumb="@drawable/video_seek_bar_thumb" />
 
+    <!-- 四个方块按钮 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom"
-        tools:ignore="UselessParent">
-
-        <Button
-            android:id="@+id/btn_speed_up"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!-- 上方正中间一个按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="@string/speed_up_x2"
-            android:textColor="#0000ff" />
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <Button
-            android:id="@+id/btn_speed_reset"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            <Button
+                android:id="@+id/btn_top_center"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="100dp"
+                android:text="@string/Top"
+                android:textColor="#ffffff"
+                tools:ignore="DuplicateSpeakableTextCheck"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+        </LinearLayout>
+
+        <!-- 下方的三个按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="@string/reset_speed"
-            android:textColor="#0000ff" />
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                tools:ignore="NestedWeights">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_bottom_left_2_leftup"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_border"
+                        android:text="@string/SmallSnowFore"
+                        android:textColor="#ffffff"
+                        tools:ignore="VisualLintButtonSize"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"/>
+
+                    <Button
+                        android:id="@+id/btn_bottom_left_2_rightup"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_border"
+                        android:text="@string/SmallSnowBack"
+                        android:textColor="#ffffff"
+                        tools:ignore="VisualLintButtonSize"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_bottom_left_2_leftdown"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_border"
+                        android:text="@string/BigSnowFore"
+                        android:textColor="#ffffff"
+                        tools:ignore="VisualLintButtonSize"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"/>
+
+                    <Button
+                        android:id="@+id/btn_bottom_left_2_rightdown"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_border"
+                        android:text="@string/BigSnowBack"
+                        android:textColor="#ffffff"
+                        tools:ignore="VisualLintButtonSize"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_bottom_center_2_leftup"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_border"
+                        android:text="@string/SmallRainFore"
+                        android:textColor="#ffffff"
+                        tools:ignore="NestedWeights,VisualLintButtonSize"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"/>
+
+                    <Button
+                        android:id="@+id/btn_bottom_center_2_rightup"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_border"
+                        android:text="@string/SmallRainBack"
+                        android:textColor="#ffffff"
+                        tools:ignore="VisualLintButtonSize"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_bottom_center_2_leftdown"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_border"
+                        android:text="@string/BigRainFore"
+                        android:textColor="#ffffff"
+                        tools:ignore="NestedWeights,VisualLintButtonSize"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"/>
+
+                    <Button
+                        android:id="@+id/btn_bottom_center_2_rightdown"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_border"
+                        android:text="@string/BigRainBack"
+                        android:textColor="#ffffff"
+                        tools:ignore="VisualLintButtonSize"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+            <Button
+                android:id="@+id/btn_bottom_center_3"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:text="@string/Cloud"
+                android:textColor="#ffffff"
+                tools:ignore="VisualLintButtonSize"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
+
 </FrameLayout>

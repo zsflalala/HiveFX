@@ -1,6 +1,7 @@
 #pragma once
 
 #include <EGL/egl.h>
+#include "Common.h"
 
 struct android_app;
 
@@ -9,7 +10,7 @@ namespace hiveVG
     class CSnowRenderer;
     class CRainRendererAsync;
     class CCloudRendererBillBoard;
-    class CSnowSceneRendererAsync;
+    class CSnowSceneRenderer;
 
     class CRenderer
     {
@@ -24,7 +25,9 @@ namespace hiveVG
         void __initRenderer();
         void __updateRenderArea();
 
-        int          m_SceneID       = 0;
+        ERenderType  m_RenderType        = ERenderType::SNOW;
+        ERenderType  m_EnableRenderType  = ERenderType::SMALL_SNOW_FORE;
+        bool         m_IsPointerDown = false;
         int          m_WindowWidth   = -1;
         int          m_WindowHeight  = -1;
         android_app* m_pApp          = nullptr;
@@ -34,6 +37,6 @@ namespace hiveVG
         CSnowRenderer*           m_pSnow           = nullptr;
         CRainRendererAsync*      m_pRainScene      = nullptr;
         CCloudRendererBillBoard* m_pCloudScene     = nullptr;
-        CSnowSceneRendererAsync* m_pSnowScene      = nullptr;
+        CSnowSceneRenderer* m_pSnowScene      = nullptr;
     };
 }

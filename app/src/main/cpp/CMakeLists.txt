@@ -19,7 +19,7 @@ add_library(hivefx SHARED
         Renderers/SnowRenderer.cpp
         Renderers/CloudRendererBillBoard.cpp
         Renderers/RainRendererAsync.cpp
-        Renderers/SnowSceneRendererAsync.cpp
+        Renderers/SnowSceneRenderer.cpp
 )
 
 find_package(game-activity REQUIRED CONFIG)

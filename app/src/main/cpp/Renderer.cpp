@@ -6,7 +6,7 @@
 #include "Renderers/SnowRenderer.h"
 #include "Renderers/RainRendererAsync.h"
 #include "Renderers/CloudRendererBillBoard.h"
-#include "Renderers/SnowSceneRendererAsync.h"
+#include "Renderers/SnowSceneRenderer.h"
 #include "Common.h"
 
 using namespace hiveVG;
@@ -108,25 +108,27 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    if (m_SceneID == 0)
+    if (m_RenderType == ERenderType::SNOW)
     {
         if (m_pSnow == nullptr) m_pSnow = new CSnowRenderer(m_pApp);
+        m_pSnow->handleInput(m_EnableRenderType, m_IsPointerDown);
         m_pSnow->renderScene(m_WindowWidth, m_WindowHeight);
     }
-    else if (m_SceneID == 1)
+    else if (m_RenderType == ERenderType::RAIN)
     {
         if (m_pRainScene == nullptr) m_pRainScene = new CRainRendererAsync(m_pApp);
+        m_pRainScene->handleInput(m_EnableRenderType, m_IsPointerDown);
         m_pRainScene->renderScene();
     }
-    else if (m_SceneID == 2)
+    else if (m_RenderType == ERenderType::CLOUD)
     {
         if (m_pCloudScene == nullptr) m_pCloudScene = new CCloudRendererBillBoard(m_pApp);
         m_pCloudScene->renderScene(m_WindowWidth, m_WindowHeight);
     }
-    else if (m_SceneID == 3)
+    else if (m_RenderType == ERenderType::SNOW_SCENE)
     {
-        if (m_pSnowScene == nullptr) m_pSnowScene = new CSnowSceneRendererAsync(m_pApp);
-        m_pSnowScene->renderScene();
+        if (m_pSnowScene == nullptr) m_pSnowScene = new CSnowSceneRenderer(m_pApp);
+        m_pSnowScene->renderScene(m_WindowWidth, m_WindowHeight);
     }
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
@@ -167,23 +169,82 @@ void CRenderer::handleInput()
         {
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
+                m_IsPointerDown = true;
                 if (PointerY > m_WindowHeight / 2.0)
                 {
                     if (PointerX < m_WindowWidth / 3.0)
-                        m_SceneID = 0;
+                    {
+                        m_RenderType = ERenderType::SNOW;
+                        if (PointerY < m_WindowHeight * 3.0 / 4.0)
+                        {
+                            if (PointerX < m_WindowWidth / 6.0)
+                            {
+                                m_EnableRenderType = ERenderType::SMALL_SNOW_FORE;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"小雪前景");
+                            }
+                            else
+                            {
+                                m_EnableRenderType = ERenderType::SMALL_SNOW_BACK;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"小雪背景");
+                            }
+                        }
+                        else
+                        {
+                            if (PointerX < m_WindowWidth / 6.0)
+                            {
+                                m_EnableRenderType = ERenderType::BIG_SNOW_FORE;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"大雪前景");
+                            }
+                            else
+                            {
+                                m_EnableRenderType = ERenderType::BIG_SNOW_BACK;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"大雪背景");
+                            }
+                        }
+                    }
                     else if (PointerX < m_WindowWidth * 2.0 / 3.0)
-                        m_SceneID = 1;
+                    {
+                        m_RenderType = ERenderType::RAIN;
+                        if (PointerY < m_WindowHeight * 3.0 / 4.0)
+                        {
+                            if (PointerX < m_WindowWidth / 2.0)
+                            {
+                                m_EnableRenderType = ERenderType::SMALL_RAIN_FORE;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"小雨前景");
+                            }
+                            else
+                            {
+                                m_EnableRenderType = ERenderType::SMALL_RAIN_BACK;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"小雨背景");
+                            }
+                        }
+                        else
+                        {
+                            if (PointerX < m_WindowWidth / 2.0)
+                            {
+                                m_EnableRenderType = ERenderType::BIG_RAIN_FORE;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"大雨前景");
+                            }
+                            else
+                            {
+                                m_EnableRenderType = ERenderType::BIG_RAIN_BACK;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"大雨背景");
+                            }
+                        }
+                    }
                     else
-                        m_SceneID = 2;
+                        m_RenderType = ERenderType::CLOUD;
                 }
                 else
-                    m_SceneID = 3;
+                    m_RenderType = ERenderType::SNOW_SCENE;
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
                 break;
 
             case AMOTION_EVENT_ACTION_CANCEL:
             case AMOTION_EVENT_ACTION_UP:
             case AMOTION_EVENT_ACTION_POINTER_UP:
+                m_IsPointerDown    = false;
+                m_EnableRenderType = ERenderType::NONE;
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Up", Pointer.id, PointerX, PointerY);
                 break;
 

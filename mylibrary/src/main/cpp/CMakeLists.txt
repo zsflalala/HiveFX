@@ -4,12 +4,12 @@ project("mylibrary")
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         SingleTexturePlayer.cpp
-    SequenceFramePlayer.cpp
-    BillBoardManager.cpp
-    AsyncSequenceFramePlayer.cpp
-    ShaderProgram.cpp
-    ScreenQuad.cpp
-    Texture2D.cpp)
+        SequenceFramePlayer.cpp
+        BillBoardManager.cpp
+        AsyncSequenceFramePlayer.cpp
+        ShaderProgram.cpp
+        ScreenQuad.cpp
+        Texture2D.cpp)
 
 set(REQUIRED_PACKAGES
         glm
