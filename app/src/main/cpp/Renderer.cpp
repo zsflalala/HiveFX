@@ -7,6 +7,7 @@
 #include "Renderers/RainRendererAsync.h"
 #include "Renderers/CloudRendererBillBoard.h"
 #include "Renderers/SnowSceneRenderer.h"
+#include "Renderers/RainRenderer.h"
 #include "Common.h"
 
 using namespace hiveVG;
@@ -116,9 +117,9 @@ void CRenderer::renderScene()
     }
     else if (m_RenderType == ERenderType::RAIN)
     {
-        if (m_pRainScene == nullptr) m_pRainScene = new CRainRendererAsync(m_pApp);
-        m_pRainScene->handleInput(m_EnableRenderType, m_IsPointerDown);
-        m_pRainScene->renderScene();
+        if (m_pRain == nullptr) m_pRain = new CRainRenderer(m_pApp);
+        m_pRain->handleInput(m_EnableRenderType, m_IsPointerDown);
+        m_pRain->renderScene(m_WindowWidth, m_WindowHeight);
     }
     else if (m_RenderType == ERenderType::CLOUD)
     {

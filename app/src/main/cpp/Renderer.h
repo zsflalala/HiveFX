@@ -11,6 +11,7 @@ namespace hiveVG
     class CRainRendererAsync;
     class CCloudRendererBillBoard;
     class CSnowSceneRenderer;
+    class CRainRenderer;
 
     class CRenderer
     {
@@ -35,6 +36,7 @@ namespace hiveVG
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
         CSnowRenderer*           m_pSnow           = nullptr;
+        CRainRenderer*           m_pRain           = nullptr;
         CRainRendererAsync*      m_pRainScene      = nullptr;
         CCloudRendererBillBoard* m_pCloudScene     = nullptr;
         CSnowSceneRenderer* m_pSnowScene      = nullptr;
