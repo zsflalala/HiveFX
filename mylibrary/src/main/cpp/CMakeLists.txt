@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-project("mylibrary")
+project("hivefxso")
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         SingleTexturePlayer.cpp
@@ -21,12 +21,12 @@ foreach(PACKAGE ${REQUIRED_PACKAGES})
 endforeach()
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    android
-    log
-    EGL
-    GLESv3
-    glm::glm
-    libwebp::libwebp
+        android
+        log
+        EGL
+        GLESv3
+        glm::glm
+        libwebp::libwebp
 )
 
 # 设置库的输出目录

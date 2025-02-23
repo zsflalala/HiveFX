@@ -7,9 +7,9 @@ project("hivefx")
 add_library(mylibrary SHARED IMPORTED)
 
 set_target_properties(mylibrary PROPERTIES IMPORTED_LOCATION
-        ${PROJECT_SOURCE_DIR}/../../../libs/${CMAKE_ANDROID_ARCH_ABI}/libmylibrary.so)
+        ${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/jniLibs/${CMAKE_ANDROID_ARCH_ABI}/libhivefxso.so)
 
-include_directories(${PROJECT_SOURCE_DIR}/third_party/Players/include)
+include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 
 ########################## 第三方库 相关配置  结束################################
 
@@ -28,6 +28,7 @@ find_package(game-activity REQUIRED CONFIG)
 set(REQUIRED_PACKAGES
         glm
         WebP
+        jsoncpp
 )
 
 foreach(PACKAGE ${REQUIRED_PACKAGES})
@@ -44,4 +45,5 @@ target_link_libraries(hivefx
         mylibrary   # 链接第三方库
         glm::glm
         libwebp::libwebp
+        JsonCpp::JsonCpp
     )

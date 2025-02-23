@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
 }
-
 android {
     namespace = "com.hive.hivefx"
     compileSdk = 34
@@ -59,7 +58,7 @@ android {
 
     sourceSets {
         getByName("main") {
-            jniLibs.srcDirs("libs")
+            jniLibs.srcDirs("../mylibrary/src/main/jniLibs")
         }
     }
 }

@@ -1,5 +1,7 @@
 #include "SnowRenderer.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
+#include <android/asset_manager.h>
+#include <json/json.h>
 #include "Common.h"
 #include "ScreenQuad.h"
 #include "SingleTexturePlayer.h"
@@ -25,6 +27,32 @@ CSnowRenderer::~CSnowRenderer()
 
 void CSnowRenderer::__initAlgorithm()
 {
+    std::string fileName = "configs/BasicFramePlayerConfig.json";
+
+    AAsset* asset = AAssetManager_open(m_pApp->activity->assetManager, fileName.c_str(), AASSET_MODE_BUFFER);
+    if (!asset) {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::MAIN_TAG, "file is not open");
+        return ;
+    }
+    off_t assetLength = AAsset_getLength(asset);
+    std::vector<char> buffer(assetLength);
+    AAsset_read(asset, buffer.data(), assetLength);
+    AAsset_close(asset);
+    std::string jsonContent = std::string(buffer.begin(), buffer.end());
+
+    Json::Value root;
+    Json::CharReaderBuilder reader;
+    std::string errs;
+
+    std::istringstream sstream(jsonContent);
+    if (!Json::parseFromStream(reader, sstream, &root, &errs)) {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::MAIN_TAG, "json file parse failed, %s", errs.c_str());
+        return;
+    }
+    LOG_INFO(hiveVG::TAG_KEYWORD::MAIN_TAG, "Name:  %s", root["name"].asString().c_str());
+    LOG_INFO(hiveVG::TAG_KEYWORD::MAIN_TAG, "Age:   %s", root["age"].asString().c_str());
+    LOG_INFO(hiveVG::TAG_KEYWORD::MAIN_TAG, "Email: %s", root["email"].asString().c_str());
+
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
     EPictureType PictureType = EPictureType::PNG;
