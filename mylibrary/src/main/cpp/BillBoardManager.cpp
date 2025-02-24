@@ -59,7 +59,7 @@ void CBillBoardManager::updateSequenceState(float vDeltaTime)
                 State = __initSequenceParams();
                 State._IsAlive = true;
                 Player->setScreenUVOffset(State._UVOffset);
-                Player->setScreenRandScale(State._UVScale);
+                Player->setScreenUVScale(glm::vec2(State._UVScale, State._UVScale));
             }
         }
         else

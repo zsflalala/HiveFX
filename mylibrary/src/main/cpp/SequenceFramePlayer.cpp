@@ -80,6 +80,15 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight,
         m_CurrentFrame = (m_CurrentFrame + 1) % m_ValidFrames;
     }
     m_WindowSize = glm::vec2(vWindowWidth, vWindowHeight);
+    if (m_IsMoving)
+    {
+        m_ScreenUVOffset += m_ScreenUVMovingSpeed * float(vDeltaTime);
+        float ScreenMaxUV = 1.0f;
+        if (m_ScreenUVOffset.x > ScreenMaxUV + m_ScreenUVScale.x || m_ScreenUVOffset.x < -ScreenMaxUV - m_ScreenUVScale.x)
+            m_ScreenUVOffset.x = -ScreenMaxUV - m_ScreenUVScale.x;
+        if (m_ScreenUVOffset.y > ScreenMaxUV + m_ScreenUVScale.y || m_ScreenUVOffset.y < -ScreenMaxUV - m_ScreenUVScale.y)
+            m_ScreenUVOffset.y = -ScreenMaxUV - m_ScreenUVScale.y;
+    }
 }
 
 void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
@@ -102,7 +111,7 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->useProgram();
     m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
     m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
-    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale * m_ScreenRandScale);
+    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
     m_pSequenceShaderProgram->setUniform("texUVOffset", TextureUVOffset);
     m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
     m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);

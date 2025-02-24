@@ -60,10 +60,8 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     m_pSmallSnowForePlayer->setLoopPlayback(IsLoop);
     m_pSmallSnowForePlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
     m_pSmallSnowForePlayer->setScreenUVOffset(m_UVOffset);
-
-    float MovingDistance = 2.0f + 2 * m_PlayScale; // 2.0f is from -1.0 ~ 1.0; * 2 is from left to right
-    float PlanLivingTime = 5.0f;
-    m_MovingSpeed   = MovingDistance / PlanLivingTime;
+    if (m_PlayMode == EPlayType::PARTICAL)
+        m_pSmallSnowForePlayer->setIsMoving(true);
     m_LastFrameTime = __getCurrentTime();
 }
 
@@ -79,16 +77,6 @@ void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeigh
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_pSmallSnowForePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
-    if (m_PlayMode == EPlayType::PARTICAL)
-    {
-        m_UVOffset += glm::vec2(m_MovingDirection, 0.0f) * m_MovingSpeed * float(DeltaTime);
-        if (m_UVOffset.x > 1.0f + m_PlayScale || m_UVOffset.y > 1.0 + m_PlayScale)
-        {
-            glm::vec2 OutScreenUV = glm::vec2(-1.0f - m_PlayScale, 0.0f);
-            m_UVOffset = OutScreenUV;
-        }
-        m_pSmallSnowForePlayer->setScreenUVOffset(m_UVOffset);
-    }
     m_pSmallSnowForePlayer->draw(m_pScreenQuad);
 }
 

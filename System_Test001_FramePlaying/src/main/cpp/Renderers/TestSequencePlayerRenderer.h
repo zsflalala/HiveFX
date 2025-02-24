@@ -26,8 +26,6 @@ namespace hiveVG
 
         double       m_LastFrameTime        = 0.0f;
         double       m_CurrentTime          = 0.0f;
-        float        m_MovingDirection      = 1.0f;
-        float        m_MovingSpeed          = 0.5;
         glm::vec2    m_UVOffset             = glm::vec2(0.0f, 0.0f);
         EPlayType    m_PlayMode             = EPlayType::FULLSCREEN;
         float        m_PlayScale            = 1.0f;
