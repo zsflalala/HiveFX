@@ -41,7 +41,7 @@ void CBillBoardManager::draw(CScreenQuad* vQuad)
     {
         if (!m_SequenceState[i]._IsAlive)
             continue;
-        m_SequencePlayers[i]->draw(vQuad);
+        m_SequencePlayers[i]->draw(vQuad)          ;
     }
 }
 

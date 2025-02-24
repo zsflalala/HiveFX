@@ -1,0 +1,16 @@
+{
+  "sequence_config": {
+    "frames_path": "Textures/BigRainPNG",
+    "frames_type" : "png",
+    "frames_count": 64,
+    "play_mode": "fullscreen",
+    "position": {
+      "x": -1.0,
+      "y": -0.3
+    },
+    "fps": 60,
+    "loop": true,
+    "scale": 1.0,
+    "blend_mode": "additive"
+  }
+}

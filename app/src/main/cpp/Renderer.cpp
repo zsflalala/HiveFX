@@ -111,7 +111,7 @@ void CRenderer::renderScene()
 
     if (m_RenderType == ERenderType::SNOW)
     {
-        if (m_pSnow == nullptr) m_pSnow = new CSnowRenderer(m_pApp);
+        if (m_pSnow == nullptr) m_pSnow = new CTestSequencePlayerRenderer(m_pApp);
         m_pSnow->handleInput(m_EnableRenderType, m_IsPointerDown);
         m_pSnow->renderScene(m_WindowWidth, m_WindowHeight);
     }

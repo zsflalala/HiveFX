@@ -38,8 +38,8 @@ CSequenceFramePlayer::~CSequenceFramePlayer()
 bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetManager)
 {
     std::string PictureSuffix;
-    if (m_TextureType == EPictureType::PNG) PictureSuffix = ".png";
-    else if (m_TextureType == EPictureType::JPG) PictureSuffix = ".jpg";
+    if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
+    else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
     else if (m_TextureType == EPictureType::ASTC) PictureSuffix = ".astc";
     for (int i = 0; i < m_TextureCount; i++)

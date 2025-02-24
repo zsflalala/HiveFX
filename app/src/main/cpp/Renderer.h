@@ -7,7 +7,7 @@ struct android_app;
 
 namespace hiveVG
 {
-    class CSnowRenderer;
+    class CTestSequencePlayerRenderer;
     class CRainRendererAsync;
     class CCloudRendererBillBoard;
     class CSnowSceneRenderer;
@@ -35,7 +35,7 @@ namespace hiveVG
         EGLDisplay   m_Display       = EGL_NO_DISPLAY;
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
-        CSnowRenderer*           m_pSnow           = nullptr;
+        CTestSequencePlayerRenderer*           m_pSnow           = nullptr;
         CRainRenderer*           m_pRain           = nullptr;
         CRainRendererAsync*      m_pRainScene      = nullptr;
         CCloudRendererBillBoard* m_pCloudScene     = nullptr;

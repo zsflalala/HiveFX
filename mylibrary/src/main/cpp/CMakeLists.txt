@@ -9,11 +9,13 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         AsyncSequenceFramePlayer.cpp
         ShaderProgram.cpp
         ScreenQuad.cpp
-        Texture2D.cpp)
+        Texture2D.cpp
+        JsonReader.cpp)
 
 set(REQUIRED_PACKAGES
         glm
         WebP
+        jsoncpp
 )
 
 foreach(PACKAGE ${REQUIRED_PACKAGES})
@@ -27,6 +29,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         GLESv3
         glm::glm
         libwebp::libwebp
+        JsonCpp::JsonCpp
 )
 
 # 设置库的输出目录
