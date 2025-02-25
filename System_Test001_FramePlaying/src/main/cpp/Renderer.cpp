@@ -31,7 +31,7 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pSnow)       delete m_pSnow;
+    if (m_pTestPlayer)       delete m_pTestPlayer;
 }
 
 void CRenderer::__initRenderer()
@@ -94,8 +94,8 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    if (m_pSnow == nullptr) m_pSnow = new CTestSequencePlayerRenderer(m_pApp);
-    m_pSnow->renderScene(m_WindowWidth, m_WindowHeight);
+    if (m_pTestPlayer == nullptr) m_pTestPlayer = new CTestSequencePlayerRenderer(m_pApp);
+    m_pTestPlayer->renderScene(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

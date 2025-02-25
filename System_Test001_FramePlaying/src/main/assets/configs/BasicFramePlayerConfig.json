@@ -10,7 +10,7 @@
     },
     "fps": 60,
     "loop": true,
-    "moving_speed": 0.1,
+    "moving_speed": [0.2, 0.0],
     "scale": 0.5,
     "blend_mode": "additive"
   }

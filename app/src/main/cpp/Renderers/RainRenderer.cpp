@@ -25,7 +25,7 @@ CRainRenderer::~CRainRenderer()
 void CRainRenderer::__initAlgorithm()
 {
     int SequenceRows = 1, SequenceCols = 1, TextureCount = 64;
-    EPictureType PictureType = EPictureType::PNG;
+    EPictureType::EPictureType PictureType = EPictureType::PNG;
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
     m_pSmallRainForePlayer = new CSequenceFramePlayer("Textures/SmallRain_fore", SequenceRows, SequenceCols, TextureCount, PictureType);

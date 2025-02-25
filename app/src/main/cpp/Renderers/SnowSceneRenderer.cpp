@@ -21,7 +21,7 @@ CSnowSceneRenderer::~CSnowSceneRenderer()
 void CSnowSceneRenderer::__initAlgorithm()
 {
     int TextureCount = 128;
-    EPictureType PictureType = EPictureType::PNG;
+    EPictureType::EPictureType PictureType = EPictureType::PNG;
     int SequenceRows = 1, SequenceCols = 1;
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer("Textures/SnowCover", SequenceRows, SequenceCols, TextureCount, PictureType);

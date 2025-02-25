@@ -31,6 +31,6 @@ namespace hiveVG
         EGLDisplay   m_Display       = EGL_NO_DISPLAY;
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
-        CTestSequencePlayerRenderer*           m_pSnow           = nullptr;
+        CTestSequencePlayerRenderer* m_pTestPlayer = nullptr;
     };
 }

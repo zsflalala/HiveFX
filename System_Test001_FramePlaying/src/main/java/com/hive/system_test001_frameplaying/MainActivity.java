@@ -8,7 +8,6 @@ public class MainActivity extends GameActivity
 {
     static
     {
-        System.loadLibrary("hivefxso");
         System.loadLibrary("system_test001_frameplaying");
     }
 
