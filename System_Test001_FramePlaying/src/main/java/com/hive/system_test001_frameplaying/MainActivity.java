@@ -1,11 +1,6 @@
 package com.hive.system_test001_frameplaying;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.google.androidgamesdk.GameActivity;
 
@@ -26,7 +21,6 @@ public class MainActivity extends GameActivity
             hideSystemUi();
         }
     }
-
     private void hideSystemUi()
     {
         View decorView = getWindow().getDecorView();

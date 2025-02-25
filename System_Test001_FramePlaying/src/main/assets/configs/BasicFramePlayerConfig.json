@@ -1,0 +1,17 @@
+{
+  "sequence_config": {
+    "frames_path": "Textures/BigRainJPG",
+    "frames_type" : "jpg",
+    "frames_count": 64,
+    "play_mode": "partial",
+    "position": {
+      "x": -1.0,
+      "y": -0.3
+    },
+    "fps": 60,
+    "loop": true,
+    "moving_speed": 0.1,
+    "scale": 0.5,
+    "blend_mode": "additive"
+  }
+}

@@ -10,12 +10,12 @@
 
 using namespace hiveVG;
 
-CSnowRenderer::CSnowRenderer(android_app *vApp) : m_pApp(vApp)
+CTestSequencePlayerRenderer::CTestSequencePlayerRenderer(android_app *vApp) : m_pApp(vApp)
 {
     __initAlgorithm();
 }
 
-CSnowRenderer::~CSnowRenderer()
+CTestSequencePlayerRenderer::~CTestSequencePlayerRenderer()
 {
     if (m_pScreenQuad)              delete m_pScreenQuad;
     if (m_pSmallSnowForePlayer)     delete m_pSmallSnowForePlayer;
@@ -25,7 +25,7 @@ CSnowRenderer::~CSnowRenderer()
     if (m_pSnowSceneSeqFramePlayer) delete m_pSnowSceneSeqFramePlayer;
 }
 
-void CSnowRenderer::__initAlgorithm()
+void CTestSequencePlayerRenderer::__initAlgorithm()
 {
     std::string fileName = "configs/BasicFramePlayerConfig.json";
 
@@ -105,7 +105,7 @@ void CSnowRenderer::__initAlgorithm()
     m_LastFrameTime = __getCurrentTime();
 }
 
-void CSnowRenderer::renderScene(int vWindowWidth, int vWindowHeight)
+void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 {
     m_CurrentTime    = __getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
@@ -140,7 +140,7 @@ void CSnowRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     }
 }
 
-void CSnowRenderer::handleInput(ERenderType vInputType, bool vIsPointerDown)
+void CTestSequencePlayerRenderer::handleInput(ERenderType vInputType, bool vIsPointerDown)
 {
     if (vInputType == ERenderType::SMALL_SNOW_FORE)
     {
@@ -161,7 +161,7 @@ void CSnowRenderer::handleInput(ERenderType vInputType, bool vIsPointerDown)
     m_PreviousPointerState = vIsPointerDown;
 }
 
-double CSnowRenderer::__getCurrentTime()
+double CTestSequencePlayerRenderer::__getCurrentTime()
 {
     struct timeval tv;
     gettimeofday(&tv, nullptr);

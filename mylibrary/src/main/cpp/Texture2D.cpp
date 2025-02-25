@@ -99,7 +99,7 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     double StartTime = __getCurrentTime();
     int Channels;
     unsigned char* pImageData;
-    if (vPictureType == EPictureType::PNG)
+    if (vPictureType == EPictureType::PNG || vPictureType == EPictureType::JPG)
     {
         pImageData = stbi_load_from_memory(pBuffer.get(), AssetSize, &voWidth, &voHeight, &Channels, 0);
     }
