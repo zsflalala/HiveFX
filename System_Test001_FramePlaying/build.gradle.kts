@@ -16,17 +16,11 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags += ""
+                cppFlags += "-std=c++20"
+                arguments("-DCMAKE_TOOLCHAIN_FILE=conan_android_toolchain.cmake")
             }
         }
     }
-
-//    externalNativeBuild {
-//        cmake {
-//            cppFlags += "-std=c++17"
-//            arguments("-DCMAKE_TOOLCHAIN_FILE=conan_android_toolchain.cmake")
-//        }
-//    }
 
     buildTypes {
         release {
@@ -56,6 +50,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.games.activity)
+    implementation(project(":mylibrary"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

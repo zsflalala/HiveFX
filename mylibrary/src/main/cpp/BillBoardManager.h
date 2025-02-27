@@ -34,11 +34,11 @@ namespace hiveVG
         float getImageAspectRatioAt(int i) { return static_cast<float>(m_SequencePlayers[i]->getSingleTextureWidth()) / static_cast<float>(m_SequencePlayers[i]->getSingleTextureHeight()); }
         void  updateSequenceState(float vDeltaTime);
 
-        void setLoop(bool vLoop);
-        void setFrameRate(int vFrameRate);
-        void setRotationAngle(float vRotationAngle);
-        void setScreenUvOffset(glm::vec2& vUVOffset);
-        void setImageAspectRatioAt(int i, glm::vec2& vScale) { m_SequencePlayers[i]->setScreenUVScale(vScale); }
+        void  setLoop(bool vLoop);
+        void  setFrameRate(int vFrameRate);
+        void  setRotationAngle(float vRotationAngle);
+        void  setScreenUvOffset(glm::vec2& vUVOffset);
+        void  setImageAspectRatioAt(int i, glm::vec2& vScale) { m_SequencePlayers[i]->setScreenUVScale(vScale); }
 
     private:
         SSequenceState __initSequenceParams();

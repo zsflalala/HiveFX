@@ -11,11 +11,11 @@ namespace hiveVG
     class CSingleTexturePlayer;
     class CSequenceFramePlayer;
 
-    class CSnowRenderer
+    class CTestSequencePlayerRenderer
     {
     public:
-        CSnowRenderer(android_app *vApp);
-        ~CSnowRenderer();
+        CTestSequencePlayerRenderer(android_app *vApp);
+        ~CTestSequencePlayerRenderer();
 
         void renderScene(int vWindowWidth, int vWindowHeight);
         void handleInput(ERenderType vInputType, bool vIsPointerDown);

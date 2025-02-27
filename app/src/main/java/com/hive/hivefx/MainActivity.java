@@ -13,7 +13,6 @@ public class MainActivity extends GameActivity
 {
     static
     {
-        System.loadLibrary("hivefxso");
         System.loadLibrary("hivefx");
     }
 

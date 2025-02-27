@@ -14,12 +14,18 @@ CRainRendererAsync::CRainRendererAsync(android_app *vApp) : m_pApp(vApp)
 
 CRainRendererAsync::~CRainRendererAsync()
 {
-    if (m_pScreenQuad)          delete m_pScreenQuad;
-    if (m_pSmallRainForePlayer) delete m_pSmallRainForePlayer;
-    if (m_pSmallRainBackPlayer) delete m_pSmallRainBackPlayer;
-    if (m_pBigRainForePlayer)   delete m_pSmallRainForePlayer;
-    if (m_pBigRainBackPlayer)   delete m_pSmallRainBackPlayer;
-    if (m_pSingleFramePlayer)   delete m_pSingleFramePlayer;
+    if (m_pScreenQuad)
+        delete m_pScreenQuad;
+    if (m_pSmallRainForePlayer)
+        delete m_pSmallRainForePlayer;
+    if (m_pSmallRainBackPlayer)
+        delete m_pSmallRainBackPlayer;
+    if (m_pBigRainForePlayer)
+        delete m_pSmallRainForePlayer;
+    if (m_pBigRainBackPlayer)
+        delete m_pSmallRainBackPlayer;
+    if (m_pSingleFramePlayer)
+        delete m_pSingleFramePlayer;
 }
 
 void CRainRendererAsync::__initAlgorithm()
@@ -32,17 +38,17 @@ void CRainRendererAsync::__initAlgorithm()
     m_pSmallRainForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pSmallRainBackPlayer = new CAsyncSequenceFramePlayer("Textures/SmallRain_back", TextureCount, PictureType);
     m_pSmallRainBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
-    m_pBigRainForePlayer   = new CAsyncSequenceFramePlayer("Textures/BigRain_fore", TextureCount, PictureType);
+    m_pBigRainForePlayer = new CAsyncSequenceFramePlayer("Textures/BigRain_fore", TextureCount, PictureType);
     m_pBigRainForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
-    m_pBigRainBackPlayer   = new CAsyncSequenceFramePlayer("Textures/BigRain_back", TextureCount, PictureType);
+    m_pBigRainBackPlayer = new CAsyncSequenceFramePlayer("Textures/BigRain_back", TextureCount, PictureType);
     m_pBigRainBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
-    m_pSingleFramePlayer   = new CSingleTexturePlayer("Textures/snowScene.png");
+    m_pSingleFramePlayer = new CSingleTexturePlayer("Textures/snowScene.png");
     m_pSingleFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 }
 
 void CRainRendererAsync::renderScene()
 {
-    glClearColor(0.345f,0.345f,0.345f, 0.0f);
+    glClearColor(0.345f, 0.345f, 0.345f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
 
@@ -78,19 +84,23 @@ void CRainRendererAsync::handleInput(ERenderType vInputType, bool vIsPointerDown
     if (vInputType == ERenderType::SMALL_RAIN_FORE)
     {
         // 在持续摁下时只改变一次 m_EnableSmallRainFore 的变量值
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableSmallRainFore = !m_EnableSmallRainFore;
+        if (vIsPointerDown && !m_PreviousPointerState)
+            m_EnableSmallRainFore = !m_EnableSmallRainFore;
     }
     else if (vInputType == ERenderType::SMALL_RAIN_BACK)
     {
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableSmallRainBack = !m_EnableSmallRainBack;
+        if (vIsPointerDown && !m_PreviousPointerState)
+            m_EnableSmallRainBack = !m_EnableSmallRainBack;
     }
     else if (vInputType == ERenderType::BIG_RAIN_FORE)
     {
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableBigRainFore   = !m_EnableBigRainFore;
+        if (vIsPointerDown && !m_PreviousPointerState)
+            m_EnableBigRainFore = !m_EnableBigRainFore;
     }
     else if (vInputType == ERenderType::BIG_RAIN_BACK)
     {
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableBigRainBack   = !m_EnableBigRainBack;
+        if (vIsPointerDown && !m_PreviousPointerState)
+            m_EnableBigRainBack = !m_EnableBigRainBack;
     }
     m_PreviousPointerState = vIsPointerDown;
 }

@@ -10,7 +10,7 @@
 
 using namespace hiveVG;
 
-CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType vPictureType)
+CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType)
         : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType)
 {
     m_ValidFrames = m_SequenceRows * m_SequenceCols;
@@ -38,10 +38,9 @@ CSequenceFramePlayer::~CSequenceFramePlayer()
 bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetManager)
 {
     std::string PictureSuffix;
-    if (m_TextureType == EPictureType::PNG) PictureSuffix = ".png";
-    else if (m_TextureType == EPictureType::JPG) PictureSuffix = ".jpg";
+    if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
+    else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
-    else if (m_TextureType == EPictureType::ASTC) PictureSuffix = ".astc";
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;;
@@ -80,6 +79,15 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight,
         m_CurrentFrame = (m_CurrentFrame + 1) % m_ValidFrames;
     }
     m_WindowSize = glm::vec2(vWindowWidth, vWindowHeight);
+    if (m_IsMoving)
+    {
+        m_ScreenUVOffset += m_ScreenUVMovingSpeed * float(vDeltaTime);
+        float ScreenMaxUV = 1.0f;
+        if (m_ScreenUVOffset.x > ScreenMaxUV + m_ScreenUVScale.x || m_ScreenUVOffset.x < -ScreenMaxUV - m_ScreenUVScale.x)
+            m_ScreenUVOffset.x = -ScreenMaxUV - m_ScreenUVScale.x;
+        if (m_ScreenUVOffset.y > ScreenMaxUV + m_ScreenUVScale.y || m_ScreenUVOffset.y < -ScreenMaxUV - m_ScreenUVScale.y)
+            m_ScreenUVOffset.y = -ScreenMaxUV - m_ScreenUVScale.y;
+    }
 }
 
 void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
@@ -102,7 +110,7 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->useProgram();
     m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
     m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
-    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale * m_ScreenRandScale);
+    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
     m_pSequenceShaderProgram->setUniform("texUVOffset", TextureUVOffset);
     m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
     m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);

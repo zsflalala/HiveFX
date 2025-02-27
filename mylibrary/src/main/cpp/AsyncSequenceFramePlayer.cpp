@@ -11,7 +11,7 @@
 using namespace hiveVG;
 
 CAsyncSequenceFramePlayer::CAsyncSequenceFramePlayer(const std::string &vTextureRootPath,
-                                                     int vTextureCount, EPictureType vPictureType):m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType)
+                                                     int vTextureCount, EPictureType::EPictureType vPictureType):m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType)
 {
     m_LoadedTextures  = std::vector<STextureData>(vTextureCount);
     m_FrameLoadedGPU  = std::vector<bool>(vTextureCount);
