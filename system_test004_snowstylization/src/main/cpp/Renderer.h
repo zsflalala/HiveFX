@@ -17,7 +17,6 @@ namespace hiveVG
         ~CRenderer();
 
         void renderScene();
-        void handleInput();
 
     private:
         void __initRenderer();
@@ -26,9 +25,7 @@ namespace hiveVG
         void __generateSnowScene();
         static double __getCurrentTime();
 
-        ERenderType  m_RenderType           = ERenderType::SNOW;
-        ERenderType  m_EnableRenderType     = ERenderType::SMALL_SNOW_FORE;
-        bool         m_IsPointerDown        = false;
+        std::string  m_TexturePath;
         int          m_WindowWidth          = -1;
         int          m_WindowHeight         = -1;
         android_app* m_pApp                 = nullptr;

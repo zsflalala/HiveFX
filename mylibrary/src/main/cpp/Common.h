@@ -26,6 +26,11 @@ namespace hiveVG::TAG_KEYWORD
     const char *const SNOW_STYLIZE_TAG          = "SnowStylize";
 }
 
+namespace hiveVG::CONFIG_KEYWORD
+{
+    const char *const TexturePath               = "texture_path";
+}
+
 namespace hiveVG
 {
     enum class ERenderType : std::uint8_t

@@ -10,6 +10,7 @@
 #include "ScreenQuad.h"
 #include "SingleTexturePlayer.h"
 #include "SnowStylizer.h"
+#include "JsonReader.h"
 
 using namespace hiveVG;
 
@@ -98,10 +99,14 @@ void CRenderer::__initRenderer()
 
 void CRenderer::__initAlgorithm()
 {
-    m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pTestPlayer = new CSingleTexturePlayer("backroad.png");
-    m_pTestPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    std::string ConfigFilePath = "configs/SnowStylizeConfig.json";
+    CJsonReader JsonConfig = CJsonReader(m_pApp->activity->assetManager, ConfigFilePath);
+    m_TexturePath = JsonConfig.getString(hiveVG::CONFIG_KEYWORD::TexturePath);
     __generateSnowScene();
+
+    m_pScreenQuad = CScreenQuad::getOrCreate();
+    m_pTestPlayer = new CSingleTexturePlayer(m_TexturePath);
+    m_pTestPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 }
 
 void CRenderer::renderScene()
@@ -134,59 +139,12 @@ void CRenderer::__updateRenderArea()
     }
 }
 
-void CRenderer::handleInput()
-{
-    auto *pInputBuffer = android_app_swap_input_buffers(m_pApp);
-    if (!pInputBuffer) return;
-
-    for (auto i = 0; i < pInputBuffer->motionEventsCount; i++)
-    {
-        auto &MotionEvent = pInputBuffer->motionEvents[i];
-        auto Action = MotionEvent.action;
-
-        auto PointerIndex = (Action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-
-        auto &Pointer = MotionEvent.pointers[PointerIndex];
-        auto PointerX = GameActivityPointerAxes_getX(&Pointer);
-        auto PointerY = GameActivityPointerAxes_getY(&Pointer);
-
-        switch (Action & AMOTION_EVENT_ACTION_MASK)
-        {
-            case AMOTION_EVENT_ACTION_DOWN:
-            case AMOTION_EVENT_ACTION_POINTER_DOWN:
-                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
-                break;
-            case AMOTION_EVENT_ACTION_CANCEL:
-            case AMOTION_EVENT_ACTION_UP:
-            case AMOTION_EVENT_ACTION_POINTER_UP:
-                m_IsPointerDown    = false;
-                m_EnableRenderType = ERenderType::NONE;
-                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Up", Pointer.id, PointerX, PointerY);
-                break;
-
-            case AMOTION_EVENT_ACTION_MOVE:
-                for (auto Index = 0; Index < MotionEvent.pointerCount; Index++)
-                {
-                    Pointer = MotionEvent.pointers[Index];
-                    PointerX = GameActivityPointerAxes_getX(&Pointer);
-                    PointerY = GameActivityPointerAxes_getY(&Pointer);
-                    LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Move", Pointer.id, PointerX, PointerY);
-
-                    if (Index != (MotionEvent.pointerCount - 1)) LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, ",");
-                }
-                break;
-            default:
-                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Unknown MotionEvent Action: %d", Action);
-        }
-    }
-    android_app_clear_motion_events(pInputBuffer);
-}
-
 void CRenderer::__generateSnowScene()
 {
     double TimeStart = __getCurrentTime();
     CSnowStylizer SnowGenerator;
-    SnowGenerator.loadImg(m_pApp->activity->assetManager,"backroad.png");
+    SnowGenerator.loadImg(m_pApp->activity->assetManager,m_TexturePath);
+//    SnowGenerator.loadImg(m_pApp->activity->assetManager,m_TexturePath, cv::Vec3b(246, 246, 246));
     SnowGenerator.setShapeFreq(15);
     SnowGenerator.setShapeAmplitude(5);
     SnowGenerator.generateSnow(5);

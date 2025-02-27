@@ -72,7 +72,6 @@ void android_main(struct android_app* vApp)
         if (vApp->userData)
         {
             auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CRenderer*>(vApp->userData);
-            pSeqFrameRenderer->handleInput();
             pSeqFrameRenderer->renderScene();
         }
     } while (!vApp->destroyRequested);
