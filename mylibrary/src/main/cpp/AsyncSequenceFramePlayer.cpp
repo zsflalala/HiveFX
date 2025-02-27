@@ -213,14 +213,20 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
     if (Texture._IsLoaded.load())
     {
         double StartTime = __getCurrentTime();
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
         glBindTexture(GL_TEXTURE_2D, vTextureHandles[vTextureIndex]);
         GLenum Format = (Texture._Channels == 4) ? GL_RGBA : GL_RGB;
-        glTexImage2D(GL_TEXTURE_2D, 0, Format, Texture._Width, Texture._Height, 0, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
+        //glTexImage2D(GL_TEXTURE_2D, 0, Format, Texture._Width, Texture._Height, 0, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, Texture._Width, Texture._Height, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glGenerateMipmap(GL_TEXTURE_2D);
+
         vFrameLoadedGPU[vTextureIndex].store(true);
         double EndTime  = __getCurrentTime();
         double Duration = EndTime - StartTime;

@@ -55,9 +55,10 @@ namespace hiveVG
         std::mutex                           m_LoadTextureToCPUMutex;
         std::vector<STextureData>            m_LoadedTextures;
         std::vector<std::atomic<bool>>       m_FrameLoadedGPU;
-        std::set<int>                      m_FramesToUploadGPU;
+        std::set<int>                        m_FramesToUploadGPU;
         unsigned int*	                     m_pTextureHandles      = nullptr;
         CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
         std::vector<std::future<void>>       m_TextureLoadFutures;
+        GLuint                               m_PBOHandle;
     };
 }
