@@ -16,8 +16,8 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 ########################## 第三方库 相关配置  结束################################
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
-    system_test001_frameplaying.cpp
-    Renderer.cpp
+        system_test001_frameplaying.cpp
+        Renderer.cpp
         Renderers/TestSequencePlayerRenderer.cpp
 )
 
@@ -34,13 +34,14 @@ foreach(PACKAGE ${REQUIRED_PACKAGES})
 endforeach()
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    game-activity::game-activity
-    EGL
-    GLESv3
-    jnigraphics
-    android
-    log
-    hivefxso   # 链接第三方库
-    glm::glm
-    libwebp::libwebp
-    JsonCpp::JsonCpp)
+        game-activity::game-activity
+        EGL
+        GLESv3
+        jnigraphics
+        android
+        log
+        hivefxso   # 链接第三方库
+        glm::glm
+        libwebp::libwebp
+        JsonCpp::JsonCpp
+    )
