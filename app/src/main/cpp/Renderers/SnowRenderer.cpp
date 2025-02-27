@@ -40,7 +40,6 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
         return ;
     };
     m_pSmallSnowForePlayer->setFrameRate(60.0f);
-
     TexRootPath = "Textures/SmallSnow_back";
     m_pSmallSnowBackPlayer = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount, PictureType);
     if(!m_pSmallSnowBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
