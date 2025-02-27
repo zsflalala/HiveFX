@@ -9,6 +9,7 @@ namespace hiveVG
 {
     class CTestSequencePlayerRenderer;
     class CRainRendererAsync;
+    class CSnowRendererAsync;
     class CCloudRendererBillBoard;
     class CSnowSceneRenderer;
     class CRainRenderer;
@@ -37,7 +38,8 @@ namespace hiveVG
         EGLContext   m_Context       = EGL_NO_CONTEXT;
         CTestSequencePlayerRenderer* m_pSnow       = nullptr;
         CRainRenderer*               m_pRain       = nullptr;
-        CRainRendererAsync*          m_pRainScene  = nullptr;
+        CRainRendererAsync*          m_pRainAsync  = nullptr;
+        CSnowRendererAsync*          m_pSnowAsync  = nullptr;
         CCloudRendererBillBoard*     m_pCloudScene = nullptr;
         CSnowSceneRenderer*          m_pSnowScene  = nullptr;
     };

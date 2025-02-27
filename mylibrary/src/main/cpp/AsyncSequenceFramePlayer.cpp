@@ -15,6 +15,7 @@ CAsyncSequenceFramePlayer::CAsyncSequenceFramePlayer(const std::string &vTexture
     m_LoadedTextures  = std::vector<STextureData>(vTextureCount);
     m_FrameLoadedGPU  = std::vector<std::atomic<bool>>(vTextureCount);
     m_pTextureHandles = new unsigned int [vTextureCount];
+    glGenTextures(m_TextureCount, m_pTextureHandles);
 }
 
 CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
@@ -42,10 +43,11 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAsse
     for (int i = 0;i < m_TextureCount;i++)
     {
         std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
-        std::thread([this, i, TexturePath, vAssetManager]()
-                    {
-                        __loadTextureDataAsync(vAssetManager, i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex, m_FramesToUploadGPU);
-                    }).detach();
+        m_TextureLoadFutures.emplace_back(std::async(std::launch::async,
+                                                     [this, i, TexturePath, vAssetManager]()
+                                                     {
+                                                         __loadTextureDataAsync(vAssetManager, i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex,m_FramesToUploadGPU);
+                                                     }));
     }
 
     m_pAsyncShaderProgram = CShaderProgram::createProgram(
@@ -56,7 +58,6 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAsse
     assert(m_pAsyncShaderProgram != nullptr);
 
     m_GPULoadedTime = __getCurrentTime();
-    glGenTextures(m_TextureCount, m_pTextureHandles);
     return true;
 }
 
@@ -64,8 +65,8 @@ void CAsyncSequenceFramePlayer::updateFrames()
 {
     if (!m_FramesToUploadGPU.empty())
     {
-        int FrameToUpload = m_FramesToUploadGPU.front();
-        m_FramesToUploadGPU.pop();
+        int FrameToUpload = *m_FramesToUploadGPU.begin();
+        m_FramesToUploadGPU.erase(m_FramesToUploadGPU.begin());
         __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureHandles, m_FrameLoadedGPU);
     }
     double CurrentTime = __getCurrentTime();
@@ -130,7 +131,7 @@ CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, 
                                                   const std::string &vTexturePath,
                                                   std::vector<STextureData> &vLoadedTextures,
                                                   std::mutex &vTextureMutex,
-                                                  std::queue<int> &vFramesToUploadGPU)
+                                                  std::set<int> &vFramesToUploadGPU)
 {
     if (!vAssetManager)
     {
@@ -188,7 +189,7 @@ CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, 
         Texture._Height = Height;
         Texture._Channels = Channels;
         Texture._IsLoaded.store(true);
-        vFramesToUploadGPU.push(vFrameIndex);
+        vFramesToUploadGPU.insert(vFrameIndex);
         double EndTime = __getCurrentTime();
         double Duration = EndTime - StartTime;
         m_CPUCostTime.push_back(Duration);

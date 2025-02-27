@@ -2,7 +2,8 @@
 
 #include <string>
 #include <vector>
-#include <queue>
+#include <set>
+#include <future>
 #include <GLES3/gl3.h>
 #include <android/asset_manager.h>
 #include "Common.h"
@@ -34,7 +35,7 @@ namespace hiveVG
         void setFrameRate(int vFrameRate) { m_FrameRate = vFrameRate; }
 
     private:
-        void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::queue<int> &vFramesToUploadGPU);
+        void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::set<int> &vFramesToUploadGPU);
         void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedGPU);
         double __getCurrentTime();
         double __getCostTime(std::vector<double> &vCostTime);
@@ -54,8 +55,9 @@ namespace hiveVG
         std::mutex                           m_LoadTextureToCPUMutex;
         std::vector<STextureData>            m_LoadedTextures;
         std::vector<std::atomic<bool>>       m_FrameLoadedGPU;
-        std::queue<int>                      m_FramesToUploadGPU;
+        std::set<int>                      m_FramesToUploadGPU;
         unsigned int*	                     m_pTextureHandles      = nullptr;
         CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
+        std::vector<std::future<void>>       m_TextureLoadFutures;
     };
 }
