@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <future>
 #include <GLES3/gl3.h>
 #include <android/asset_manager.h>
 #include "Common.h"
@@ -34,8 +35,8 @@ namespace hiveVG
         void setFrameRate(int vFrameRate) { m_FrameRate = vFrameRate; }
 
     private:
-        void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::queue<int> &vFramesToUploadGPU);
-        void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedGPU);
+        void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::queue<int> &vFramesToUploadGPU);
+        void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<bool>& vFrameLoadedGPU);
         double __getCurrentTime();
         double __getCostTime(std::vector<double> &vCostTime);
 
@@ -52,10 +53,13 @@ namespace hiveVG
         std::vector<double>                  m_GPUCostTime;
         std::string                          m_TextureRootPath;
         std::mutex                           m_LoadTextureToCPUMutex;
+        std::mutex                           m_FrameLoadMutex;
         std::vector<STextureData>            m_LoadedTextures;
-        std::vector<std::atomic<bool>>       m_FrameLoadedGPU;
+        std::vector<bool>                    m_FrameLoadedGPU;
         std::queue<int>                      m_FramesToUploadGPU;
         unsigned int*	                     m_pTextureHandles      = nullptr;
         CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
+        std::vector<std::future<void>>       m_TextureLoadFutures;
+        int count=0;
     };
 }

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "Renderers/SnowRenderer.h"
 #include "Renderers/RainRendererAsync.h"
+#include "Renderers/SnowRendererAsync.h"
 #include "Renderers/CloudRendererBillBoard.h"
 #include "Renderers/SnowSceneRenderer.h"
 #include "Renderers/RainRenderer.h"
@@ -35,7 +36,7 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pRainScene) delete m_pRainScene;
+    if (m_pRainAsync) delete m_pRainAsync;
     if (m_pSnow) delete m_pSnow;
     if (m_pCloudScene) delete m_pCloudScene;
 }
@@ -111,15 +112,21 @@ void CRenderer::renderScene()
 
     if (m_RenderType == ERenderType::SNOW)
     {
-        if (m_pSnow == nullptr) m_pSnow = new CSnowRenderer(m_pApp);
+        /*if (m_pSnow == nullptr) m_pSnow = new CSnowRenderer(m_pApp);
         m_pSnow->handleInput(m_EnableRenderType, m_IsPointerDown);
-        m_pSnow->renderScene(m_WindowWidth, m_WindowHeight);
+        m_pSnow->renderScene(m_WindowWidth, m_WindowHeight);*/
+        if (m_pSnowAsync == nullptr) m_pSnowAsync = new CSnowRendererAsync(m_pApp);
+        m_pSnowAsync->handleInput(m_EnableRenderType, m_IsPointerDown);
+        m_pSnowAsync->renderScene();
     }
     else if (m_RenderType == ERenderType::RAIN)
     {
-        if (m_pRain == nullptr) m_pRain = new CRainRenderer(m_pApp);
+       /* if (m_pRain == nullptr) m_pRain = new CRainRenderer(m_pApp);
         m_pRain->handleInput(m_EnableRenderType, m_IsPointerDown);
-        m_pRain->renderScene(m_WindowWidth, m_WindowHeight);
+        m_pRain->renderScene(m_WindowWidth, m_WindowHeight);*/
+       if (m_pRainAsync == nullptr) m_pRainAsync = new CRainRendererAsync(m_pApp);
+        m_pRainAsync->handleInput(m_EnableRenderType, m_IsPointerDown);
+        m_pRainAsync->renderScene();
     }
     else if (m_RenderType == ERenderType::CLOUD)
     {

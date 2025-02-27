@@ -9,6 +9,7 @@ namespace hiveVG
 {
     class CSnowRenderer;
     class CRainRendererAsync;
+    class CSnowRendererAsync;
     class CCloudRendererBillBoard;
     class CSnowSceneRenderer;
     class CRainRenderer;
@@ -26,9 +27,9 @@ namespace hiveVG
         void __initRenderer();
         void __updateRenderArea();
 
-        ERenderType  m_RenderType        = ERenderType::SNOW;
+        ERenderType  m_RenderType        = ERenderType::SNOW;//ERenderType::RAIN;
         ERenderType  m_EnableRenderType  = ERenderType::SMALL_SNOW_FORE;
-        bool         m_IsPointerDown = false;
+        bool         m_IsPointerDown = true;
         int          m_WindowWidth   = -1;
         int          m_WindowHeight  = -1;
         android_app* m_pApp          = nullptr;
@@ -37,7 +38,8 @@ namespace hiveVG
         EGLContext   m_Context       = EGL_NO_CONTEXT;
         CSnowRenderer*           m_pSnow           = nullptr;
         CRainRenderer*           m_pRain           = nullptr;
-        CRainRendererAsync*      m_pRainScene      = nullptr;
+        CRainRendererAsync*      m_pRainAsync      = nullptr;
+        CSnowRendererAsync*      m_pSnowAsync      = nullptr;
         CCloudRendererBillBoard* m_pCloudScene     = nullptr;
         CSnowSceneRenderer* m_pSnowScene      = nullptr;
     };

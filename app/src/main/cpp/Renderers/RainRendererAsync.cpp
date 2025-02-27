@@ -24,7 +24,7 @@ CRainRendererAsync::~CRainRendererAsync()
 
 void CRainRendererAsync::__initAlgorithm()
 {
-    int TextureCount = 64;
+    int TextureCount = 128;
     EPictureType PictureType = EPictureType::PNG;
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
