@@ -1,15 +1,18 @@
 #pragma once
 
 #include <EGL/egl.h>
+#include "Common.h"
 
 struct android_app;
 
 namespace hiveVG
 {
-    class CSnowRenderer;
+    class CTestSequencePlayerRenderer;
     class CRainRendererAsync;
+    class CSnowRendererAsync;
     class CCloudRendererBillBoard;
-    class CSnowSceneRendererAsync;
+    class CSnowSceneRenderer;
+    class CRainRenderer;
 
     class CRenderer
     {
@@ -24,17 +27,20 @@ namespace hiveVG
         void __initRenderer();
         void __updateRenderArea();
 
-        int          m_SceneID       = 0;
-        int          m_WindowWidth   = -1;
-        int          m_WindowHeight  = -1;
-        android_app* m_pApp          = nullptr;
-        EGLDisplay   m_Display       = EGL_NO_DISPLAY;
-        EGLSurface   m_Surface       = EGL_NO_SURFACE;
-        EGLContext   m_Context       = EGL_NO_CONTEXT;
-        CSnowRenderer*           m_pSnow           = nullptr;
-        CRainRendererAsync*      m_pRainScene      = nullptr;
-        CCloudRendererBillBoard* m_pCloudScene     = nullptr;
-        CSnowSceneRendererAsync* m_pSnowScene      = nullptr;
+        ERenderType m_RenderType = ERenderType::SNOW; // ERenderType::RAIN;
+        ERenderType m_EnableRenderType = ERenderType::SMALL_SNOW_FORE;
+        bool m_IsPointerDown = true;
+        int m_WindowWidth = -1;
+        int m_WindowHeight = -1;
+        android_app *m_pApp = nullptr;
+        EGLDisplay m_Display = EGL_NO_DISPLAY;
+        EGLSurface m_Surface = EGL_NO_SURFACE;
+        EGLContext m_Context = EGL_NO_CONTEXT;
+        CSnowRenderer *m_pSnow = nullptr;
+        CRainRenderer *m_pRain = nullptr;
+        CRainRendererAsync *m_pRainAsync = nullptr;
+        CSnowRendererAsync *m_pSnowAsync = nullptr;
+        CCloudRendererBillBoard *m_pCloudScene = nullptr;
+        CSnowSceneRenderer *m_pSnowScene = nullptr;
     };
-
 }

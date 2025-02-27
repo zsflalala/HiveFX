@@ -1,6 +1,12 @@
 package com.hive.hivefx;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
+
 import com.google.androidgamesdk.GameActivity;
 
 public class MainActivity extends GameActivity
@@ -11,10 +17,23 @@ public class MainActivity extends GameActivity
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        addExtraViews();
+    }
+
+    private void addExtraViews() {
+        FrameLayout ParentFrameLayout = findViewById(contentViewId);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        @SuppressLint("InflateParams") View CustomLayout = inflater.inflate(R.layout.activity_game, null);
+        ParentFrameLayout.addView(CustomLayout);
+    }
+
+    @Override
     public void onWindowFocusChanged(boolean hasFocus)
     {
         super.onWindowFocusChanged(hasFocus);
-
         if (hasFocus)
         {
             hideSystemUi();

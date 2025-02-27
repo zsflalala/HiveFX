@@ -21,4 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "HiveFX"
 include(":app")
- 
+include(":mylibrary")
+include(":system_test001_frameplaying")
+include(":system_test002_slidewindow")
+include(":system_test004_snowstylization")
