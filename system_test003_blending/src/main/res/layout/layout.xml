@@ -69,7 +69,10 @@
                 android:layout_weight="1"
                 android:text="全屏序列帧"
                 android:backgroundTint="#fffccc"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
         </LinearLayout>
     </LinearLayout>
 
