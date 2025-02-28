@@ -4,7 +4,7 @@
 #include "Texture2D.h"
 
 namespace hiveVG {
-    CTextureBlender::CTextureBlender() : m_isInit(false), m_isDstTex1bound(false), m_DstFBO(0), m_SrcFBO(0)
+    CTextureBlender::CTextureBlender() : m_BlendingMode(EBlendingMode::NORMAL), m_isInit(false), m_isDstTex1bound(false), m_DstFBO(0), m_SrcFBO(0)
     {
         m_pScreenQuad = CScreenQuad::getOrCreate();
 
@@ -30,7 +30,6 @@ namespace hiveVG {
         if (m_pDstTexture1) delete m_pDstTexture1;
         if (m_pSrcTexture) delete m_pSrcTexture;
         if (m_pBlitShaderProgram) delete m_pBlitShaderProgram;
-        //if (m_pAlphaBlendShaderProgram) delete m_pAlphaBlendShaderProgram;
         for (auto ShaderProgram : m_pBlendShaderPrograms)
             if(ShaderProgram) delete ShaderProgram;
         m_pBlendShaderPrograms.clear();

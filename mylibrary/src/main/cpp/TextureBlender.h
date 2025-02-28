@@ -23,7 +23,7 @@ namespace hiveVG {
         void blitToScreen(CTexture2D *vTexture = nullptr);
         void blitSrcToScreen();
 
-        CShaderProgram* fetchBlitShaderProgram() { return m_pBlitShaderProgram; }
+        //CShaderProgram* fetchBlitShaderProgram() { return m_pBlitShaderProgram; }
 
     private:
         bool __createFBO();
@@ -34,7 +34,7 @@ namespace hiveVG {
         void __blend(CShaderProgram* vShaderProgram);
         bool __updateTexSize(GLuint& vFboId, CTexture2D* vTextrue, int vWidth, int vHeight);
 
-        EBlendingMode   m_BlendingMode = EBlendingMode::ALPHA_BLEND;
+        EBlendingMode   m_BlendingMode;
         bool            m_isInit;
         bool            m_isDstTex1bound;
         GLuint          m_DstFBO;
@@ -46,6 +46,7 @@ namespace hiveVG {
 
         CScreenQuad*    m_pScreenQuad = nullptr;
         CShaderProgram* m_pBlitShaderProgram = nullptr;
+
         std::vector<CShaderProgram *> m_pBlendShaderPrograms;
 
         std::string              m_pBlitVertShaderFile;
