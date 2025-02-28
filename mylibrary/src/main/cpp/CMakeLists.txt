@@ -10,7 +10,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         ShaderProgram.cpp
         ScreenQuad.cpp
         Texture2D.cpp
-        JsonReader.cpp)
+        JsonReader.cpp
+        TextureBlender.cpp)
 
 set(REQUIRED_PACKAGES
         glm

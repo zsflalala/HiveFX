@@ -43,5 +43,7 @@ bool CSingleTexturePlayer::initTextureAndShaderProgram(AAssetManager *vAssetMana
 void CSingleTexturePlayer::updateFrame()
 {
     m_pSingleShaderProgram->useProgram();
+    m_pSingleShaderProgram->setUniform("quadTexture", 0);
+    glActiveTexture(GL_TEXTURE0);
     m_pSingleTexture->bindTexture();
 }

@@ -18,6 +18,7 @@ namespace hiveVG::TAG_KEYWORD
     const char *const SINGLE_PALYER_TAG         = "CSequenceFramePlayer";
     const char *const SEQFRAME_PALYER_TAG       = "CSequenceFramePlayer";
     const char *const ASYNC_SEQFRAME_PALYER_TAG = "CAsyncSequenceFramePlayer";
+    const char *const TEXTURE_BLENDER_TAG      = "CTextureBlender";
 }
 
 namespace hiveVG
@@ -35,5 +36,10 @@ namespace hiveVG
     enum class EPlayType : std::uint8_t
     {
         FULLSCREEN = 0, PARTICAL
+    };
+
+    enum class EBlendingMode : std::uint8_t
+    {
+        ALPHA_BLEND, MULTIPLY, LIGHTEN, LINEAR_DODGE, LIGHTER_COLOR, OVERLAY, SOFT_LIGHT
     };
 }

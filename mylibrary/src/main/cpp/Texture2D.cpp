@@ -171,6 +171,40 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     return new CTexture2D(TextureHandle);
 }
 
+CTexture2D* CTexture2D::createEmptyTexture(int vWidth, int vHeight, int vChannels)
+{
+    GLint Format = GL_RGB;
+    if (vChannels == 3) Format = GL_RGB;
+    else if (vChannels == 4) Format = GL_RGBA;
+    else if (vChannels == 1) Format = GL_RED;
+    else LOG_WARN(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Channel Count is invalid, set default format [GL_RGB].");
+
+    double StartTime = __getCurrentTime();
+    GLuint TextureHandle;
+    glGenTextures(1, &TextureHandle);
+    glBindTexture(GL_TEXTURE_2D, TextureHandle);
+    glTexImage2D(GL_TEXTURE_2D, 0, Format, vWidth, vHeight, 0, Format, GL_UNSIGNED_BYTE, nullptr);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
+    if (!IsValid)
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create empty texture.");
+        return nullptr;
+    }
+    else
+    {
+        double EndTime = __getCurrentTime();
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Creating empty image costs time: %f", EndTime - StartTime);
+    }
+
+    return new CTexture2D(TextureHandle);
+}
+
 CTexture2D::~CTexture2D()
 {
     glDeleteTextures(1, &m_TextureHandle);
