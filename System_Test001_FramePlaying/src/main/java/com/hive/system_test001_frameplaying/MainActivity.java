@@ -1,14 +1,12 @@
 package com.hive.system_test001_frameplaying;
 
 import android.view.View;
-
 import com.google.androidgamesdk.GameActivity;
 
 public class MainActivity extends GameActivity
 {
     static
     {
-        System.loadLibrary("hivefxso");
         System.loadLibrary("system_test001_frameplaying");
     }
 

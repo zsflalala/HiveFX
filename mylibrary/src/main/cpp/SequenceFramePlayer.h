@@ -15,7 +15,7 @@ namespace hiveVG
     class CSequenceFramePlayer
     {
     public:
-        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType vPictureType = EPictureType::PNG);
+        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
         ~CSequenceFramePlayer();
 
         void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
@@ -54,11 +54,11 @@ namespace hiveVG
         std::string       m_TextureRootPath;
         int               m_CurrentTexture = 0;
         int               m_TextureCount;
-        EPictureType      m_TextureType     = EPictureType::PNG;
-        glm::vec2         m_ScreenUVScale   = glm::vec2(1.0f, 1.0f);
-        glm::vec2         m_ScreenUVOffset  = glm::vec2(0.0f, 0.0f);
-        glm::vec2		  m_WindowSize      = glm::vec2(0.0f, 0.0f);
-        glm::vec2         m_ScreenUVMovingSpeed = glm::vec2(0.1f, 0.0f);
+        glm::vec2         m_ScreenUVScale        = glm::vec2(1.0f, 1.0f);
+        glm::vec2         m_ScreenUVOffset       = glm::vec2(0.0f, 0.0f);
+        glm::vec2		  m_WindowSize           = glm::vec2(0.0f, 0.0f);
+        glm::vec2         m_ScreenUVMovingSpeed  = glm::vec2(0.1f, 0.0f);
+        EPictureType::EPictureType m_TextureType = EPictureType::PNG;
 
         std::vector<CTexture2D*> m_SeqTextures;
         CShaderProgram*          m_pSequenceShaderProgram = nullptr;

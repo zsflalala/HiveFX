@@ -27,35 +27,9 @@ CTestSequencePlayerRenderer::~CTestSequencePlayerRenderer()
 
 void CTestSequencePlayerRenderer::__initAlgorithm()
 {
-    std::string fileName = "configs/BasicFramePlayerConfig.json";
-
-    AAsset* asset = AAssetManager_open(m_pApp->activity->assetManager, fileName.c_str(), AASSET_MODE_BUFFER);
-    if (!asset) {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::MAIN_TAG, "file is not open");
-        return ;
-    }
-    off_t assetLength = AAsset_getLength(asset);
-    std::vector<char> buffer(assetLength);
-    AAsset_read(asset, buffer.data(), assetLength);
-    AAsset_close(asset);
-    std::string jsonContent = std::string(buffer.begin(), buffer.end());
-
-    Json::Value root;
-    Json::CharReaderBuilder reader;
-    std::string errs;
-
-    std::istringstream sstream(jsonContent);
-    if (!Json::parseFromStream(reader, sstream, &root, &errs)) {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::MAIN_TAG, "json file parse failed, %s", errs.c_str());
-        return;
-    }
-    LOG_INFO(hiveVG::TAG_KEYWORD::MAIN_TAG, "Name:  %s", root["name"].asString().c_str());
-    LOG_INFO(hiveVG::TAG_KEYWORD::MAIN_TAG, "Age:   %s", root["age"].asString().c_str());
-    LOG_INFO(hiveVG::TAG_KEYWORD::MAIN_TAG, "Email: %s", root["email"].asString().c_str());
-
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
-    EPictureType PictureType = EPictureType::PNG;
+    EPictureType::EPictureType PictureType = EPictureType::PNG;
     int SequenceRows = 1, SequenceCols = 1, TextureCount = 128;
 
     std::string  TexRootPath = "Textures/SmallSnow_fore";

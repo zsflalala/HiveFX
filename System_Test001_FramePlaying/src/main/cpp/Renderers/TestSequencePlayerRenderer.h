@@ -24,13 +24,14 @@ namespace hiveVG
         void   __initAlgorithm();
         static double __getCurrentTime();
 
-        double       m_LastFrameTime        = 0.0f;
-        double       m_CurrentTime          = 0.0f;
-        glm::vec2    m_UVOffset             = glm::vec2(0.0f, 0.0f);
-        EPlayType    m_PlayMode             = EPlayType::FULLSCREEN;
-        float        m_PlayScale            = 1.0f;
-        android_app* m_pApp                 = nullptr;
-        CScreenQuad* m_pScreenQuad          = nullptr;
-        CSequenceFramePlayer* m_pSmallSnowForePlayer = nullptr;
+        double                     m_LastFrameTime        = 0.0f;
+        double                     m_CurrentTime          = 0.0f;
+        glm::vec2                  m_UVOffset             = glm::vec2(0.0f, 0.0f);
+        EPlayType::EPlayType       m_PlayMode             = EPlayType::FULLSCREEN;
+        EPictureType::EPictureType m_PictureType          = EPictureType::PNG;
+        float                      m_PlayScale            = 1.0f;
+        android_app*               m_pApp                 = nullptr;
+        CScreenQuad*               m_pScreenQuad          = nullptr;
+        CSequenceFramePlayer*      m_pSmallSnowForePlayer          = nullptr;
     };
 }

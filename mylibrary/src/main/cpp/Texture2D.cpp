@@ -76,7 +76,7 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     return new CTexture2D(TextureHandle);
 }
 
-CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType& vPictureType)
+CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType)
 {
     if (!vAssetManager)
     {
@@ -98,7 +98,7 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
 
     double StartTime = __getCurrentTime();
     int Channels;
-    unsigned char* pImageData;
+    unsigned char *pImageData = nullptr;
     if (vPictureType == EPictureType::PNG || vPictureType == EPictureType::JPG)
     {
         pImageData = stbi_load_from_memory(pBuffer.get(), AssetSize, &voWidth, &voHeight, &Channels, 0);
@@ -220,7 +220,7 @@ CTexture2D::CTexture2D(GLuint vTextureHandle) : m_TextureHandle(vTextureHandle) 
 
 double CTexture2D::__getCurrentTime()
 {
-    struct timeval tv;
+    struct timeval tv{};
     gettimeofday(&tv, nullptr);
     return tv.tv_sec + tv.tv_usec / 1000000.0;
 }

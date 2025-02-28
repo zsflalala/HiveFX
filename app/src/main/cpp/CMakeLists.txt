@@ -4,9 +4,9 @@ project("hivefx")
 
 ########################## 第三方库 相关配置  开始################################
 
-add_library(mylibrary SHARED IMPORTED)
+add_library(hivefxso SHARED IMPORTED)
 
-set_target_properties(mylibrary PROPERTIES IMPORTED_LOCATION
+set_target_properties(hivefxso PROPERTIES IMPORTED_LOCATION
         ${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/jniLibs/${CMAKE_ANDROID_ARCH_ABI}/libhivefxso.so)
 
 include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
@@ -42,7 +42,7 @@ target_link_libraries(hivefx
         jnigraphics
         android
         log
-        mylibrary   # 链接第三方库
+        hivefxso   # 链接第三方库
         glm::glm
         libwebp::libwebp
         JsonCpp::JsonCpp

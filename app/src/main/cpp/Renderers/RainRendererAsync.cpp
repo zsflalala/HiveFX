@@ -25,7 +25,7 @@ CRainRendererAsync::~CRainRendererAsync()
 void CRainRendererAsync::__initAlgorithm()
 {
     int TextureCount = 64;
-    EPictureType PictureType = EPictureType::PNG;
+    EPictureType::EPictureType PictureType = EPictureType::PNG;
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
     m_pSmallRainForePlayer = new CAsyncSequenceFramePlayer("Textures/SmallRain_fore", TextureCount, PictureType);

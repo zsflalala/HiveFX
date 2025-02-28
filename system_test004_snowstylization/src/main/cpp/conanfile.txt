@@ -1,0 +1,11 @@
+[requires]
+glm/1.0.1
+libwebp/1.5.0
+jsoncpp/1.9.6
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout

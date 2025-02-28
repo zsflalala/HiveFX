@@ -26,7 +26,7 @@ namespace hiveVG
     class CAsyncSequenceFramePlayer
     {
     public:
-        CAsyncSequenceFramePlayer(const std::string& vTextureRootPath, int vTextureCount, EPictureType vPictureType = EPictureType::PNG);
+        CAsyncSequenceFramePlayer(const std::string& vTextureRootPath, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
         ~CAsyncSequenceFramePlayer();
 
         bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
@@ -40,7 +40,7 @@ namespace hiveVG
         double __getCostTime(std::vector<double> &vCostTime);
 
         int                                  m_TextureCount;
-        EPictureType                         m_TextureType            = EPictureType::PNG;
+        EPictureType::EPictureType           m_TextureType            = EPictureType::PNG;
         int                                  m_Frame                  = 0;
         int                                  m_LastLoadedFrame        = -1;
         int                                  m_FrameRate              = 60;

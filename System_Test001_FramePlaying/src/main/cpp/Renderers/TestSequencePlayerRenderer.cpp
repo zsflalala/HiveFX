@@ -24,33 +24,28 @@ CTestSequencePlayerRenderer::~CTestSequencePlayerRenderer()
 
 void CTestSequencePlayerRenderer::__initAlgorithm()
 {
-    // TODO : change the string to be universal
     std::string FileName = "configs/BasicFramePlayerConfig.json";
     CJsonReader JsonReader = CJsonReader(m_pApp->activity->assetManager, FileName);
     Json::Value SequenceConfig = JsonReader.getObject("sequence_config");
     std::string FramePath = SequenceConfig["frames_path"].asString();
     std::string FrameType = SequenceConfig["frames_type"].asString();
     int         FrameCount = SequenceConfig["frames_count"].asInt();
-    std::string PlayMode  = SequenceConfig["play_mode"].asString();
-    bool        IsLoop    = SequenceConfig["loop"].asBool();
-    int         PlayFPS   = SequenceConfig["fps"].asInt();
+    std::string PlayMode   = SequenceConfig["play_mode"].asString();
+    bool        IsLoop     = SequenceConfig["loop"].asBool();
+    int         PlayFPS    = SequenceConfig["fps"].asInt();
+    float       MoveSpeedX = SequenceConfig["moving_speed"][0].asFloat();
+    float       MoveSpeedY = SequenceConfig["moving_speed"][1].asFloat();
     m_PlayScale   = SequenceConfig["scale"].asFloat();
     m_UVOffset.x  = SequenceConfig["position"]["x"].asFloat();
     m_UVOffset.y  = SequenceConfig["position"]["y"].asFloat();
 
     int SequenceRows = 1, SequenceCols = 1;
-    EPictureType PictureType = EPictureType::PNG;
-
-    if (FrameType == "jpg")
-        PictureType = EPictureType::JPG;
-    else if (FrameType == "webp")
-        PictureType = EPictureType::WEBP;
-
-    if (PlayMode == "partial")
-        m_PlayMode = EPlayType::PARTICAL;
+    // String To Enum
+    m_PictureType = EPictureType::FromString(FrameType);
+    m_PlayMode    = EPlayType::FromString(PlayMode);
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pSmallSnowForePlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, PictureType);
+    m_pSmallSnowForePlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, m_PictureType);
     if(!m_pSmallSnowForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
@@ -58,10 +53,13 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     }
     m_pSmallSnowForePlayer->setFrameRate(PlayFPS);
     m_pSmallSnowForePlayer->setLoopPlayback(IsLoop);
-    m_pSmallSnowForePlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
-    m_pSmallSnowForePlayer->setScreenUVOffset(m_UVOffset);
-    if (m_PlayMode == EPlayType::PARTICAL)
+    if (m_PlayMode == EPlayType::PARTIAL)
+    {
         m_pSmallSnowForePlayer->setIsMoving(true);
+        m_pSmallSnowForePlayer->setScreenUVOffset(m_UVOffset);
+        m_pSmallSnowForePlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
+        m_pSmallSnowForePlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
+    }
     m_LastFrameTime = __getCurrentTime();
 }
 

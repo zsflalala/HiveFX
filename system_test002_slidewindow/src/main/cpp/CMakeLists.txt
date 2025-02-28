@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.22.1)
 
+project("system_test002_slidewindow")
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
-
-project("system_test002_slidewindow")
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
     system_test002_slidewindow.cpp

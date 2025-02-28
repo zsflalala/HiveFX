@@ -31,7 +31,7 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pSnow)       delete m_pSnow;
+    if (m_pTestPlayer)       delete m_pTestPlayer;
 }
 
 void CRenderer::__initRenderer()
@@ -94,8 +94,8 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    if (m_pSnow == nullptr) m_pSnow = new CTestSequencePlayerRenderer(m_pApp);
-    m_pSnow->renderScene(m_WindowWidth, m_WindowHeight);
+    if (m_pTestPlayer == nullptr) m_pTestPlayer = new CTestSequencePlayerRenderer(m_pApp);
+    m_pTestPlayer->renderScene(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
@@ -113,52 +113,4 @@ void CRenderer::__updateRenderArea()
         m_WindowHeight = Height;
         glViewport(0, 0, m_WindowWidth, m_WindowHeight);
     }
-}
-
-void CRenderer::handleInput()
-{
-    auto *pInputBuffer = android_app_swap_input_buffers(m_pApp);
-    if (!pInputBuffer) return;
-
-    for (auto i = 0; i < pInputBuffer->motionEventsCount; i++)
-    {
-        auto &MotionEvent = pInputBuffer->motionEvents[i];
-        auto Action = MotionEvent.action;
-
-        auto PointerIndex = (Action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-
-        auto &Pointer = MotionEvent.pointers[PointerIndex];
-        auto PointerX = GameActivityPointerAxes_getX(&Pointer);
-        auto PointerY = GameActivityPointerAxes_getY(&Pointer);
-
-        switch (Action & AMOTION_EVENT_ACTION_MASK)
-        {
-            case AMOTION_EVENT_ACTION_DOWN:
-            case AMOTION_EVENT_ACTION_POINTER_DOWN:
-                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
-                break;
-            case AMOTION_EVENT_ACTION_CANCEL:
-            case AMOTION_EVENT_ACTION_UP:
-            case AMOTION_EVENT_ACTION_POINTER_UP:
-                m_IsPointerDown    = false;
-                m_EnableRenderType = ERenderType::NONE;
-                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Up", Pointer.id, PointerX, PointerY);
-                break;
-
-            case AMOTION_EVENT_ACTION_MOVE:
-                for (auto Index = 0; Index < MotionEvent.pointerCount; Index++)
-                {
-                    Pointer = MotionEvent.pointers[Index];
-                    PointerX = GameActivityPointerAxes_getX(&Pointer);
-                    PointerY = GameActivityPointerAxes_getY(&Pointer);
-                    LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Move", Pointer.id, PointerX, PointerY);
-
-                    if (Index != (MotionEvent.pointerCount - 1)) LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, ",");
-                }
-                break;
-            default:
-                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Unknown MotionEvent Action: %d", Action);
-        }
-    }
-    android_app_clear_motion_events(pInputBuffer);
 }
