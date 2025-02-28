@@ -1,5 +1,6 @@
 #include "BillBoardManager.h"
 #include <random>
+#include "TextureBlender.h"
 
 using namespace hiveVG;
 
@@ -9,6 +10,7 @@ CBillBoardManager::~CBillBoardManager()
     {
         delete m_SequencePlayers[i];
     }
+    if (m_pTexBlender) delete m_pTexBlender;
 }
 
 void CBillBoardManager::pushBack(CSequenceFramePlayer* vSequenceFramePlayer)
@@ -37,11 +39,33 @@ void CBillBoardManager::updateFrameAndUV(int vWindowWidth, int vWindowHeight, do
 
 void CBillBoardManager::draw(CScreenQuad* vQuad)
 {
-    for (int i = 0; i < m_SequencePlayers.size(); i++)
+    auto DrawCallFunc = [this](CScreenQuad* vQuad, int Index)
+    {
+        this->m_SequencePlayers[Index]->draw(vQuad);
+    };
+
+    for (int i = 0; i < 1; i++)
     {
         if (!m_SequenceState[i]._IsAlive)
             continue;
-        m_SequencePlayers[i]->draw(vQuad)          ;
+        if(m_IsBlend)
+        {
+            LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"开启混合");
+            m_pTexBlender->drawAndBlend(std::bind(DrawCallFunc, vQuad, i));
+        }
+        else
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"关闭混合");
+            m_SequencePlayers[i]->draw(vQuad);
+        }
+    }
+    if(m_IsBlend)
+    {
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
+        m_pTexBlender->blitToScreen();
     }
 }
 
