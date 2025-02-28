@@ -29,6 +29,7 @@ namespace hiveVG
         void   __initBillBoardManager();
         double __getCurrentTime();
         void   __SequenceFrameDrawCallFunc(CSequenceFramePlayer* vSequFraPlayer, int vWindowWidth, int vWindowHeight, float vDeltaTime);
+
         void   __BillBoardDrawCallFunc(int vWindowWidth, int vWindowHeight, float vDeltaTime);
 
         bool         m_showLayer1 = true;
