@@ -4,15 +4,19 @@
 #include <vector>
 #include <set>
 #include <future>
+#include <mutex>
+#include <queue>
+#include <condition_variable>
+#include <functional>
 #include <GLES3/gl3.h>
 #include <android/asset_manager.h>
 #include "Common.h"
+#include "ThreadPool.h"
 
 namespace hiveVG
 {
     class CTexture2D;
     class CShaderProgram;
-
     struct STextureData
     {
         std::vector<unsigned char> _ImageData;
@@ -23,7 +27,11 @@ namespace hiveVG
         unsigned char* _Data = nullptr;
         std::atomic<bool> _IsLoaded { false };
     };
-
+    struct TextureLoadTask {
+        int index;
+        std::string path;
+        void *assetManager;
+    };
     class CAsyncSequenceFramePlayer
     {
     public:
@@ -37,6 +45,7 @@ namespace hiveVG
     private:
         void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::set<int> &vFramesToUploadGPU);
         void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedGPU);
+        void   __processTextureLoadQueue();
         double __getCurrentTime();
         double __getCostTime(std::vector<double> &vCostTime);
 
@@ -59,6 +68,9 @@ namespace hiveVG
         unsigned int*	                     m_pTextureHandles      = nullptr;
         CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
         std::vector<std::future<void>>       m_TextureLoadFutures;
-        GLuint                               m_PBOHandle;
+        ThreadPool                           m_ThreadPool;
+        std::queue<TextureLoadTask>          textureLoadQueue;
+        std::mutex                          queueMutex;
     };
+
 }

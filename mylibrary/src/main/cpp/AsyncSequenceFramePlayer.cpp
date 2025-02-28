@@ -10,7 +10,8 @@
 using namespace hiveVG;
 
 CAsyncSequenceFramePlayer::CAsyncSequenceFramePlayer(const std::string &vTextureRootPath,
-                                                     int vTextureCount, EPictureType::EPictureType vPictureType):m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType)
+                                                     int vTextureCount, EPictureType::EPictureType vPictureType):m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType),
+                                                                                                                 m_ThreadPool(std::thread::hardware_concurrency())
 {
     m_LoadedTextures  = std::vector<STextureData>(vTextureCount);
     m_FrameLoadedGPU  = std::vector<std::atomic<bool>>(vTextureCount);
@@ -43,11 +44,15 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAsse
     for (int i = 0;i < m_TextureCount;i++)
     {
         std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
-        m_TextureLoadFutures.emplace_back(std::async(std::launch::async,
+        /*m_TextureLoadFutures.emplace_back(std::async(std::launch::async,
                                                      [this, i, TexturePath, vAssetManager]()
                                                      {
                                                          __loadTextureDataAsync(vAssetManager, i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex,m_FramesToUploadGPU);
-                                                     }));
+                                                     }));*/
+        m_ThreadPool.enqueueTask([this, vAssetManager, i, TexturePath]() {
+            this->__loadTextureDataAsync(vAssetManager, i, TexturePath,m_LoadedTextures, m_LoadTextureToCPUMutex,m_FramesToUploadGPU);
+        });
+
     }
 
     m_pAsyncShaderProgram = CShaderProgram::createProgram(
@@ -218,8 +223,7 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
 
         glBindTexture(GL_TEXTURE_2D, vTextureHandles[vTextureIndex]);
         GLenum Format = (Texture._Channels == 4) ? GL_RGBA : GL_RGB;
-        //glTexImage2D(GL_TEXTURE_2D, 0, Format, Texture._Width, Texture._Height, 0, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, Texture._Width, Texture._Height, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
+        glTexImage2D(GL_TEXTURE_2D, 0, Format, Texture._Width, Texture._Height, 0, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
