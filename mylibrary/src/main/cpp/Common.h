@@ -22,6 +22,7 @@ namespace hiveVG::TAG_KEYWORD
     const char *const SINGLE_PALYER_TAG         = "CSequenceFramePlayer";
     const char *const SEQFRAME_PALYER_TAG       = "CSequenceFramePlayer";
     const char *const ASYNC_SEQFRAME_PALYER_TAG = "CAsyncSequenceFramePlayer";
+    const char *const TEXTURE_BLENDER_TAG      = "CTextureBlender";
     const char *const SYSTEMTEST_TAG            = "SystemTest";
     const char *const SNOW_STYLIZE_TAG          = "SnowStylize";
 }
@@ -38,5 +39,9 @@ namespace hiveVG
         NONE = 0, SNOW, RAIN, CLOUD, SNOW_SCENE, SMALL_SNOW_FORE, SMALL_SNOW_BACK, BIG_SNOW_FORE, BIG_SNOW_BACK, SMALL_RAIN_FORE, SMALL_RAIN_BACK, BIG_RAIN_FORE, BIG_RAIN_BACK
     };
 
+    enum class EBlendingMode : std::uint8_t
+    {
+        NORMAL, MULTIPLY, LIGHTEN, LINEAR_DODGE, LIGHTER_COLOR, OVERLAY, SOFT_LIGHT, COUNT
+    };
     const static std::string P60SaveToPhotoPath = "/storage/emulated/0/Pictures/Screenshots/";
 }
