@@ -273,7 +273,7 @@ void CSnowStylizer::__saveImg()
     {
         std::string FileName = std::vformat(m_FileNameFormat._FileName, std::make_format_args(i));
         std::string OutputFile;
-        OutputFile = hiveVG::P60SaveToPhotoPath + m_FileNameFormat._FilePath + "/" + FileName;
+        OutputFile = hiveVG::P60SaveToPhotoPath + FileName;
         bool SuccessFlag = cv::imwrite(OutputFile, m_LayerSnowImgs[i]);
         if (SuccessFlag)
         {
@@ -281,7 +281,7 @@ void CSnowStylizer::__saveImg()
         }
         else
         {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::SNOW_STYLIZE_TAG, "Failed to save the image.");
+            LOG_ERROR(hiveVG::TAG_KEYWORD::SNOW_STYLIZE_TAG, "Failed to save the image in [%s].", OutputFile.c_str());
         }
     }
 }

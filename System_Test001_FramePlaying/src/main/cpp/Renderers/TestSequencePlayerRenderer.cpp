@@ -53,11 +53,11 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     }
     m_pSmallSnowForePlayer->setFrameRate(PlayFPS);
     m_pSmallSnowForePlayer->setLoopPlayback(IsLoop);
-    m_pSmallSnowForePlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
-    m_pSmallSnowForePlayer->setScreenUVOffset(m_UVOffset);
     if (m_PlayMode == EPlayType::PARTIAL)
     {
         m_pSmallSnowForePlayer->setIsMoving(true);
+        m_pSmallSnowForePlayer->setScreenUVOffset(m_UVOffset);
+        m_pSmallSnowForePlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
         m_pSmallSnowForePlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
     }
     m_LastFrameTime = __getCurrentTime();
