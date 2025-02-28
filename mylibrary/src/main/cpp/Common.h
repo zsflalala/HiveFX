@@ -46,7 +46,7 @@ namespace hiveVG
 
     enum class EBlendingMode : std::uint8_t
     {
-        ALPHA_BLEND, MULTIPLY, LIGHTEN, LINEAR_DODGE, LIGHTER_COLOR, OVERLAY, SOFT_LIGHT
+        ALPHA_BLEND, MULTIPLY, LIGHTEN, LINEAR_DODGE, LIGHTER_COLOR, OVERLAY, SOFT_LIGHT, COUNT
     };
     const static std::string P60SaveToPhotoPath = "/storage/emulated/0/Pictures/Screenshots/";
 }

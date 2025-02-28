@@ -197,3 +197,10 @@ void CFullScreenSequenceBlendRenderer::changeLayerStatus(int vIndex)
             break;
     }
 }
+
+void CFullScreenSequenceBlendRenderer::changeBlendMode(int vMode)
+{
+    assert(vMode >= 0 && vMode < static_cast<int>(EBlendingMode::COUNT));
+    hiveVG::EBlendingMode Mode = static_cast<EBlendingMode>(vMode);
+    m_pTexBlender->setBlendingMode(Mode);
+}

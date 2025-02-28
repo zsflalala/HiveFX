@@ -140,7 +140,8 @@ void CRenderer::handleInput()
         {
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
-                if (PointerY > m_WindowHeight * 17.0 / 20.0) {
+                if (PointerY > m_WindowHeight * 17.0 / 20.0)
+                {
                     if (PointerX < m_WindowWidth / 2.0) {
                         if(PointerX < m_WindowWidth / 4.0)
                             m_pFullScreenSequenceBlendRenderer->changeLayerStatus(1);
@@ -154,6 +155,11 @@ void CRenderer::handleInput()
                         else
                             m_pFullScreenSequenceBlendRenderer->changeLayerStatus(3);
                     }
+                }
+                else if(PointerY < m_WindowHeight * 3.0 / 20.0)
+                {
+                    int Area = PointerX / (m_WindowWidth / 5);
+                    m_pFullScreenSequenceBlendRenderer->changeBlendMode(Area);
                 }
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
                 break;
