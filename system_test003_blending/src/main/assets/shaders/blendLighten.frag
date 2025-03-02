@@ -10,7 +10,6 @@ void main()
 {
     vec4 Source = texture(SrcTexture, TexCoord);
     vec4 Destination = texture(DstTexture, vec2(TexCoord.x, (1.0 - TexCoord.y)));
-    float MaxAlpha = max(Source.a, Destination.a);
     vec3 SrcColorWithAlpha = Source.rgb * Source.a;
     vec3 DstColorWithAlpha = Destination.rgb * Destination.a;
 

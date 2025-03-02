@@ -18,5 +18,6 @@ void main()
     vec3 Multiply = SrcColor * SrcAlpha * DstColor * DstAlpha;
     vec3 SrcContribution = SrcColor * SrcAlpha * ( 1.0 - DstAlpha );
     vec3 DstContribution = DstColor * DstAlpha * ( 1.0 - SrcAlpha );
-    FragColor.rgb =  Multiply + SrcContribution + DstContribution;
+    FragColor.rgb = Multiply + SrcContribution + DstContribution;
+    FragColor.rgb /= FragColor.a;
 }

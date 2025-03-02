@@ -179,7 +179,6 @@ namespace hiveVG {
         m_pBlendShaderPrograms.push_back(__compilerShader(vAssetManager, "shaders/blitTex2Screen.vert", "shaders/blendLighten.frag"));
         m_pBlendShaderPrograms.push_back(__compilerShader(vAssetManager, "shaders/blitTex2Screen.vert", "shaders/blendLinearDodge.frag"));
         m_pBlendShaderPrograms.push_back(__compilerShader(vAssetManager, "shaders/blitTex2Screen.vert", "shaders/blendLighterColor.frag"));
-//        m_pBlendShaderPrograms.push_back(__compilerShader(vAssetManager, "shaders/blitTex2Screen.vert", "shaders/blendOverlay.frag"));
 
         if(!m_pBlitShaderProgram)
             return false;
