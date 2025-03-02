@@ -27,6 +27,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
 find_package(game-activity REQUIRED CONFIG)
 
 set(REQUIRED_PACKAGES
+        glm
+        jsoncpp
         OpenCV
 )
 
@@ -42,5 +44,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         android
         log
         hivefxso   # 链接第三方库
+        glm::glm
+        JsonCpp::JsonCpp
         ${OpenCV_LIBS}
     )

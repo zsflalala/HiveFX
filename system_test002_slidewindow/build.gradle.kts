@@ -16,16 +16,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags += ""
+                cppFlags += "-std=c++17"
+                arguments("-DCMAKE_TOOLCHAIN_FILE=conan_android_toolchain.cmake")
             }
         }
-
-//        externalNativeBuild {
-//            cmake {
-//                cppFlags += "-std=c++17"
-//                arguments("-DCMAKE_TOOLCHAIN_FILE=conan_android_toolchain.cmake")
-//            }
-//        }
     }
 
     buildTypes {

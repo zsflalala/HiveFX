@@ -19,6 +19,7 @@ set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/opencv-mobile/sdk/native/jni")
 ########################## 第三方库 相关配置  结束 ################################
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
+        SlideWindow.cpp
         SingleTexturePlayer.cpp
         SequenceFramePlayer.cpp
         BillBoardManager.cpp
@@ -28,7 +29,9 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         Texture2D.cpp
         JsonReader.cpp
         EnumReflect.cpp
-        SnowStylizer.cpp)
+        SnowStylizer.cpp
+        TextureBlender.cpp
+        TimeUtils.cpp)
 
 set(REQUIRED_PACKAGES
         glm

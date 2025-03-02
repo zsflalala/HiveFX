@@ -1,12 +1,17 @@
 {
-  "name": "John Doe",
-  "age": 30,
-  "email": "john.doe@example.com",
-  "is_active": true,
-  "friends": ["Alice", "Bob", "Charlie"],
-  "address": {
-    "street": "123 Main St",
-    "city": "New York",
-    "zip": "10001"
+  "sequence_config": {
+    "frames_path": "textures/BigRainJPG",
+    "frames_type" : "jpg",
+    "frames_count": 64,
+    "play_mode": "fullscreen",
+    "position": {
+      "x": -1.0,
+      "y": -0.3
+    },
+    "fps": 60,
+    "loop": true,
+    "moving_speed": [0.2, 0.0],
+    "scale": 0.5,
+    "blend_mode": "additive"
   }
 }

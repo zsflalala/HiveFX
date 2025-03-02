@@ -1,6 +1,7 @@
 #include "SnowSceneRenderer.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include "Common.h"
+#include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "SingleTexturePlayer.h"
 #include "SequenceFramePlayer.h"
@@ -24,7 +25,7 @@ void CSnowSceneRenderer::__initAlgorithm()
     EPictureType::EPictureType PictureType = EPictureType::PNG;
     int SequenceRows = 1, SequenceCols = 1;
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer("Textures/SnowCover", SequenceRows, SequenceCols, TextureCount, PictureType);
+    m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer("textures/SnowCover", SequenceRows, SequenceCols, TextureCount, PictureType);
     if(!m_pSnowSceneSeqFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SnowScene initialization falied.");
@@ -36,7 +37,7 @@ void CSnowSceneRenderer::__initAlgorithm()
 
 void CSnowSceneRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 {
-    m_CurrentTime    = __getCurrentTime();
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
@@ -47,11 +48,4 @@ void CSnowSceneRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 
     m_pSnowSceneSeqFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
     m_pSnowSceneSeqFramePlayer->draw(m_pScreenQuad);
-}
-
-double CSnowSceneRenderer::__getCurrentTime()
-{
-    struct timeval tv;
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }

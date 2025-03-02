@@ -1,6 +1,7 @@
 #include "CloudRendererBillBoard.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include "Common.h"
+#include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "SequenceFramePlayer.h"
 #include "BillBoardManager.h"
@@ -21,7 +22,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
-    std::string TexRootPath = "Textures/Cloud2Scene";
+    std::string TexRootPath = "textures/Cloud2Scene";
     int SequenceRows = 1, SequenceCols = 1;
     int TextureCount = 180;
     CSequenceFramePlayer* Cloud2Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
@@ -31,7 +32,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
         return ;
     }
 
-    TexRootPath = "Textures/Cloud4Scene";
+    TexRootPath = "textures/Cloud4Scene";
     TextureCount = 176;
     CSequenceFramePlayer* Cloud4Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
     if (!Cloud4Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
@@ -40,7 +41,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
         return ;
     }
 
-    TexRootPath = "Textures/Cloud5Scene";
+    TexRootPath = "textures/Cloud5Scene";
     TextureCount = 128;
     CSequenceFramePlayer* Cloud5Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
     if (!Cloud5Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
@@ -55,12 +56,12 @@ void CCloudRendererBillBoard::__initAlgorithm()
     m_pCloudManager->pushBack(Cloud5Scene);
     m_pCloudManager->initSequenceState();
 
-    m_LastFrameTime = __getCurrentTime();
+    m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
 void CCloudRendererBillBoard::renderScene(int vWindowWidth, int vWindowHeight)
 {
-    m_CurrentTime    = __getCurrentTime();
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
@@ -80,11 +81,4 @@ void CCloudRendererBillBoard::renderScene(int vWindowWidth, int vWindowHeight)
         m_pCloudManager->setImageAspectRatioAt(i, ScreenUVScale[i]);
     }
     m_pCloudManager->draw(m_pScreenQuad);
-}
-
-double CCloudRendererBillBoard::__getCurrentTime()
-{
-    struct timeval tv;
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }

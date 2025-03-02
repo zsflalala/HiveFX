@@ -7,7 +7,7 @@ struct android_app;
 
 namespace hiveVG
 {
-    class CSingleTexturePlayer;
+    class CSequenceFramePlayer;
     class CScreenQuad;
 
     class CRenderer
@@ -17,25 +17,24 @@ namespace hiveVG
         ~CRenderer();
 
         void renderScene();
-        void handleInput();
 
     private:
         void __initRenderer();
         void __initAlgorithm();
         void __updateRenderArea();
         void __generateSnowScene();
-        static double __getCurrentTime();
 
-        ERenderType  m_RenderType           = ERenderType::SNOW;
-        ERenderType  m_EnableRenderType     = ERenderType::SMALL_SNOW_FORE;
-        bool         m_IsPointerDown        = false;
+        std::string  m_TexturePath;
+        std::string  m_P60GeneratePath      = P60SaveToPhotoPath;
         int          m_WindowWidth          = -1;
         int          m_WindowHeight         = -1;
+        double       m_LastFrameTime        = 0.0f;
+        double       m_CurrentTime          = 0.0f;
         android_app* m_pApp                 = nullptr;
         EGLDisplay   m_Display              = EGL_NO_DISPLAY;
         EGLSurface   m_Surface              = EGL_NO_SURFACE;
         EGLContext   m_Context              = EGL_NO_CONTEXT;
-        CSingleTexturePlayer* m_pTestPlayer = nullptr;
+        CSequenceFramePlayer* m_pTestPlayer = nullptr;
         CScreenQuad*          m_pScreenQuad = nullptr;
     };
 }

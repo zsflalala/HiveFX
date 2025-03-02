@@ -7,9 +7,11 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "Common.h"
+#include "TimeUtils.h"
 #include "ScreenQuad.h"
-#include "SingleTexturePlayer.h"
+#include "SequenceFramePlayer.h"
 #include "SnowStylizer.h"
+#include "JsonReader.h"
 
 using namespace hiveVG;
 
@@ -98,14 +100,24 @@ void CRenderer::__initRenderer()
 
 void CRenderer::__initAlgorithm()
 {
-    m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pTestPlayer = new CSingleTexturePlayer("backroad.png");
-    m_pTestPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    std::string ConfigFilePath = "configs/SnowStylizeConfig.json";
+    CJsonReader JsonConfig = CJsonReader(m_pApp->activity->assetManager, ConfigFilePath);
+    m_TexturePath = JsonConfig.getString(hiveVG::CONFIG_KEYWORD::TexturePath);
     __generateSnowScene();
+
+    m_pScreenQuad = CScreenQuad::getOrCreate();
+    int Rows = 1, Cols = 1, TextureCount = 5;
+    m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, Rows, Cols, TextureCount);
+    m_pTestPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pTestPlayer->setFrameRate(5);
 }
 
 void CRenderer::renderScene()
 {
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
+    double DeltaTime = m_CurrentTime - m_LastFrameTime;
+    m_LastFrameTime  = m_CurrentTime;
+
     __updateRenderArea();
 
     glClearColor(0.1f,0.1f,0.1f, 0.0f);
@@ -113,8 +125,8 @@ void CRenderer::renderScene()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pTestPlayer->updateFrame();
-    m_pScreenQuad->bindAndDraw();
+    m_pTestPlayer->updateFrameAndUV(m_WindowWidth, m_WindowHeight, DeltaTime);
+    m_pTestPlayer->draw(m_pScreenQuad);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
@@ -134,71 +146,16 @@ void CRenderer::__updateRenderArea()
     }
 }
 
-void CRenderer::handleInput()
-{
-    auto *pInputBuffer = android_app_swap_input_buffers(m_pApp);
-    if (!pInputBuffer) return;
-
-    for (auto i = 0; i < pInputBuffer->motionEventsCount; i++)
-    {
-        auto &MotionEvent = pInputBuffer->motionEvents[i];
-        auto Action = MotionEvent.action;
-
-        auto PointerIndex = (Action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-
-        auto &Pointer = MotionEvent.pointers[PointerIndex];
-        auto PointerX = GameActivityPointerAxes_getX(&Pointer);
-        auto PointerY = GameActivityPointerAxes_getY(&Pointer);
-
-        switch (Action & AMOTION_EVENT_ACTION_MASK)
-        {
-            case AMOTION_EVENT_ACTION_DOWN:
-            case AMOTION_EVENT_ACTION_POINTER_DOWN:
-                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
-                break;
-            case AMOTION_EVENT_ACTION_CANCEL:
-            case AMOTION_EVENT_ACTION_UP:
-            case AMOTION_EVENT_ACTION_POINTER_UP:
-                m_IsPointerDown    = false;
-                m_EnableRenderType = ERenderType::NONE;
-                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Up", Pointer.id, PointerX, PointerY);
-                break;
-
-            case AMOTION_EVENT_ACTION_MOVE:
-                for (auto Index = 0; Index < MotionEvent.pointerCount; Index++)
-                {
-                    Pointer = MotionEvent.pointers[Index];
-                    PointerX = GameActivityPointerAxes_getX(&Pointer);
-                    PointerY = GameActivityPointerAxes_getY(&Pointer);
-                    LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Move", Pointer.id, PointerX, PointerY);
-
-                    if (Index != (MotionEvent.pointerCount - 1)) LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, ",");
-                }
-                break;
-            default:
-                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Unknown MotionEvent Action: %d", Action);
-        }
-    }
-    android_app_clear_motion_events(pInputBuffer);
-}
-
 void CRenderer::__generateSnowScene()
 {
-    double TimeStart = __getCurrentTime();
+    double TimeStart = CTimeUtils::getCurrentTime();
     CSnowStylizer SnowGenerator;
-    SnowGenerator.loadImg(m_pApp->activity->assetManager,"backroad.png");
+    SnowGenerator.loadImg(m_pApp->activity->assetManager,m_TexturePath);
     SnowGenerator.setShapeFreq(15);
     SnowGenerator.setShapeAmplitude(5);
     SnowGenerator.generateSnow(5);
 
-    double TimeEnd = __getCurrentTime();
+    double TimeEnd = CTimeUtils::getCurrentTime();
     double ElapsedTime = TimeEnd - TimeStart;
     LOG_INFO(hiveVG::TAG_KEYWORD::SNOW_STYLIZE_TAG, "花费时间：%f", ElapsedTime);
-}
-
-double CRenderer::__getCurrentTime()
-{
-    struct timeval tv{};
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }
