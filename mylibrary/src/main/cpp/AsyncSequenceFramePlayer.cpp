@@ -59,7 +59,7 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAsse
         SingleTexPlayFrag);
     assert(m_pAsyncShaderProgram != nullptr);
 
-    m_GPULoadedTime = __getCurrentTime();
+    m_GPULoadedTime = CTimeUtils::getCurrentTime();
     return true;
 }
 
@@ -200,7 +200,7 @@ void CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetMana
         Texture._Channels = Channels;
         Texture._IsLoaded.store(true);
         vFramesToUploadGPU.insert(vFrameIndex);
-        double EndTime = __getCurrentTime();
+        double EndTime = CTimeUtils::getCurrentTime();
         double Duration = EndTime - StartTime;
         m_CPUCostTime.push_back(Duration);
         LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "CPU load frame %d costs time: %f", vFrameIndex, Duration);
@@ -225,7 +225,7 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
     auto &Texture = vLoadedTextures[vTextureIndex];
     if (Texture._IsLoaded.load())
     {
-        double StartTime = __getCurrentTime();
+        double StartTime = CTimeUtils::getCurrentTime();
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
         glGenerateMipmap(GL_TEXTURE_2D);
 
