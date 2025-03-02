@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project("hivefxso")
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
+        SlideWindow.cpp
         SingleTexturePlayer.cpp
         SequenceFramePlayer.cpp
         BillBoardManager.cpp
