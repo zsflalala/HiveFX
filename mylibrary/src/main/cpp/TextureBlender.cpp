@@ -5,7 +5,7 @@
 
 using namespace hiveVG;
 
-CTextureBlender::CTextureBlender() : m_BlendingMode(EBlendingMode::NORMAL), m_IsInit(false), m_IsDstTex1bound(false), m_DstFBO(0), m_SrcFBO(0)
+CTextureBlender::CTextureBlender() : m_BlendingMode(EBlendingMode::NORMAL), m_IsInit(false), m_IsDstTex1Bound(false), m_DstFBO(0), m_SrcFBO(0)
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
     // TODO: 用其他方式管理混合 shader。当使用到某 blend 算法时再生成
@@ -45,7 +45,7 @@ void CTextureBlender::updateResolution(int vWidth, int vHeight)
     // TODO
 }
 
-void CTextureBlender::drawAndBlend(std::function<void()> vDrawCall)
+void CTextureBlender::drawAndBlend(const std::function<void()>& vDrawCall)
 {
     if(!m_IsInit)
     {
@@ -78,7 +78,7 @@ void CTextureBlender::blitToScreen(CTexture2D *vTexture)
     m_pBlitShaderProgram->setUniform("fboTexture", 0);
     glActiveTexture(GL_TEXTURE0);
     if(vTexture == nullptr)
-        if(m_IsDstTex1bound)
+        if(m_IsDstTex1Bound)
             m_pDstTexture1->bindTexture();
         else
             m_pDstTexture0->bindTexture();
@@ -122,7 +122,7 @@ bool CTextureBlender::__updateTexSize(GLuint &vFboId, CTexture2D* vTexture, int 
 bool CTextureBlender::__createTexture(int vWidth, int vHeight)
 {
     int Channels = 4;
-    m_pSrcTexture = CTexture2D::createEmptyTexture(vWidth, vHeight, Channels);
+    m_pSrcTexture  = CTexture2D::createEmptyTexture(vWidth, vHeight, Channels);
     m_pDstTexture0 = CTexture2D::createEmptyTexture(vWidth, vHeight, Channels);
     m_pDstTexture1 = CTexture2D::createEmptyTexture(vWidth, vHeight, Channels);
     if(m_pSrcTexture == nullptr || m_pDstTexture0 == nullptr || m_pDstTexture1 == nullptr)
@@ -178,6 +178,11 @@ bool CTextureBlender::__compilerShaders(AAssetManager* vAssetManager)
 
     if(!m_pBlitShaderProgram)
         return false;
+    for (auto &pBlendShaderProgram: m_BlendShaderPrograms)
+    {
+        if (!pBlendShaderProgram) return false;
+    }
+
     return true;
 }
 
@@ -189,12 +194,12 @@ void CTextureBlender::__blend(CShaderProgram* vShaderProgram)
         return;
     }
     assert(vShaderProgram);
-    CTexture2D* pDstTex = m_IsDstTex1bound ? m_pDstTexture1 : m_pDstTexture0;
-    if(m_IsDstTex1bound)
+    CTexture2D* pDstTex = m_IsDstTex1Bound ? m_pDstTexture1 : m_pDstTexture0;
+    if(m_IsDstTex1Bound)
         __bindTex2FBO(m_DstFBO, m_pDstTexture0);
     else
         __bindTex2FBO(m_DstFBO, m_pDstTexture1);
-    m_IsDstTex1bound = !m_IsDstTex1bound;
+    m_IsDstTex1Bound = !m_IsDstTex1Bound;
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_DstFBO);
     glClearColor(0.0f, 1.0f, 0.0f, 0.0f);

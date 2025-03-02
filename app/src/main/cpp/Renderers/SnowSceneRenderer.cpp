@@ -25,7 +25,7 @@ void CSnowSceneRenderer::__initAlgorithm()
     EPictureType::EPictureType PictureType = EPictureType::PNG;
     int SequenceRows = 1, SequenceCols = 1;
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer("Textures/SnowCover", SequenceRows, SequenceCols, TextureCount, PictureType);
+    m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer("textures/SnowCover", SequenceRows, SequenceCols, TextureCount, PictureType);
     if(!m_pSnowSceneSeqFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SnowScene initialization falied.");

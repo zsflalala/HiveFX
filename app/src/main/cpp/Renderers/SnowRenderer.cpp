@@ -33,7 +33,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     EPictureType::EPictureType PictureType = EPictureType::PNG;
     int SequenceRows = 1, SequenceCols = 1, TextureCount = 128;
 
-    std::string  TexRootPath = "Textures/SmallSnow_fore";
+    std::string  TexRootPath = "textures/SmallSnow_fore";
     m_pSmallSnowForePlayer = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount, PictureType);
     if(!m_pSmallSnowForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
@@ -42,7 +42,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     }
     m_pSmallSnowForePlayer->setFrameRate(60.0f);
 
-    TexRootPath = "Textures/SmallSnow_back";
+    TexRootPath = "textures/SmallSnow_back";
     m_pSmallSnowBackPlayer = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount, PictureType);
     if(!m_pSmallSnowBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
@@ -51,7 +51,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     }
     m_pSmallSnowBackPlayer->setFrameRate(60.0f);
 
-    TexRootPath = "Textures/BigSnow_fore";
+    TexRootPath = "textures/BigSnow_fore";
     m_pBigSnowForePlayer = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount, PictureType);
     if(!m_pBigSnowForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
@@ -60,7 +60,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     }
     m_pBigSnowForePlayer->setFrameRate(60.0f);
 
-    TexRootPath = "Textures/BigSnow_back";
+    TexRootPath = "textures/BigSnow_back";
     m_pBigSnowBackPlayer = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount, PictureType);
     if(!m_pBigSnowBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
@@ -69,7 +69,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     }
     m_pBigSnowBackPlayer->setFrameRate(60.0f);
 
-    m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer("Textures/SnowCover", SequenceRows, SequenceCols, TextureCount, PictureType);
+    m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer("textures/SnowCover", SequenceRows, SequenceCols, TextureCount, PictureType);
     if(!m_pSnowSceneSeqFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SnowScene initialization falied.");

@@ -21,8 +21,6 @@ namespace hiveVG
     private:
         void __initRenderer();
         void __updateRenderArea();
-        void __blendInit();
-        void __blendTest();
 
         bool         m_IsPointerDown = false;
         int          m_WindowWidth   = -1;

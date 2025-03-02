@@ -1,6 +1,6 @@
 {
   "sequence_config": {
-    "frames_path": "Textures/BigRainJPG",
+    "frames_path": "textures/BigRainJPG",
     "frames_type" : "jpg",
     "frames_count": 64,
     "play_mode": "fullscreen",

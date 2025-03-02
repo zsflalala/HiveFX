@@ -22,7 +22,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
-    std::string TexRootPath = "Textures/Cloud2Scene";
+    std::string TexRootPath = "textures/Cloud2Scene";
     int SequenceRows = 1, SequenceCols = 1;
     int TextureCount = 180;
     CSequenceFramePlayer* Cloud2Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
@@ -32,7 +32,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
         return ;
     }
 
-    TexRootPath = "Textures/Cloud4Scene";
+    TexRootPath = "textures/Cloud4Scene";
     TextureCount = 176;
     CSequenceFramePlayer* Cloud4Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
     if (!Cloud4Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
@@ -41,7 +41,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
         return ;
     }
 
-    TexRootPath = "Textures/Cloud5Scene";
+    TexRootPath = "textures/Cloud5Scene";
     TextureCount = 128;
     CSequenceFramePlayer* Cloud5Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
     if (!Cloud5Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))

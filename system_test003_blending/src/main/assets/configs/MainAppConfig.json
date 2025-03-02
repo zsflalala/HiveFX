@@ -3,7 +3,7 @@
         "layer_type" : "sequence_frame",
         "blend_mode" : "multiply",
         "config" : {
-            "frames_path" : "Textures/BigRainJPG",
+            "frames_path" : "textures/BigRainJPG",
             "frames_type" : "png",
             "frames_count" : 64,
             "play_mode" : "fullscreen",
@@ -21,7 +21,7 @@
         "layer_type" : "sequence_frame",
         "blend_mode" : "normal",
         "config": {
-        "frames_path": "Textures/Cloud",
+        "frames_path": "textures/Cloud",
         "frames_type" : "png",
         "frames_count": 64,
         "play_mode": "partical",
@@ -37,7 +37,6 @@
     },
     "background_house" : {
         "layer_type" : "single_picture",
-        "blend_mode" : "normal",
-        ""
+        "blend_mode" : "normal"
     }
 }

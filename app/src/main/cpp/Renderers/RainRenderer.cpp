@@ -29,23 +29,23 @@ void CRainRenderer::__initAlgorithm()
     EPictureType::EPictureType PictureType = EPictureType::PNG;
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
-    m_pSmallRainForePlayer = new CSequenceFramePlayer("Textures/SmallRain_fore", SequenceRows, SequenceCols, TextureCount, PictureType);
+    m_pSmallRainForePlayer = new CSequenceFramePlayer("textures/SmallRain_fore", SequenceRows, SequenceCols, TextureCount, PictureType);
     m_pSmallRainForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pSmallRainForePlayer->setFrameRate(60.0);
 
-    m_pSmallRainBackPlayer = new CSequenceFramePlayer("Textures/SmallRain_back", SequenceRows, SequenceCols, TextureCount, PictureType);
+    m_pSmallRainBackPlayer = new CSequenceFramePlayer("textures/SmallRain_back", SequenceRows, SequenceCols, TextureCount, PictureType);
     m_pSmallRainBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pSmallRainBackPlayer->setFrameRate(60.0);
 
-    m_pBigRainForePlayer   = new CSequenceFramePlayer("Textures/BigRain_fore", SequenceRows, SequenceCols, TextureCount, PictureType);
+    m_pBigRainForePlayer   = new CSequenceFramePlayer("textures/BigRain_fore", SequenceRows, SequenceCols, TextureCount, PictureType);
     m_pBigRainForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pBigRainForePlayer->setFrameRate(60.0);
 
-    m_pBigRainBackPlayer   = new CSequenceFramePlayer("Textures/BigRain_back", SequenceRows, SequenceCols, TextureCount, PictureType);
+    m_pBigRainBackPlayer   = new CSequenceFramePlayer("textures/BigRain_back", SequenceRows, SequenceCols, TextureCount, PictureType);
     m_pBigRainBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pBigRainBackPlayer->setFrameRate(60.0);
 
-    m_pBackFramePlayer     = new CSingleTexturePlayer("Textures/snowScene.png");
+    m_pBackFramePlayer     = new CSingleTexturePlayer("textures/snowScene.png");
     m_pBackFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 }
 
