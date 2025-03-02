@@ -44,11 +44,6 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAsse
     for (int i = 0;i < m_TextureCount;i++)
     {
         std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
-        /*m_TextureLoadFutures.emplace_back(std::async(std::launch::async,
-                                                     [this, i, TexturePath, vAssetManager]()
-                                                     {
-                                                         __loadTextureDataAsync(vAssetManager, i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex,m_FramesToUploadGPU);
-                                                     }));*/
         m_ThreadPool.enqueueTask([this, vAssetManager, i, TexturePath]() {
             this->__loadTextureDataAsync(vAssetManager, i, TexturePath,m_LoadedTextures, m_LoadTextureToCPUMutex,m_FramesToUploadGPU);
         });
@@ -88,7 +83,6 @@ void CAsyncSequenceFramePlayer::updateFrames()
         m_GPUCostTime.clear();
     }
 
-    // TODO : update loading frame logic.
     if (m_FrameLoadedGPU[m_Frame].load())
     {
         m_LastLoadedFrame = m_Frame;
