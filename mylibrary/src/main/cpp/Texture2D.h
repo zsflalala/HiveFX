@@ -12,6 +12,7 @@ namespace hiveVG
     public:
         static CTexture2D* loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath);
         static CTexture2D* loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType);
+        static CTexture2D* loadTextureFromMobile(const std::string &vTexturePath);
         static CTexture2D* createEmptyTexture(int vWidth, int vHeight, int vChannels);
 
         ~CTexture2D();

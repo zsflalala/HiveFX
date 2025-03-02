@@ -37,18 +37,24 @@ CSequenceFramePlayer::~CSequenceFramePlayer()
 
 bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetManager)
 {
+    if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
+        m_TextureRootPath += '/';
     std::string PictureSuffix;
     if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
     else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
     for (int i = 0; i < m_TextureCount; i++)
     {
-        std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;;
+        std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;;
         CTexture2D* pSequenceTexture = CTexture2D::loadTexture(vAssetManager, TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
         if (!pSequenceTexture)
         {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
-            return false;
+            pSequenceTexture = CTexture2D::loadTextureFromMobile(TexturePath);
+            if (!pSequenceTexture)
+            {
+                LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+                return false;
+            }
         }
         m_SeqTextures.push_back(pSequenceTexture);
     }
