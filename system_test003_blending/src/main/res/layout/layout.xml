@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- 顶部按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="top">
+
+        <!-- 横向排列按钮的容器 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/Normal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="正常"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="#7fccddff"
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+
+            <Button
+                android:id="@+id/Multiply"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="正片叠底"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="#7fccddff"
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+
+            <Button
+                android:id="@+id/Lighten"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="变亮"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="#7fccddff"
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+
+            <Button
+                android:id="@+id/LinearDodge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="线性减淡"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="#7fccddff"
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+
+            <Button
+                android:id="@+id/LighterColor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="浅色"
+                android:backgroundTint="#7fccddff"
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 底部按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="bottom"> <!-- 整体布局底部对齐 -->
+
+        <!-- 横向排列按钮的容器 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <!-- 按钮1 -->
+            <Button
+                android:id="@+id/btn1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="全屏序列帧"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="#7ffffccc"
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+
+            <!-- 按钮2 -->
+            <Button
+                android:id="@+id/btn2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="运动矩形"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="#7ffffccc"
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+
+            <!-- 按钮3 -->
+            <Button
+                android:id="@+id/btn3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="单个图像"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="#7ffffccc"
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+
+            <!-- 按钮4 -->
+            <Button
+                android:id="@+id/btn4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="全屏序列帧"
+                android:backgroundTint="#7ffffccc"
+                android:textColor="@android:color/black"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -20,7 +20,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         externalNativeBuild {
             cmake {
-                cppFlags += "-std=c++17"
+                cppFlags += "-std=c++20"
                 arguments("-DCMAKE_TOOLCHAIN_FILE=conan_android_toolchain.cmake")
             }
         }
@@ -48,7 +48,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)

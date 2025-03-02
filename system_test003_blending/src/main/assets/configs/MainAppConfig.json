@@ -1,0 +1,43 @@
+{
+    "foreground_rain": {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "multiply",
+        "config" : {
+            "frames_path" : "Textures/BigRainJPG",
+            "frames_type" : "png",
+            "frames_count" : 64,
+            "play_mode" : "fullscreen",
+            "position" : {
+                "x" : -1.0,
+                "y" : -0.3
+            },
+            "fps" : 60,
+            "loop" : true,
+            "moving_speed": [0.2, 0.0],
+            "scale": 0.5
+        }
+    },
+    "billboard_cloud" : {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config": {
+        "frames_path": "Textures/Cloud",
+        "frames_type" : "png",
+        "frames_count": 64,
+        "play_mode": "partical",
+        "position": {
+            "x": -1.0,
+            "y": -0.3
+        },
+        "fps": 60,
+        "loop": true,
+        "moving_speed": [0.2, 0.0],
+        "scale": 0.5
+        }
+    },
+    "background_house" : {
+        "layer_type" : "single_picture",
+        "blend_mode" : "normal",
+        ""
+    }
+}

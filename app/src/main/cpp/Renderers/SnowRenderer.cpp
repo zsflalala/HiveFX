@@ -3,6 +3,7 @@
 #include <android/asset_manager.h>
 #include <json/json.h>
 #include "Common.h"
+#include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "SingleTexturePlayer.h"
 #include "SequenceFramePlayer.h"
@@ -38,7 +39,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
-    };
+    }
     m_pSmallSnowForePlayer->setFrameRate(60.0f);
 
     TexRootPath = "Textures/SmallSnow_back";
@@ -47,7 +48,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
-    };
+    }
     m_pSmallSnowBackPlayer->setFrameRate(60.0f);
 
     TexRootPath = "Textures/BigSnow_fore";
@@ -56,7 +57,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
-    };
+    }
     m_pBigSnowForePlayer->setFrameRate(60.0f);
 
     TexRootPath = "Textures/BigSnow_back";
@@ -65,7 +66,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
-    };
+    }
     m_pBigSnowBackPlayer->setFrameRate(60.0f);
 
     m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer("Textures/SnowCover", SequenceRows, SequenceCols, TextureCount, PictureType);
@@ -73,15 +74,15 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SnowScene initialization falied.");
         return ;
-    };
+    }
     m_pSnowSceneSeqFramePlayer->setFrameRate(5);
 
-    m_LastFrameTime = __getCurrentTime();
+    m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
 void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 {
-    m_CurrentTime    = __getCurrentTime();
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
@@ -133,11 +134,4 @@ void CTestSequencePlayerRenderer::handleInput(ERenderType vInputType, bool vIsPo
         if (vIsPointerDown && !m_PreviousPointerState) m_EnableBigSnowBack   = !m_EnableBigSnowBack;
     }
     m_PreviousPointerState = vIsPointerDown;
-}
-
-double CTestSequencePlayerRenderer::__getCurrentTime()
-{
-    struct timeval tv;
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }
