@@ -30,7 +30,6 @@ namespace hiveVG
         bool __createTexture(int vWidth, int vHeight);
         bool __bindTex2FBO(GLuint& vFboId, CTexture2D* vTexture);
         bool __compilerShaders(AAssetManager* vAssetManager);
-        CShaderProgram* __compilerShader(AAssetManager* vAssetManager, const std::string& vVertFile, const std::string& vFragFile);
         void __blend(CShaderProgram* vShaderProgram);
         bool __updateTexSize(GLuint& vFboId, CTexture2D* vTextrue, int vWidth, int vHeight);
 

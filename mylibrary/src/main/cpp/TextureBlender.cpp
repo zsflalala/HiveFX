@@ -4,6 +4,7 @@
 #include "Texture2D.h"
 
 using namespace hiveVG;
+
 CTextureBlender::CTextureBlender() : m_BlendingMode(EBlendingMode::NORMAL), m_IsInit(false), m_IsDstTex1bound(false), m_DstFBO(0), m_SrcFBO(0)
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
@@ -166,29 +167,18 @@ bool CTextureBlender::__bindTex2FBO(GLuint &vFboId, CTexture2D *vTexture)
 
 bool CTextureBlender::__compilerShaders(AAssetManager* vAssetManager)
 {
-    m_pBlitShaderProgram = __compilerShader(vAssetManager, BlitTex2ScreenVert, BlitTex2ScreenFrag);
-    m_BlendShaderPrograms.push_back(__compilerShader(vAssetManager, BlitTex2ScreenVert, BlendAlphaFrag));
-    m_BlendShaderPrograms.push_back(__compilerShader(vAssetManager, BlitTex2ScreenVert, BlendMultiplyFrag));
-    m_BlendShaderPrograms.push_back(__compilerShader(vAssetManager, BlitTex2ScreenVert, BlendLightenFrag));
-    m_BlendShaderPrograms.push_back(__compilerShader(vAssetManager, BlitTex2ScreenVert, BlendLinearDodgeFrag));
-    m_BlendShaderPrograms.push_back(__compilerShader(vAssetManager, BlitTex2ScreenVert, BlendLighterColorFrag));
-    // m_BlendShaderPrograms.push_back(__compilerShader(vAssetManager, BlitTex2ScreenVert, BlendOverlayFrag));
+
+    m_pBlitShaderProgram = CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlitTex2ScreenFrag);
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendAlphaFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendMultiplyFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendLightenFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendLinearDodgeFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendLighterColorFrag));
+    // m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendOverlayFrag));
 
     if(!m_pBlitShaderProgram)
         return false;
     return true;
-}
-
-CShaderProgram* CTextureBlender::__compilerShader(AAssetManager *vAssetManager, const std::string &vVertFile, const std::string &vFragFile)
-{
-    auto Program = CShaderProgram::createProgram(vAssetManager, vVertFile, vFragFile);
-    if(!Program)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE_BLENDER_TAG, "Shader \"%s\" & \"%s\" build error.", vVertFile.c_str(), vFragFile.c_str());
-        return nullptr;
-    }
-    assert(Program != nullptr);
-    return Program;
 }
 
 void CTextureBlender::__blend(CShaderProgram* vShaderProgram)
