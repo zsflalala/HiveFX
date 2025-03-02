@@ -24,7 +24,7 @@ void CSnowSceneRendererAsync::__initAlgorithm()
     EPictureType::EPictureType PictureType = EPictureType::PNG;
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
-    m_pSnowSceneSeqFramePlayer = new CAsyncSequenceFramePlayer("Textures/SnowCover", TextureCount, PictureType);
+    m_pSnowSceneSeqFramePlayer = new CAsyncSequenceFramePlayer("textures/SnowCover", TextureCount, PictureType);
     m_pSnowSceneSeqFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pSnowSceneSeqFramePlayer->setFrameRate(5);
     m_pSnowSceneSeqFramePlayer->setLoopPlayback(false);
@@ -35,10 +35,11 @@ void CSnowSceneRendererAsync::renderScene()
     glClearColor(0.1f,0.1f,0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
     m_pSnowSceneSeqFramePlayer->updateFrames();
     m_pScreenQuad->bindAndDraw();
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 }
 
