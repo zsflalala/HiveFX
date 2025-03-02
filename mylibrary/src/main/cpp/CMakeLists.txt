@@ -29,7 +29,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         JsonReader.cpp
         EnumReflect.cpp
         SnowStylizer.cpp
-        TextureBlender.cpp)
+        TextureBlender.cpp
+        TimeUtils.cpp)
 
 set(REQUIRED_PACKAGES
         glm

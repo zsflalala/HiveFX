@@ -1,4 +1,5 @@
 #pragma once
+
 #include <functional>
 #include <string>
 #include <vector>
@@ -6,13 +7,14 @@
 #include <android/asset_manager.h>
 #include "Common.h"
 
-namespace hiveVG {
-    //typedef void (*DrawCallsFunc)();
+namespace hiveVG
+{
     class CShaderProgram;
     class CScreenQuad;
     class CTexture2D;
 
-    class CTextureBlender {
+    class CTextureBlender
+    {
     public:
         CTextureBlender();
         ~CTextureBlender();
@@ -22,8 +24,6 @@ namespace hiveVG {
         void drawAndBlend(std::function<void()> vDrawCall);
         void blitToScreen(CTexture2D *vTexture = nullptr);
         void blitSrcToScreen();
-
-        //CShaderProgram* fetchBlitShaderProgram() { return m_pBlitShaderProgram; }
 
     private:
         bool __createFBO();
@@ -35,22 +35,20 @@ namespace hiveVG {
         bool __updateTexSize(GLuint& vFboId, CTexture2D* vTextrue, int vWidth, int vHeight);
 
         EBlendingMode   m_BlendingMode;
-        bool            m_isInit;
-        bool            m_isDstTex1bound;
+        bool            m_IsInit;
+        bool            m_IsDstTex1bound;
         GLuint          m_DstFBO;
         GLuint          m_SrcFBO;
 
         CTexture2D*     m_pDstTexture0 = nullptr;
         CTexture2D*     m_pDstTexture1 = nullptr;
         CTexture2D*     m_pSrcTexture  = nullptr;
-
-        CScreenQuad*    m_pScreenQuad = nullptr;
+        CScreenQuad*    m_pScreenQuad  = nullptr;
         CShaderProgram* m_pBlitShaderProgram = nullptr;
 
-        std::vector<CShaderProgram *> m_pBlendShaderPrograms;
-
-        std::string              m_pBlitVertShaderFile;
-        std::vector<std::string> m_pBlendShaderFileList;
+        std::vector<CShaderProgram*> m_BlendShaderPrograms;
+        std::string                  m_BlitVertShaderFile;
+        std::vector<std::string>     m_BlendShaderFileList;
     };
 }
 

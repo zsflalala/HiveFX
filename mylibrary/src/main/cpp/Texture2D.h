@@ -22,7 +22,6 @@ namespace hiveVG
 
     private:
         inline explicit CTexture2D(GLuint vTextureHandle);
-        static double __getCurrentTime();
 
         GLuint m_TextureHandle;
     };

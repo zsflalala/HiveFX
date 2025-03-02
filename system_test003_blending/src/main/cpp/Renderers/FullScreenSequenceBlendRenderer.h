@@ -25,17 +25,15 @@ namespace hiveVG
         void changeBlendMode(int vMode);
 
     private:
-        void   __initAlgorithm();
-        void   __initBillBoardManager();
-        double __getCurrentTime();
-        void   __SequenceFrameDrawCallFunc(CSequenceFramePlayer* vSequFraPlayer, int vWindowWidth, int vWindowHeight, float vDeltaTime);
+        void __initAlgorithm();
+        void __initBillBoardManager();
+        void __SequenceFrameDrawCallFunc(CSequenceFramePlayer* vSequFraPlayer, int vWindowWidth, int vWindowHeight, double vDeltaTime);
+        void __BillBoardDrawCallFunc(int vWindowWidth, int vWindowHeight, double vDeltaTime);
 
-        void   __BillBoardDrawCallFunc(int vWindowWidth, int vWindowHeight, float vDeltaTime);
-
-        bool         m_showLayer1 = true;
-        bool         m_showLayer2 = true;
-        bool         m_showLayer3 = true;
-        bool         m_showLayer4 = true;
+        bool         m_ShowLayer1    = true;
+        bool         m_ShowLayer2    = true;
+        bool         m_ShowLayer3    = true;
+        bool         m_ShowLayer4    = true;
         double       m_LastFrameTime = 0.0f;
         double       m_CurrentTime   = 0.0f;
         android_app* m_pApp          = nullptr;

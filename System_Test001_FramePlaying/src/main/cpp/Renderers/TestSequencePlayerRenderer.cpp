@@ -3,6 +3,7 @@
 #include <android/asset_manager.h>
 #include <json/json.h>
 #include "Common.h"
+#include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "SingleTexturePlayer.h"
 #include "SequenceFramePlayer.h"
@@ -60,12 +61,12 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
         m_pSmallSnowForePlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
         m_pSmallSnowForePlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
     }
-    m_LastFrameTime = __getCurrentTime();
+    m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
 void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 {
-    m_CurrentTime    = __getCurrentTime();
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
@@ -76,11 +77,4 @@ void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeigh
 
     m_pSmallSnowForePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
     m_pSmallSnowForePlayer->draw(m_pScreenQuad);
-}
-
-double CTestSequencePlayerRenderer::__getCurrentTime()
-{
-    struct timeval tv{};
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }

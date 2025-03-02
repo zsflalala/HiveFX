@@ -22,7 +22,7 @@ namespace hiveVG::TAG_KEYWORD
     const char *const SINGLE_PALYER_TAG         = "CSequenceFramePlayer";
     const char *const SEQFRAME_PALYER_TAG       = "CSequenceFramePlayer";
     const char *const ASYNC_SEQFRAME_PALYER_TAG = "CAsyncSequenceFramePlayer";
-    const char *const TEXTURE_BLENDER_TAG      = "CTextureBlender";
+    const char *const TEXTURE_BLENDER_TAG       = "CTextureBlender";
     const char *const SYSTEMTEST_TAG            = "SystemTest";
     const char *const SNOW_STYLIZE_TAG          = "SnowStylize";
 }
@@ -41,7 +41,23 @@ namespace hiveVG
 
     enum class EBlendingMode : std::uint8_t
     {
-        NORMAL, MULTIPLY, LIGHTEN, LINEAR_DODGE, LIGHTER_COLOR, OVERLAY, SOFT_LIGHT, COUNT
+        NORMAL = 0, MULTIPLY, LIGHTEN, LINEAR_DODGE, LIGHTER_COLOR, OVERLAY, SOFT_LIGHT, COUNT
     };
+
     const static std::string P60SaveToPhotoPath = "/storage/emulated/0/Pictures/Screenshots/";
+
+    // Shaders config path
+    const static std::string SeqTexPlayVert        = "shaders/sequenceTexturePlayer.vert";
+    const static std::string SeqTexPlayFrag        = "shaders/sequenceTexturePlayer.frag";
+    const static std::string SingleTexPlayVert     = "shaders/singleTexturePlayer.vert";
+    const static std::string SingleTexPlayFrag     = "shaders/singleTexturePlayer.frag";
+
+    const static std::string BlitTex2ScreenVert    = "shaders/blitTex2Screen.vert";
+    const static std::string BlitTex2ScreenFrag    = "shaders/blitTex2Screen.frag";
+    const static std::string BlendAlphaFrag        = "shaders/blendAlpha.frag";
+    const static std::string BlendMultiplyFrag     = "shaders/blendMultiply.frag";
+    const static std::string BlendLightenFrag      = "shaders/blendLighten.frag";
+    const static std::string BlendLinearDodgeFrag  = "shaders/blendLinearDodge.frag";
+    const static std::string BlendLighterColorFrag = "shaders/blendLighterColor.frag";
+    const static std::string BlendOverlayFrag      = "shaders/blendOverlay.frag";
 }

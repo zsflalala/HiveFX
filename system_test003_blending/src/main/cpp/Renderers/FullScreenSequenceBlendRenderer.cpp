@@ -1,6 +1,7 @@
 #include "FullScreenSequenceBlendRenderer.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include "Common.h"
+#include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "Texture2D.h"
 #include "SingleTexturePlayer.h"
@@ -28,25 +29,23 @@ CFullScreenSequenceBlendRenderer::~CFullScreenSequenceBlendRenderer()
 
 void CFullScreenSequenceBlendRenderer::render(int vWindowWidth, int vWindowHeight)
 {
-    m_CurrentTime    = __getCurrentTime();
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
     glClearColor(0.1f,0.2f,0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    std::function<void()> SequFrameDrawCallFunc;
-
+    std::function<void()> SeqFrameDrawCallFunc;
     // 第四层：背景序列帧
-    if (m_showLayer4)
+    if (m_ShowLayer4)
     {
-        SequFrameDrawCallFunc = std::bind(&CFullScreenSequenceBlendRenderer::__SequenceFrameDrawCallFunc,
-                                                                this, m_pBackSequFraPlayer, vWindowWidth, vWindowHeight, DeltaTime);
-        m_pTexBlender->drawAndBlend(SequFrameDrawCallFunc);
+        SeqFrameDrawCallFunc = [this, vWindowWidth, vWindowHeight, DeltaTime] { __SequenceFrameDrawCallFunc(m_pBackSequFraPlayer, vWindowWidth, vWindowHeight, DeltaTime); };
+        m_pTexBlender->drawAndBlend(SeqFrameDrawCallFunc);
     }
 
     // 第三层：中景图片
-    if(m_showLayer3)
+    if(m_ShowLayer3)
     {
         std::function<void()> SingleTexDrawCallFunc = [this]()
         {
@@ -56,33 +55,28 @@ void CFullScreenSequenceBlendRenderer::render(int vWindowWidth, int vWindowHeigh
         m_pTexBlender->drawAndBlend(SingleTexDrawCallFunc);
     }
 
-    if(m_showLayer2)
+    if(m_ShowLayer2)
     {
-        SequFrameDrawCallFunc = std::bind(&CFullScreenSequenceBlendRenderer::__BillBoardDrawCallFunc,
-                                          this, vWindowWidth, vWindowHeight, DeltaTime);
-        m_pTexBlender->drawAndBlend(SequFrameDrawCallFunc);
+        SeqFrameDrawCallFunc = [this, vWindowWidth, vWindowHeight, DeltaTime] { __BillBoardDrawCallFunc(vWindowWidth, vWindowHeight, DeltaTime); };
+        m_pTexBlender->drawAndBlend(SeqFrameDrawCallFunc);
     }
 
     // 第一层：前景序列帧
-    if(m_showLayer1)
+    if(m_ShowLayer1)
     {
-        SequFrameDrawCallFunc = std::bind(&CFullScreenSequenceBlendRenderer::__SequenceFrameDrawCallFunc,
-                                          this, m_pForeSequFraPlayer, vWindowWidth, vWindowHeight, DeltaTime);
-        m_pTexBlender->drawAndBlend(SequFrameDrawCallFunc);
+        SeqFrameDrawCallFunc = [this, vWindowWidth, vWindowHeight, DeltaTime] { __SequenceFrameDrawCallFunc(m_pForeSequFraPlayer, vWindowWidth, vWindowHeight, DeltaTime); };
+        m_pTexBlender->drawAndBlend(SeqFrameDrawCallFunc);
     }
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_pTexBlender->blitToScreen();
-    //m_pTexBlender->blitSrcToScreen();
 }
 
 void CFullScreenSequenceBlendRenderer::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
-
     m_pBackground = CTexture2D::loadTexture(m_pApp->activity->assetManager, "Textures/park.png");
-
     m_pMediumShot = new CSingleTexturePlayer("Textures/Background.png");
     m_pMediumShot->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 
@@ -103,25 +97,19 @@ void CFullScreenSequenceBlendRenderer::__initAlgorithm()
     __initBillBoardManager();
 
     m_pTexBlender = new CTextureBlender();
-    int Width, Height;
+    int Width = 0, Height = 0;
     assert(m_pApp->window != nullptr);
-    if (m_pApp->window != nullptr) {
+    if (m_pApp->window != nullptr)
+    {
         Width = ANativeWindow_getWidth(m_pApp->window);
         Height = ANativeWindow_getHeight(m_pApp->window);
     }
 
     m_pTexBlender->init(m_pApp->activity->assetManager,Width, Height);
-
-    m_LastFrameTime = __getCurrentTime();
+    m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
-double CFullScreenSequenceBlendRenderer::__getCurrentTime() {
-    struct timeval tv{};
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
-}
-
-void CFullScreenSequenceBlendRenderer::__SequenceFrameDrawCallFunc(CSequenceFramePlayer* vSequFraPlayer, int vWindowWidth, int vWindowHeight, float vDeltaTime)
+void CFullScreenSequenceBlendRenderer::__SequenceFrameDrawCallFunc(CSequenceFramePlayer* vSequFraPlayer, int vWindowWidth, int vWindowHeight, double vDeltaTime)
 {
     vSequFraPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, vDeltaTime);
     vSequFraPlayer->draw(m_pScreenQuad);
@@ -132,7 +120,7 @@ void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
     std::string TexRootPath = "Textures/Cloud2Scene";
     int SequenceRows = 1, SequenceCols = 1;
     int TextureCount = 180;
-    CSequenceFramePlayer* Cloud2Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
+    auto* Cloud2Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
     if (!Cloud2Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
@@ -141,7 +129,7 @@ void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
 
     TexRootPath = "Textures/Cloud4Scene";
     TextureCount = 176;
-    CSequenceFramePlayer* Cloud4Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
+    auto* Cloud4Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
     if (!Cloud4Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
@@ -150,7 +138,7 @@ void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
 
     TexRootPath = "Textures/Cloud5Scene";
     TextureCount = 128;
-    CSequenceFramePlayer* Cloud5Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
+    auto* Cloud5Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
     if (!Cloud5Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
@@ -164,7 +152,7 @@ void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
     m_pCloudManager->initSequenceState();
 }
 
-void CFullScreenSequenceBlendRenderer::__BillBoardDrawCallFunc(int vWindowWidth, int vWindowHeight, float vDeltaTime)
+void CFullScreenSequenceBlendRenderer::__BillBoardDrawCallFunc(int vWindowWidth, int vWindowHeight, double vDeltaTime)
 {
     m_pCloudManager->updateFrameAndUV(vWindowWidth, vWindowHeight, vDeltaTime);
     m_pCloudManager->updateSequenceState(vDeltaTime);
@@ -184,16 +172,19 @@ void CFullScreenSequenceBlendRenderer::changeLayerStatus(int vIndex)
     switch (vIndex)
     {
         case(1):
-            m_showLayer1 = !m_showLayer1;
+            m_ShowLayer1 = !m_ShowLayer1;
             break;
         case(2):
-            m_showLayer2 = !m_showLayer2;
+            m_ShowLayer2 = !m_ShowLayer2;
             break;
         case(3):
-            m_showLayer3 = !m_showLayer3;
+            m_ShowLayer3 = !m_ShowLayer3;
             break;
         case(4):
-            m_showLayer4 = !m_showLayer4;
+            m_ShowLayer4 = !m_ShowLayer4;
+            break;
+        default:
+            LOG_ERROR(TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "No acceptable index [%d].", vIndex);
             break;
     }
 }
@@ -201,6 +192,6 @@ void CFullScreenSequenceBlendRenderer::changeLayerStatus(int vIndex)
 void CFullScreenSequenceBlendRenderer::changeBlendMode(int vMode)
 {
     assert(vMode >= 0 && vMode < static_cast<int>(EBlendingMode::COUNT));
-    hiveVG::EBlendingMode Mode = static_cast<EBlendingMode>(vMode);
+    auto Mode = static_cast<EBlendingMode>(vMode);
     m_pTexBlender->setBlendingMode(Mode);
 }

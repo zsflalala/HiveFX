@@ -2,6 +2,7 @@
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include "Common.h"
 #include "ScreenQuad.h"
+#include "TimeUtils.h"
 #include "SingleTexturePlayer.h"
 #include "SequenceFramePlayer.h"
 
@@ -50,7 +51,7 @@ void CRainRenderer::__initAlgorithm()
 
 void CRainRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 {
-    m_CurrentTime    = __getCurrentTime();
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
@@ -103,11 +104,4 @@ void CRainRenderer::handleInput(ERenderType vInputType, bool vIsPointerDown)
         if (vIsPointerDown && !m_PreviousPointerState) m_EnableBigRainBack   = !m_EnableBigRainBack;
     }
     m_PreviousPointerState = vIsPointerDown;
-}
-
-double CRainRenderer::__getCurrentTime()
-{
-    struct timeval tv;
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }

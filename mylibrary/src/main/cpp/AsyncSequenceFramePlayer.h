@@ -36,7 +36,6 @@ namespace hiveVG
     private:
         void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::queue<int> &vFramesToUploadGPU);
         void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedGPU);
-        double __getCurrentTime();
         double __getCostTime(std::vector<double> &vCostTime);
 
         int                                  m_TextureCount;

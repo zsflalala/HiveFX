@@ -5,10 +5,12 @@
 
 struct android_app;
 
-namespace hiveVG {
+namespace hiveVG
+{
 
     class CFullScreenSequenceBlendRenderer;
-    class CRenderer {
+    class CRenderer
+    {
     public:
         CRenderer(android_app *vApp);
         ~CRenderer();

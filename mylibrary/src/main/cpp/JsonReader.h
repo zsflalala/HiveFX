@@ -17,7 +17,7 @@ namespace hiveVG
         double      getDouble(const std::string& vKey)  const;
         bool        getBool(const std::string& vKey)    const;
         Json::Value getArray(const std::string& vKey)   const;
-        Json::Value getObject(const std::string& vKey)   const;
+        Json::Value getObject(const std::string& vKey)  const;
 
     private:
         void __checkKeyExists(const std::string& vKey) const;

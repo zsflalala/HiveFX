@@ -21,7 +21,6 @@ namespace hiveVG
 
     private:
         void   __initAlgorithm();
-        double __getCurrentTime();
 
         double       m_LastFrameTime = 0.0f;
         double       m_CurrentTime   = 0.0f;

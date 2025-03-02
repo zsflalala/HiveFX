@@ -1,6 +1,7 @@
 #include "CloudRendererBillBoard.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include "Common.h"
+#include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "SequenceFramePlayer.h"
 #include "BillBoardManager.h"
@@ -55,12 +56,12 @@ void CCloudRendererBillBoard::__initAlgorithm()
     m_pCloudManager->pushBack(Cloud5Scene);
     m_pCloudManager->initSequenceState();
 
-    m_LastFrameTime = __getCurrentTime();
+    m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
 void CCloudRendererBillBoard::renderScene(int vWindowWidth, int vWindowHeight)
 {
-    m_CurrentTime    = __getCurrentTime();
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
@@ -80,11 +81,4 @@ void CCloudRendererBillBoard::renderScene(int vWindowWidth, int vWindowHeight)
         m_pCloudManager->setImageAspectRatioAt(i, ScreenUVScale[i]);
     }
     m_pCloudManager->draw(m_pScreenQuad);
-}
-
-double CCloudRendererBillBoard::__getCurrentTime()
-{
-    struct timeval tv;
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }
