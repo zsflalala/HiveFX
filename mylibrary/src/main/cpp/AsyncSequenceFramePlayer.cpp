@@ -10,7 +10,7 @@
 using namespace hiveVG;
 
 CAsyncSequenceFramePlayer::CAsyncSequenceFramePlayer(const std::string &vTextureRootPath,
-                                                     int vTextureCount, EPictureType::EPictureType vPictureType):m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType),
+                                                     int vTextureCount, EPictureType::EPictureType vPictureType):m_TextureRootPath(vTextureRootPath), m_ValidFrames(vTextureCount),m_TextureCount(vTextureCount), m_TextureType(vPictureType),
                                                                                                                  m_ThreadPool(std::thread::hardware_concurrency())
 {
     m_LoadedTextures  = std::vector<STextureData>(vTextureCount);
@@ -95,6 +95,11 @@ void CAsyncSequenceFramePlayer::updateFrames()
         double FrameTime = 1.0 / m_FrameRate;
         if (CurrentTime - m_LastFrameTime >= FrameTime)
         {
+            if (!m_IsLoop && m_Frame == m_ValidFrames - 1)
+            {
+                m_IsFinished = true;
+                return;
+            }
             m_Frame = (m_Frame + 1) % m_TextureCount;
             m_LastFrameTime = CurrentTime;
         }
@@ -108,6 +113,11 @@ void CAsyncSequenceFramePlayer::updateFrames()
             double FrameTime = 1.0 / m_FrameRate;
             if (TimeElapsed >= FrameTime)
             {
+                if (!m_IsLoop && m_Frame == m_ValidFrames - 1)
+                {
+                    m_IsFinished = true;
+                    return;
+                }
                 m_Frame = (m_Frame + 1) % m_TextureCount;
                 m_LastFrameTime = CurrentTime;
                 LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d is not loaded for too long, skipping to next frame.", m_Frame);

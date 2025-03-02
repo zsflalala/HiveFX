@@ -6,6 +6,7 @@
 #include "Renderers/SnowRenderer.h"
 #include "Renderers/RainRendererAsync.h"
 #include "Renderers/SnowRendererAsync.h"
+#include "Renderers/SnowSceneRendererAsync.h"
 #include "Renderers/CloudRendererBillBoard.h"
 #include "Renderers/SnowSceneRenderer.h"
 #include "Renderers/RainRenderer.h"
@@ -137,9 +138,13 @@ void CRenderer::renderScene()
     }
     else if (m_RenderType == ERenderType::SNOW_SCENE)
     {
-        if (m_pSnowScene == nullptr)
+       /* if (m_pSnowScene == nullptr)
             m_pSnowScene = new CSnowSceneRenderer(m_pApp);
-        m_pSnowScene->renderScene(m_WindowWidth, m_WindowHeight);
+        m_pSnowScene->renderScene(m_WindowWidth, m_WindowHeight);*/
+        if (m_pSnowSceneASync == nullptr)
+            m_pSnowSceneASync = new CSnowSceneRendererAsync(m_pApp);
+        m_pSnowSceneASync->handleInput(m_EnableRenderType, m_IsPointerDown);
+        m_pSnowSceneASync->renderScene();
     }
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);

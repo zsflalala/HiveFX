@@ -41,19 +41,29 @@ namespace hiveVG
         bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
         void updateFrames();
         void setFrameRate(int vFrameRate) { m_FrameRate = vFrameRate; }
+        void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
+        void setValidFrames(int vValidFrames)   { m_ValidFrames = vValidFrames; }
 
+        [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
+        [[nodiscard]] bool getLoopState()   const { return m_IsLoop; }
+        [[nodiscard]] int  getSingleTextureWidth() const  { return m_SequeceSingleTextureWidth; }
+        [[nodiscard]] int  getSingleTextureHeight() const { return m_SequeceSingleTextureHeight; }
     private:
         void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::set<int> &vFramesToUploadGPU);
         void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedGPU);
-        void   __processTextureLoadQueue();
         double __getCurrentTime();
         double __getCostTime(std::vector<double> &vCostTime);
 
+        bool                                 m_IsLoop          = true;
+        bool                                 m_IsFinished      = false;
         int                                  m_TextureCount;
         EPictureType::EPictureType           m_TextureType            = EPictureType::PNG;
         int                                  m_Frame                  = 0;
         int                                  m_LastLoadedFrame        = -1;
         int                                  m_FrameRate              = 60;
+        int                                  m_ValidFrames;
+        int				                     m_SequeceSingleTextureWidth;
+        int				                     m_SequeceSingleTextureHeight;
         double                               m_LastFrameTime          = 0;
         double                               m_FrameLoadTimeThreshold = 0.1f;
         double                               m_CPULoadedTime;

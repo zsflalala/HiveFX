@@ -10,6 +10,7 @@ namespace hiveVG
     class CTestSequencePlayerRenderer;
     class CRainRendererAsync;
     class CSnowRendererAsync;
+    class CSnowSceneRendererAsync;
     class CCloudRendererBillBoard;
     class CSnowSceneRenderer;
     class CRainRenderer;
@@ -42,5 +43,6 @@ namespace hiveVG
         CSnowRendererAsync*          m_pSnowAsync  = nullptr;
         CCloudRendererBillBoard*     m_pCloudScene = nullptr;
         CSnowSceneRenderer*          m_pSnowScene  = nullptr;
+        CSnowSceneRendererAsync*     m_pSnowSceneASync  = nullptr;
     };
 }
