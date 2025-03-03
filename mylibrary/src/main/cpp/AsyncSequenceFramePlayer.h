@@ -17,6 +17,7 @@ namespace hiveVG
 {
     class CTexture2D;
     class CShaderProgram;
+
     struct STextureData
     {
         std::vector<unsigned char> _ImageData;
@@ -26,11 +27,6 @@ namespace hiveVG
         int _Format   = 0;
         unsigned char* _Data = nullptr;
         std::atomic<bool> _IsLoaded { false };
-    };
-    struct TextureLoadTask {
-        int index;
-        std::string path;
-        void *assetManager;
     };
     class CAsyncSequenceFramePlayer
     {
@@ -48,6 +44,7 @@ namespace hiveVG
         [[nodiscard]] bool getLoopState()   const { return m_IsLoop; }
         [[nodiscard]] int  getSingleTextureWidth() const  { return m_SequeceSingleTextureWidth; }
         [[nodiscard]] int  getSingleTextureHeight() const { return m_SequeceSingleTextureHeight; }
+
     private:
         void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::set<int> &vFramesToUploadGPU);
         void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedGPU);
@@ -78,8 +75,7 @@ namespace hiveVG
         CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
         std::vector<std::future<void>>       m_TextureLoadFutures;
         ThreadPool                           m_ThreadPool;
-        std::queue<TextureLoadTask>          textureLoadQueue;
-        std::mutex                          queueMutex;
+
     };
 
 }

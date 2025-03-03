@@ -67,9 +67,20 @@ void CAsyncSequenceFramePlayer::updateFrames()
 {
     if (!m_FramesToUploadGPU.empty())
     {
-        int FrameToUpload = *m_FramesToUploadGPU.begin();
+        /*int FrameToUpload = *m_FramesToUploadGPU.begin();
         m_FramesToUploadGPU.erase(m_FramesToUploadGPU.begin());
-        __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureHandles, m_FrameLoadedGPU);
+        __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureHandles, m_FrameLoadedGPU);*/
+        std::vector<int> FramesToUpload;  // 用于存储待上传的帧
+        {
+            std::lock_guard<std::mutex> lock(m_LoadTextureToCPUMutex);  // 加锁访问
+            FramesToUpload.assign(m_FramesToUploadGPU.begin(), m_FramesToUploadGPU.end());
+            m_FramesToUploadGPU.clear();  // 清空待上传队列
+        }
+
+        for (int FrameToUpload : FramesToUpload)
+        {
+            __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureHandles, m_FrameLoadedGPU);
+        }
     }
     double CurrentTime = CTimeUtils::getCurrentTime();
     if (m_CPUCostTime.size() == m_TextureCount)
