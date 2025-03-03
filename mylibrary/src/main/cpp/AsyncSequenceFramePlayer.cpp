@@ -4,6 +4,7 @@
 #include "ShaderProgram.h"
 #include "ScreenQuad.h"
 #include "Common.h"
+#include "TimeUtils.h"
 #include "stb_image.h"
 #include "webp/decode.h"
 
@@ -33,7 +34,7 @@ CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
 
 bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAssetManager)
 {
-    m_CPULoadedTime = __getCurrentTime();
+    m_CPULoadedTime = CTimeUtils::getCurrentTime();
     std::string PictureSuffix;
     if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
     else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
@@ -50,12 +51,12 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAsse
 
     m_pAsyncShaderProgram = CShaderProgram::createProgram(
             vAssetManager,
-            "shaders/singleTexturePlayer.vert",
-            "shaders/singleTexturePlayer.frag"
+            SingleTexPlayVert,
+            SingleTexPlayFrag
     );
     assert(m_pAsyncShaderProgram != nullptr);
 
-    m_GPULoadedTime = __getCurrentTime();
+    m_GPULoadedTime = CTimeUtils::getCurrentTime();
     glGenTextures(m_TextureCount, m_pTextureHandles);
     return true;
 }
@@ -68,7 +69,7 @@ void CAsyncSequenceFramePlayer::updateFrames()
         m_FramesToUploadGPU.pop();
         __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureHandles, m_FrameLoadedGPU);
     }
-    double CurrentTime = __getCurrentTime();
+    double CurrentTime = CTimeUtils::getCurrentTime();
     if (m_CPUCostTime.size() == m_TextureCount)
     {
         double CPUAverageTime = __getCostTime(m_CPUCostTime);
@@ -148,7 +149,7 @@ CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, 
     AAsset_read(pAsset, pBuffer.get(), AssetSize);
     AAsset_close(pAsset);
 
-    double StartTime = __getCurrentTime();
+    double StartTime = CTimeUtils::getCurrentTime();
     int Width, Height, Channels;
     uint8_t* pTexData = nullptr;
 
@@ -189,7 +190,7 @@ CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, 
         Texture._Channels = Channels;
         Texture._IsLoaded.store(true);
         vFramesToUploadGPU.push(vFrameIndex);
-        double EndTime = __getCurrentTime();
+        double EndTime = CTimeUtils::getCurrentTime();
         double Duration = EndTime - StartTime;
         m_CPUCostTime.push_back(Duration);
         LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG,"CPU load frame %d costs time: %f",vFrameIndex, Duration);
@@ -211,7 +212,7 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
     auto& Texture = vLoadedTextures[vTextureIndex];
     if (Texture._IsLoaded.load())
     {
-        double StartTime = __getCurrentTime();
+        double StartTime = CTimeUtils::getCurrentTime();
         glBindTexture(GL_TEXTURE_2D, vTextureHandles[vTextureIndex]);
         GLenum Format = (Texture._Channels == 4) ? GL_RGBA : GL_RGB;
         glTexImage2D(GL_TEXTURE_2D, 0, Format, Texture._Width, Texture._Height, 0, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
@@ -221,7 +222,7 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glGenerateMipmap(GL_TEXTURE_2D);
         vFrameLoadedGPU[vTextureIndex].store(true);
-        double EndTime  = __getCurrentTime();
+        double EndTime  = CTimeUtils::getCurrentTime();
         double Duration = EndTime - StartTime;
         m_GPUCostTime.push_back(Duration);
         LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG,"GPU load frame %d costs time: %f",vTextureIndex, Duration);
@@ -230,13 +231,6 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "%d hasn't loaded yet.", vTextureIndex);
     }
-}
-
-double CAsyncSequenceFramePlayer::__getCurrentTime()
-{
-    struct timeval tv;
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }
 
 double CAsyncSequenceFramePlayer::__getCostTime(std::vector<double> &vCostTime)

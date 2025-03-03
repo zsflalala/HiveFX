@@ -22,7 +22,6 @@ namespace hiveVG
 
     private:
         void   __initAlgorithm();
-        double __getCurrentTime();
 
         bool         m_PreviousPointerState = false;
         bool         m_EnableBigSnowFore    = false;

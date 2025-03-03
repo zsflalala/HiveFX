@@ -1,0 +1,7 @@
+{
+  "slide_config": {
+    "picture_path": "textures/silk1.png",
+    "slide_speed" : 5.0,
+    "slide_direction" : "vertical"
+  }
+}

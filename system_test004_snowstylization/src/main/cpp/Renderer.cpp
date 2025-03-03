@@ -7,6 +7,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "Common.h"
+#include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "SingleTexturePlayer.h"
 #include "SnowStylizer.h"
@@ -141,7 +142,7 @@ void CRenderer::__updateRenderArea()
 
 void CRenderer::__generateSnowScene()
 {
-    double TimeStart = __getCurrentTime();
+    double TimeStart = CTimeUtils::getCurrentTime();
     CSnowStylizer SnowGenerator;
     SnowGenerator.loadImg(m_pApp->activity->assetManager,m_TexturePath);
 //    SnowGenerator.loadImg(m_pApp->activity->assetManager,m_TexturePath, cv::Vec3b(246, 246, 246));
@@ -149,14 +150,7 @@ void CRenderer::__generateSnowScene()
     SnowGenerator.setShapeAmplitude(5);
     SnowGenerator.generateSnow(5);
 
-    double TimeEnd = __getCurrentTime();
+    double TimeEnd = CTimeUtils::getCurrentTime();
     double ElapsedTime = TimeEnd - TimeStart;
     LOG_INFO(hiveVG::TAG_KEYWORD::SNOW_STYLIZE_TAG, "花费时间：%f", ElapsedTime);
-}
-
-double CRenderer::__getCurrentTime()
-{
-    struct timeval tv{};
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec / 1000000.0;
 }

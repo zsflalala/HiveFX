@@ -27,8 +27,8 @@ namespace hiveVG
         void setIsMoving(bool vIsMoving)        { m_IsMoving = vIsMoving; }
         void setScreenUVMovingSpeed(const glm::vec2& vMovingSpeed) { m_ScreenUVMovingSpeed = vMovingSpeed; }
 
-        [[nodiscard]] int  getSingleTextureWidth() const  { return m_SequeceSingleTextureWidth; }
-        [[nodiscard]] int  getSingleTextureHeight() const { return m_SequeceSingleTextureHeight; }
+        [[nodiscard]] int  getSingleTextureWidth() const  { return m_SequenceSingleTextureWidth; }
+        [[nodiscard]] int  getSingleTextureHeight() const { return m_SequenceSingleTextureHeight; }
         [[nodiscard]] bool getLoopState()   const { return m_IsLoop; }
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
 
@@ -39,10 +39,10 @@ namespace hiveVG
     private:
         int               m_SequenceRows;
         int               m_SequenceCols;
-        int				  m_SequeceWidth;
-        int				  m_SequeceHeight;
-        int				  m_SequeceSingleTextureWidth;
-        int				  m_SequeceSingleTextureHeight;
+        int				  m_SequenceWidth;
+        int				  m_SequenceHeight;
+        int				  m_SequenceSingleTextureWidth;
+        int				  m_SequenceSingleTextureHeight;
         int               m_ValidFrames;
         float             m_FramePerSecond  = 24.0f;
         bool              m_IsLoop          = true;

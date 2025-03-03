@@ -23,7 +23,6 @@ namespace hiveVG
         void __initAlgorithm();
         void __updateRenderArea();
         void __generateSnowScene();
-        static double __getCurrentTime();
 
         std::string  m_TexturePath;
         int          m_WindowWidth          = -1;

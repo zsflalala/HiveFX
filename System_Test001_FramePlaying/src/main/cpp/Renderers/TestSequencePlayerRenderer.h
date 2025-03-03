@@ -22,7 +22,6 @@ namespace hiveVG
 
     private:
         void   __initAlgorithm();
-        static double __getCurrentTime();
 
         double                     m_LastFrameTime        = 0.0f;
         double                     m_CurrentTime          = 0.0f;
@@ -32,6 +31,6 @@ namespace hiveVG
         float                      m_PlayScale            = 1.0f;
         android_app*               m_pApp                 = nullptr;
         CScreenQuad*               m_pScreenQuad          = nullptr;
-        CSequenceFramePlayer*      m_pSmallSnowForePlayer          = nullptr;
+        CSequenceFramePlayer*      m_pSmallSnowForePlayer = nullptr;
     };
 }

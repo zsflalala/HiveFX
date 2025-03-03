@@ -101,7 +101,6 @@ void CRenderer::render()
     __updateRenderArea();
 
     m_pFullScreenSequenceBlendRenderer->render(m_WindowWidth,m_WindowHeight);
-
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
