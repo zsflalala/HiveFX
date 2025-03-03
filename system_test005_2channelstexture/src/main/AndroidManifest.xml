@@ -18,7 +18,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.app.lib_name"
-                android:value="CppPackageName" />
+                android:value="system_test005_2channelstexture" />
         </activity>
     </application>
 

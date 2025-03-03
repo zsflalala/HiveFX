@@ -1,6 +1,7 @@
 package com.example.system_test006_scrollrain;
 
 import android.view.View;
+
 import com.google.androidgamesdk.GameActivity;
 
 public class MainActivity extends GameActivity
