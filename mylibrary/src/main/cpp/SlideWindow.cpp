@@ -37,6 +37,9 @@ void CSlideWindow::updateFrame(int vWindowWidth, int vWindowHeight, double vDelt
     m_pShaderProgram->setUniform("_ScreenParams", ScreenParams);
     m_pShaderProgram->setUniform("_TextureParams", glm::vec2(m_TextureWidth, m_TextureHeight));
     m_pShaderProgram->setUniform("_CoordBias", m_CoordBias * m_SlideSpeed);
+    m_pShaderProgram->setUniform("Texture", 0);
+    glActiveTexture(GL_TEXTURE0);
+    m_pTexture->bindTexture();
 
     vQuad->bindAndDraw();
 }

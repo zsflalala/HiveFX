@@ -8,7 +8,10 @@ namespace hiveVG
 {
     class CScreenQuad;
     class CSlideWindow;
+    class CSingleTexturePlayer;
+    class CTextureBlender;
 
+    typedef void (DrawCallFunc)();
     class CScrollRainRenderer
     {
     public:
@@ -25,6 +28,8 @@ namespace hiveVG
         android_app*               m_pApp                 = nullptr;
         CScreenQuad*               m_pScreenQuad          = nullptr;
         CSlideWindow*              m_pSlideWindow         = nullptr;
+        CSingleTexturePlayer*      m_pBackground          = nullptr;
+        CTextureBlender*           m_pTexBlender          = nullptr;
     };
 
 }
