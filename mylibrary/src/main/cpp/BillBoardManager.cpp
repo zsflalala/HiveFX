@@ -156,6 +156,12 @@ SSequenceState CBillBoardManager::__initSequenceParams()
 
 void CBillBoardManager::transBlendStatus()
 {
+    if(!m_pTexBlender)
+    {
+        m_IsBlend = false;
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE_BLENDER_TAG, "Blending cannot be started by no blender.");
+        return;
+    }
     m_IsBlend = !m_IsBlend;
     if(m_IsBlend)
         LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"开启混合");
