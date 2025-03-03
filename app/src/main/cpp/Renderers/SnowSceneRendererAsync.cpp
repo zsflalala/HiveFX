@@ -24,7 +24,7 @@ void CSnowSceneRendererAsync::__initAlgorithm()
     EPictureType::EPictureType PictureType = EPictureType::PNG;
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
-    m_pSnowSceneSeqFramePlayer = new CAsyncSequenceFramePlayer("Textures/SnowCover", TextureCount, PictureType);
+    m_pSnowSceneSeqFramePlayer = new CAsyncSequenceFramePlayer("textures/SnowCover", TextureCount, PictureType);
     m_pSnowSceneSeqFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pSnowSceneSeqFramePlayer->setFrameRate(5);
     m_pSnowSceneSeqFramePlayer->setLoopPlayback(false);
