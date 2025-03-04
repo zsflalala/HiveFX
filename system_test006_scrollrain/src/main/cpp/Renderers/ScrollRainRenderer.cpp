@@ -5,9 +5,9 @@
 #include "Common.h"
 #include "TimeUtils.h"
 #include "ScreenQuad.h"
-#include "SlideWindow.h"
 #include "SingleTexturePlayer.h"
 #include "TextureBlender.h"
+#include "SlideWindow.h"
 
 using namespace hiveVG;
 
@@ -42,7 +42,7 @@ void CScrollRainRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 
     std::function<DrawCallFunc> SlideWindowDrawCallFunc = [this, vWindowWidth, vWindowHeight, DeltaTime]()
     {
-        m_pSlideWindow->updateFrame(vWindowWidth, vWindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
+        m_pSlideWindow->updateFrameAndDraw(vWindowWidth, vWindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
     };
     m_pTexBlender->drawAndBlend(SlideWindowDrawCallFunc);
     //m_pSlideWindow->updateFrame(vWindowWidth, vWindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
@@ -56,7 +56,7 @@ void CScrollRainRenderer::__initAlgorithm()
 {
     // TODO: 使用 json 文件初始化
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pSlideWindow = new CSlideWindow("Textures/LongTexRain1920_10800.png", -70, "vertical");
+    m_pSlideWindow = new CSlideWindow("Textures/LongTexRain1920_10800.png", -90, "vertical");
     m_pSlideWindow->createProgram(m_pApp->activity->assetManager);
     m_pSlideWindow->loadTextures(m_pApp->activity->assetManager);
 

@@ -5,7 +5,7 @@
 
 using namespace hiveVG;
 
-CSlideWindow::CSlideWindow(std::string& vTexturePath, float vSpeed, std::string& vDirection)
+CSlideWindow::CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection)
                         : m_TexturePath(vTexturePath), m_SlideSpeed(vSpeed), m_SlideDirection(vDirection){}
 
 CSlideWindow::~CSlideWindow()
@@ -23,7 +23,7 @@ CSlideWindow::~CSlideWindow()
     }
 }
 
-void CSlideWindow::updateFrame(int vWindowWidth, int vWindowHeight, double vDeltaTime)
+void CSlideWindow::updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad *vQuad)
 {
     glm::vec2 ScreenParams = glm::vec2(vWindowWidth, vWindowHeight);
     m_CoordBias += static_cast<float>(vDeltaTime);
@@ -35,8 +35,6 @@ void CSlideWindow::updateFrame(int vWindowWidth, int vWindowHeight, double vDelt
     glActiveTexture(GL_TEXTURE0);
     m_pTexture->bindTexture();
 
-void CSlideWindow::draw(CScreenQuad *vQuad)
-{
     vQuad->bindAndDraw();
 }
 
