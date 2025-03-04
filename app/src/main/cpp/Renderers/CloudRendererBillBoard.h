@@ -18,12 +18,14 @@ namespace hiveVG
         ~CCloudRendererBillBoard();
 
         void renderScene(int vWindowWidth, int vWindowHeight);
+        void transBlendStatus();
 
     private:
         void   __initAlgorithm();
 
         double       m_LastFrameTime = 0.0f;
         double       m_CurrentTime   = 0.0f;
+
         android_app* m_pApp          = nullptr;
         CScreenQuad* m_pScreenQuad   = nullptr;
         std::unique_ptr<CBillBoardManager>  m_pCloudManager = nullptr;

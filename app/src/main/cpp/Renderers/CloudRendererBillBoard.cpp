@@ -5,6 +5,7 @@
 #include "ScreenQuad.h"
 #include "SequenceFramePlayer.h"
 #include "BillBoardManager.h"
+#include "TextureBlender.h"
 
 using namespace hiveVG;
 
@@ -57,6 +58,16 @@ void CCloudRendererBillBoard::__initAlgorithm()
     m_pCloudManager->pushBack(Cloud5Scene);
     m_pCloudManager->initSequenceState();
 
+    CTextureBlender* pTextureBlender = new CTextureBlender();
+    int Width, Height;
+    assert(m_pApp->window != nullptr);
+    if (m_pApp->window != nullptr) {
+        Width = ANativeWindow_getWidth(m_pApp->window);
+        Height = ANativeWindow_getHeight(m_pApp->window);
+    }
+    pTextureBlender->init(m_pApp->activity->assetManager,Width, Height);
+    m_pCloudManager->setBlender(pTextureBlender);
+
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
@@ -82,4 +93,11 @@ void CCloudRendererBillBoard::renderScene(int vWindowWidth, int vWindowHeight)
         m_pCloudManager->setImageAspectRatioAt(i, ScreenUVScale[i]);
     }
     m_pCloudManager->draw(m_pScreenQuad);
+
+    m_pCloudManager->blitToScreen();
+}
+
+void CCloudRendererBillBoard::transBlendStatus()
+{
+    m_pCloudManager->transBlendStatus();
 }
