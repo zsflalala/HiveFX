@@ -30,7 +30,7 @@ void CScrollRainRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
-    glClearColor(0.1f,0.1f,0.1f, 1.0f);
+    glClearColor(0.35f,0.35f,0.35f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     std::function<DrawCallFunc> BackGroundDrawCallFunc = [this]()
