@@ -20,11 +20,12 @@ namespace hiveVG
 
         void createProgram(AAssetManager *vAssetManager);
         void loadTextures(AAssetManager *vAssetManager);
-        void updateFrame(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad);
+        void updateFrame(int vWindowWidth, int vWindowHeight, double vDeltaTime);
+        void draw(CScreenQuad* vQuad);
 
     private:
-        int          m_TextureWidth{};
-        int          m_TextureHeight{};
+        int          m_TextureWidth;
+        int          m_TextureHeight;
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
         float        m_CoordBias = 0.0f;
         float        m_SlideSpeed;

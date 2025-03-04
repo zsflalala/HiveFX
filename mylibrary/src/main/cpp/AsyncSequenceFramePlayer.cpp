@@ -36,6 +36,8 @@ CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
 
 bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAssetManager)
 {
+    if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
+        m_TextureRootPath += '/';
     m_CPULoadedTime = CTimeUtils::getCurrentTime();
     std::string PictureSuffix;
     if (m_TextureType == EPictureType::PNG)
@@ -44,11 +46,10 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAsse
         PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP)
         PictureSuffix = ".webp";
-    else if (m_TextureType == EPictureType::ASTC)
-        PictureSuffix = ".astc";
+
     for (int i = 0; i < m_TextureCount; i++)
     {
-        std::string TexturePath = m_TextureRootPath + "/frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
+        std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
         m_ThreadPool.enqueueTask([this, vAssetManager, i, TexturePath]()
                                  { this->__loadTextureDataAsync(vAssetManager, i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex, m_FramesToUploadGPU); });
     }

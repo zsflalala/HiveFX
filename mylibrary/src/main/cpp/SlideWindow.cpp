@@ -23,16 +23,18 @@ CSlideWindow::~CSlideWindow()
     }
 }
 
-void CSlideWindow::updateFrame(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad)
+void CSlideWindow::updateFrame(int vWindowWidth, int vWindowHeight, double vDeltaTime)
 {
     glm::vec2 ScreenParams = glm::vec2(vWindowWidth, vWindowHeight);
     m_CoordBias += static_cast<float>(vDeltaTime);
-
     m_pShaderProgram->useProgram();
     m_pShaderProgram->setUniform("_ScreenParams", ScreenParams);
     m_pShaderProgram->setUniform("_TextureParams", glm::vec2(m_TextureWidth, m_TextureHeight));
     m_pShaderProgram->setUniform("_CoordBias", m_CoordBias * m_SlideSpeed);
+}
 
+void CSlideWindow::draw(CScreenQuad *vQuad)
+{
     vQuad->bindAndDraw();
 }
 

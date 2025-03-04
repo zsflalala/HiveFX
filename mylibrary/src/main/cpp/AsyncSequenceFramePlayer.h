@@ -38,7 +38,7 @@ namespace hiveVG
         void updateFrames();
         void setFrameRate(int vFrameRate) { m_FrameRate = vFrameRate; }
         void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
-        void setValidFrames(int vValidFrames)   { m_ValidFrames = vValidFrames; }
+        void setValidFrames(int vValidFrames) { m_ValidFrames = vValidFrames; }
 
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
         [[nodiscard]] bool getLoopState()   const { return m_IsLoop; }
@@ -75,7 +75,5 @@ namespace hiveVG
         CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
         std::vector<std::future<void>>       m_TextureLoadFutures;
         ThreadPool                           m_ThreadPool;
-
     };
-
 }
