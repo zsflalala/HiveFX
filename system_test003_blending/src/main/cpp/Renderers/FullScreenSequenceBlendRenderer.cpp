@@ -75,8 +75,8 @@ void CFullScreenSequenceBlendRenderer::render(int vWindowWidth, int vWindowHeigh
 void CFullScreenSequenceBlendRenderer::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pBackground = CTexture2D::loadTexture(m_pApp->activity->assetManager, "Textures/park.png");
-    m_pMediumShot = new CSingleTexturePlayer("Textures/Background.png");
+    m_pBackground = CTexture2D::loadTexture(m_pApp->activity->assetManager, "textures/park.png");
+    m_pMediumShot = new CSingleTexturePlayer("textures/Background.png");
     m_pMediumShot->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 
     m_pForeSequFraPlayer = new CSequenceFramePlayer("Textures/BigRain_fore", 1, 1, 64, EPictureType::PNG);
@@ -117,7 +117,7 @@ void CFullScreenSequenceBlendRenderer::__SequenceFrameDrawCallFunc(CSequenceFram
 
 void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
 {
-    std::string TexRootPath = "Textures/Cloud2Scene";
+    std::string TexRootPath = "textures/Cloud2Scene";
     int SequenceRows = 1, SequenceCols = 1;
     int TextureCount = 180;
     auto* Cloud2Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
@@ -127,7 +127,7 @@ void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
         return ;
     }
 
-    TexRootPath = "Textures/Cloud4Scene";
+    TexRootPath = "textures/Cloud4Scene";
     TextureCount = 176;
     auto* Cloud4Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
     if (!Cloud4Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
@@ -136,7 +136,7 @@ void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
         return ;
     }
 
-    TexRootPath = "Textures/Cloud5Scene";
+    TexRootPath = "textures/Cloud5Scene";
     TextureCount = 128;
     auto* Cloud5Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
     if (!Cloud5Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))

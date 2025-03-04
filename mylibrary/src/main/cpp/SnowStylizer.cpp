@@ -363,7 +363,8 @@ std::string CSnowStylizer::__formatFileName(const std::string& vFileName)
     if (LastDotPos != std::string::npos)
     {
         FileName = vFileName.substr(0, LastDotPos);
-        FileName.append("_{}.png");
+        FileName = "frame";
+        FileName.append("_{:03d}.png");
         return FileName;
     }
     else

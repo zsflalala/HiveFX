@@ -23,28 +23,29 @@ void CCloudRendererBillBoard::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
-    std::string TexRootPath = "Textures/Cloud2Scene";
+    std::string TexRootPath = "textures/Cloud2Scene";
+    EPictureType::EPictureType PictureType = EPictureType::PNG;
     int SequenceRows = 1, SequenceCols = 1;
     int TextureCount = 180;
-    CSequenceFramePlayer* Cloud2Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
+    CSequenceFramePlayer* Cloud2Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount, PictureType);
     if (!Cloud2Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
     }
 
-    TexRootPath = "Textures/Cloud4Scene";
+    TexRootPath = "textures/Cloud4Scene";
     TextureCount = 176;
-    CSequenceFramePlayer* Cloud4Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
+    CSequenceFramePlayer* Cloud4Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount, PictureType);
     if (!Cloud4Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
     }
 
-    TexRootPath = "Textures/Cloud5Scene";
+    TexRootPath = "textures/Cloud5Scene";
     TextureCount = 128;
-    CSequenceFramePlayer* Cloud5Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount);
+    CSequenceFramePlayer* Cloud5Scene = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount, PictureType);
     if (!Cloud5Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");

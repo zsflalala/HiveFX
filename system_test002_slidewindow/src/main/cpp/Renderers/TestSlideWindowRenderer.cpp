@@ -3,58 +3,49 @@
 #include <android/asset_manager.h>
 #include <json/json.h>
 #include "Common.h"
+#include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "JsonReader.h"
 #include "SlideWindow.h"
 
-namespace hiveVG
+using namespace hiveVG;
+
+CTestSlideWindowRenderer::CTestSlideWindowRenderer(android_app *vApp) : m_pApp(vApp)
 {
+    __initAlgorithm();
+}
 
-    CTestSlideWindowRenderer::CTestSlideWindowRenderer(android_app *vApp) : m_pApp(vApp)
-    {
-        __initAlgorithm();
-    }
+CTestSlideWindowRenderer::~CTestSlideWindowRenderer()
+{
+    if (m_pScreenQuad)      delete m_pScreenQuad;
+    if (m_pSlideWindow)     delete m_pSlideWindow;
+}
 
-    CTestSlideWindowRenderer::~CTestSlideWindowRenderer()
-    {
-        if (m_pScreenQuad)      delete m_pScreenQuad;
-        if (m_pSlideWindow)     delete m_pSlideWindow;
-    }
+void CTestSlideWindowRenderer::__initAlgorithm()
+{
+    std::string FileName = "configs/SlideWindowConfig.json";
+    CJsonReader JsonReader = CJsonReader(m_pApp->activity->assetManager, FileName);
+    Json::Value SlideConfig = JsonReader.getObject("slide_config");
+    std::string PicturePath = SlideConfig["picture_path"].asString();
+    float SlideSpeed = SlideConfig["slide_speed"].asFloat();
+    std::string SlideDirection = SlideConfig["slide_direction"].asString();
 
-    void CTestSlideWindowRenderer::__initAlgorithm()
-    {
-        std::string FileName = "configs/SlideWindowConfig.json";
-        CJsonReader JsonReader = CJsonReader(m_pApp->activity->assetManager, FileName);
-        Json::Value SlideConfig = JsonReader.getObject("slide_config");
-        std::string PicturePath = SlideConfig["picture_path"].asString();
-        float SlideSpeed = SlideConfig["slide_speed"].asFloat();
-        std::string SlideDirection = SlideConfig["slide_direction"].asString();
+    m_pScreenQuad = CScreenQuad::getOrCreate();
+    m_pSlideWindow = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection);
+    m_pSlideWindow->createProgram(m_pApp->activity->assetManager);
+    m_pSlideWindow->loadTextures(m_pApp->activity->assetManager);
 
-        m_pScreenQuad = CScreenQuad::getOrCreate();
-        m_pSlideWindow = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection);
-        m_pSlideWindow->createProgram(m_pApp->activity->assetManager);
-        m_pSlideWindow->loadTextures(m_pApp->activity->assetManager);
+    m_LastFrameTime = CTimeUtils::getCurrentTime();
+}
 
-        m_LastFrameTime = __getCurrentTime();
-    }
+void CTestSlideWindowRenderer::renderScene(int vWindowWidth, int vWindowHeight)
+{
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
+    double DeltaTime = m_CurrentTime - m_LastFrameTime;
+    m_LastFrameTime  = m_CurrentTime;
 
-    double CTestSlideWindowRenderer::__getCurrentTime()
-    {
-        struct timeval tv{};
-        gettimeofday(&tv, nullptr);
-        return tv.tv_sec + tv.tv_usec / 1000000.0;
-    }
+    glClearColor(0.1f,0.1f,0.1f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    void CTestSlideWindowRenderer::renderScene(int vWindowWidth, int vWindowHeight)
-    {
-        m_CurrentTime    = __getCurrentTime();
-        double DeltaTime = m_CurrentTime - m_LastFrameTime;
-        m_LastFrameTime  = m_CurrentTime;
-
-        glClearColor(0.1f,0.1f,0.1f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        m_pSlideWindow->updateFrame(vWindowWidth, vWindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
-//        m_pSlideWindow->draw(m_pScreenQuad);
-    }
+    m_pSlideWindow->updateFrameAndDraw(vWindowWidth, vWindowHeight, DeltaTime * 100.0f,m_pScreenQuad);
 }

@@ -9,7 +9,7 @@
 #include "Common.h"
 #include "TimeUtils.h"
 #include "ScreenQuad.h"
-#include "SingleTexturePlayer.h"
+#include "SequenceFramePlayer.h"
 #include "SnowStylizer.h"
 #include "JsonReader.h"
 
@@ -106,12 +106,18 @@ void CRenderer::__initAlgorithm()
     __generateSnowScene();
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pTestPlayer = new CSingleTexturePlayer(m_TexturePath);
+    int Rows = 1, Cols = 1, TextureCount = 5;
+    m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, Rows, Cols, TextureCount);
     m_pTestPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pTestPlayer->setFrameRate(5);
 }
 
 void CRenderer::renderScene()
 {
+    m_CurrentTime    = CTimeUtils::getCurrentTime();
+    double DeltaTime = m_CurrentTime - m_LastFrameTime;
+    m_LastFrameTime  = m_CurrentTime;
+
     __updateRenderArea();
 
     glClearColor(0.1f,0.1f,0.1f, 0.0f);
@@ -119,8 +125,8 @@ void CRenderer::renderScene()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pTestPlayer->updateFrame();
-    m_pScreenQuad->bindAndDraw();
+    m_pTestPlayer->updateFrameAndUV(m_WindowWidth, m_WindowHeight, DeltaTime);
+    m_pTestPlayer->draw(m_pScreenQuad);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
@@ -145,7 +151,6 @@ void CRenderer::__generateSnowScene()
     double TimeStart = CTimeUtils::getCurrentTime();
     CSnowStylizer SnowGenerator;
     SnowGenerator.loadImg(m_pApp->activity->assetManager,m_TexturePath);
-//    SnowGenerator.loadImg(m_pApp->activity->assetManager,m_TexturePath, cv::Vec3b(246, 246, 246));
     SnowGenerator.setShapeFreq(15);
     SnowGenerator.setShapeAmplitude(5);
     SnowGenerator.generateSnow(5);
