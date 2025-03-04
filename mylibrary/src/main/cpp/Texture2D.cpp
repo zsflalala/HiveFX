@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Texture2D.h"
 #include <webp/decode.h>
+#define STBI_MAX_DIMENSIONS 65536 // 增大最大宽度和高度限制
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Common.h"
