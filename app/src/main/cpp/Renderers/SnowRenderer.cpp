@@ -11,12 +11,12 @@
 
 using namespace hiveVG;
 
-CTestSequencePlayerRenderer::CTestSequencePlayerRenderer(android_app *vApp) : m_pApp(vApp)
+CSnowRenderer::CSnowRenderer(android_app *vApp) : m_pApp(vApp)
 {
     __initAlgorithm();
 }
 
-CTestSequencePlayerRenderer::~CTestSequencePlayerRenderer()
+CSnowRenderer::~CSnowRenderer()
 {
     if (m_pScreenQuad)
         delete m_pScreenQuad;
@@ -32,7 +32,7 @@ CTestSequencePlayerRenderer::~CTestSequencePlayerRenderer()
         delete m_pSnowSceneSeqFramePlayer;
 }
 
-void CTestSequencePlayerRenderer::__initAlgorithm()
+void CSnowRenderer::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
@@ -86,7 +86,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
-void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeight)
+void CSnowRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 {
     m_CurrentTime = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
@@ -121,7 +121,7 @@ void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeigh
     }
 }
 
-void CTestSequencePlayerRenderer::handleInput(ERenderType vInputType, bool vIsPointerDown)
+void CSnowRenderer::handleInput(ERenderType vInputType, bool vIsPointerDown)
 {
     if (vInputType == ERenderType::SMALL_SNOW_FORE)
     {
