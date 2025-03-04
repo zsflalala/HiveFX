@@ -47,6 +47,5 @@ void CTestSlideWindowRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     glClearColor(0.1f,0.1f,0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    m_pSlideWindow->updateFrame(vWindowWidth, vWindowHeight, DeltaTime * 100.0f);
-    m_pSlideWindow->draw(m_pScreenQuad);
+    m_pSlideWindow->updateFrameAndDraw(vWindowWidth, vWindowHeight, DeltaTime * 100.0f,m_pScreenQuad);
 }

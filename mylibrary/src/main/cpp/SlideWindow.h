@@ -15,13 +15,12 @@ namespace hiveVG
     class CSlideWindow
     {
     public:
-        CSlideWindow(std::string& vTexturePath, float vSpeed, std::string& vDirection);
+        CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection);
         virtual ~CSlideWindow();
 
         void createProgram(AAssetManager *vAssetManager);
         void loadTextures(AAssetManager *vAssetManager);
-        void updateFrame(int vWindowWidth, int vWindowHeight, double vDeltaTime);
-        void draw(CScreenQuad* vQuad);
+        void updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad);
 
     private:
         int          m_TextureWidth;
