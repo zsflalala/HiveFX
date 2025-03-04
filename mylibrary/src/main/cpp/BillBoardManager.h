@@ -35,6 +35,7 @@ namespace hiveVG
         float getImageAspectRatioAt(int i) { return static_cast<float>(m_SequencePlayers[i]->getSingleTextureWidth()) / static_cast<float>(m_SequencePlayers[i]->getSingleTextureHeight()); }
         void  updateSequenceState(float vDeltaTime);
         void  transBlendStatus();
+        void  blitToScreen();
 
         void  setLoop(bool vLoop);
         void  setFrameRate(int vFrameRate);

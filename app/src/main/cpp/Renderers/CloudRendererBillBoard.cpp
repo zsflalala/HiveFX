@@ -92,6 +92,8 @@ void CCloudRendererBillBoard::renderScene(int vWindowWidth, int vWindowHeight)
         m_pCloudManager->setImageAspectRatioAt(i, ScreenUVScale[i]);
     }
     m_pCloudManager->draw(m_pScreenQuad);
+
+    m_pCloudManager->blitToScreen();
 }
 
 void CCloudRendererBillBoard::transBlendStatus()

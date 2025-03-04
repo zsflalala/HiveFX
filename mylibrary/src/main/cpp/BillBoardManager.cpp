@@ -53,13 +53,6 @@ void CBillBoardManager::draw(CScreenQuad* vQuad)
         else
             m_SequencePlayers[i]->draw(vQuad);
     }
-    if(m_IsBlend)
-    {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//        glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA );
-        m_pTexBlender->blitToScreen();
-    }
 }
 
 void CBillBoardManager::updateSequenceState(float vDeltaTime)
@@ -167,4 +160,14 @@ void CBillBoardManager::transBlendStatus()
         LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"开启混合");
     else
         LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"关闭混合");
+}
+
+void CBillBoardManager::blitToScreen()
+{
+    if(m_IsBlend)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        m_pTexBlender->blitToScreen();
+    }
 }

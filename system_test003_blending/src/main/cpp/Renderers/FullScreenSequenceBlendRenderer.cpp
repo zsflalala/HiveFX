@@ -67,7 +67,6 @@ void CFullScreenSequenceBlendRenderer::render(int vWindowWidth, int vWindowHeigh
         SeqFrameDrawCallFunc = [this, vWindowWidth, vWindowHeight, DeltaTime] { __SequenceFrameDrawCallFunc(m_pForeSequFraPlayer, vWindowWidth, vWindowHeight, DeltaTime); };
         m_pTexBlender->drawAndBlend(SeqFrameDrawCallFunc);
     }
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_pTexBlender->blitToScreen();
