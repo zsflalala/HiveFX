@@ -2,10 +2,16 @@
 
 #include <string>
 #include <vector>
+#include <set>
+#include <future>
+#include <mutex>
 #include <queue>
+#include <condition_variable>
+#include <functional>
 #include <GLES3/gl3.h>
 #include <android/asset_manager.h>
 #include "Common.h"
+#include "ThreadPool.h"
 
 namespace hiveVG
 {
@@ -22,7 +28,6 @@ namespace hiveVG
         unsigned char* _Data = nullptr;
         std::atomic<bool> _IsLoaded { false };
     };
-
     class CAsyncSequenceFramePlayer
     {
     public:
@@ -32,17 +37,29 @@ namespace hiveVG
         bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
         void updateFrames();
         void setFrameRate(int vFrameRate) { m_FrameRate = vFrameRate; }
+        void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
+        void setValidFrames(int vValidFrames) { m_ValidFrames = vValidFrames; }
+
+        [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
+        [[nodiscard]] bool getLoopState()   const { return m_IsLoop; }
+        [[nodiscard]] int  getSingleTextureWidth() const  { return m_SequeceSingleTextureWidth; }
+        [[nodiscard]] int  getSingleTextureHeight() const { return m_SequeceSingleTextureHeight; }
 
     private:
-        void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::queue<int> &vFramesToUploadGPU);
+        void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::set<int> &vFramesToUploadGPU);
         void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedGPU);
         double __getCostTime(std::vector<double> &vCostTime);
 
+        bool                                 m_IsLoop          = true;
+        bool                                 m_IsFinished      = false;
         int                                  m_TextureCount;
         EPictureType::EPictureType           m_TextureType            = EPictureType::PNG;
         int                                  m_Frame                  = 0;
         int                                  m_LastLoadedFrame        = -1;
         int                                  m_FrameRate              = 60;
+        int                                  m_ValidFrames;
+        int				                     m_SequeceSingleTextureWidth;
+        int				                     m_SequeceSingleTextureHeight;
         double                               m_LastFrameTime          = 0;
         double                               m_FrameLoadTimeThreshold = 0.1f;
         double                               m_CPULoadedTime;
@@ -53,8 +70,10 @@ namespace hiveVG
         std::mutex                           m_LoadTextureToCPUMutex;
         std::vector<STextureData>            m_LoadedTextures;
         std::vector<std::atomic<bool>>       m_FrameLoadedGPU;
-        std::queue<int>                      m_FramesToUploadGPU;
+        std::set<int>                        m_FramesToUploadGPU;
         unsigned int*	                     m_pTextureHandles      = nullptr;
         CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
+        std::vector<std::future<void>>       m_TextureLoadFutures;
+        ThreadPool                           m_ThreadPool;
     };
 }

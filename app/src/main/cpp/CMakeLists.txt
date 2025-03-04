@@ -19,7 +19,9 @@ add_library(hivefx SHARED
         Renderers/SnowRenderer.cpp
         Renderers/CloudRendererBillBoard.cpp
         Renderers/RainRendererAsync.cpp
+        Renderers/SnowRendererAsync.cpp
         Renderers/SnowSceneRenderer.cpp
+        Renderers/SnowSceneRendererAsync.cpp
         Renderers/RainRenderer.cpp
 )
 

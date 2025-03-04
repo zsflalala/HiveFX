@@ -28,15 +28,15 @@ void CRainRendererAsync::__initAlgorithm()
     EPictureType::EPictureType PictureType = EPictureType::PNG;
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
-    m_pSmallRainForePlayer = new CAsyncSequenceFramePlayer("Textures/SmallRain_fore", TextureCount, PictureType);
+    m_pSmallRainForePlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_fore", TextureCount, PictureType);
     m_pSmallRainForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
-    m_pSmallRainBackPlayer = new CAsyncSequenceFramePlayer("Textures/SmallRain_back", TextureCount, PictureType);
+    m_pSmallRainBackPlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_back", TextureCount, PictureType);
     m_pSmallRainBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
-    m_pBigRainForePlayer   = new CAsyncSequenceFramePlayer("Textures/BigRain_fore", TextureCount, PictureType);
+    m_pBigRainForePlayer   = new CAsyncSequenceFramePlayer("textures/BigRain_fore", TextureCount, PictureType);
     m_pBigRainForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
-    m_pBigRainBackPlayer   = new CAsyncSequenceFramePlayer("Textures/BigRain_back", TextureCount, PictureType);
+    m_pBigRainBackPlayer   = new CAsyncSequenceFramePlayer("textures/BigRain_back", TextureCount, PictureType);
     m_pBigRainBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
-    m_pSingleFramePlayer   = new CSingleTexturePlayer("Textures/snowScene.png");
+    m_pSingleFramePlayer   = new CSingleTexturePlayer("textures/snowScene.png");
     m_pSingleFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 }
 

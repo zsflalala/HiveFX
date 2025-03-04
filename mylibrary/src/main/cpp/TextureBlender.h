@@ -21,21 +21,21 @@ namespace hiveVG
         bool init(AAssetManager* vAssetManager, int vWidth, int vHeight);
         void setBlendingMode(EBlendingMode vMode) { m_BlendingMode = vMode; }
         void updateResolution(int vWidth, int vHeight);
-        void drawAndBlend(std::function<void()> vDrawCall);
+        void drawAndBlend(const std::function<void()>& vDrawCall);
         void blitToScreen(CTexture2D *vTexture = nullptr);
         void blitSrcToScreen();
 
     private:
         bool __createFBO();
         bool __createTexture(int vWidth, int vHeight);
-        bool __bindTex2FBO(GLuint& vFboId, CTexture2D* vTexture);
+        static bool __bindTex2FBO(GLuint& vFboId, CTexture2D* vTexture);
         bool __compilerShaders(AAssetManager* vAssetManager);
         void __blend(CShaderProgram* vShaderProgram);
         bool __updateTexSize(GLuint& vFboId, CTexture2D* vTextrue, int vWidth, int vHeight);
 
         EBlendingMode   m_BlendingMode;
         bool            m_IsInit;
-        bool            m_IsDstTex1bound;
+        bool            m_IsDstTex1Bound;
         GLuint          m_DstFBO;
         GLuint          m_SrcFBO;
 
