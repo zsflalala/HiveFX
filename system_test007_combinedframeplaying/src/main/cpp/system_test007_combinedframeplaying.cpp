@@ -7,19 +7,19 @@
 
 extern "C"
 {
-void handle_cmd(android_app *pApp, int32_t cmd)
+void handleCmd(android_app* vApp, int32_t vCmd)
 {
-    switch (cmd)
+    switch (vCmd)
     {
         case APP_CMD_INIT_WINDOW:
-            pApp->userData = new hiveVG::CRenderer(pApp);
+            vApp->userData = new hiveVG::CRenderer(vApp);
             break;
         case APP_CMD_TERM_WINDOW:
-            if (pApp->userData)
+            if (vApp->userData)
             {
-                auto *pRenderer = reinterpret_cast<hiveVG::CRenderer *>(pApp->userData);
-                pApp->userData = nullptr;
-                delete pRenderer;
+                auto *pCSequenceFrameRenderer = reinterpret_cast<hiveVG::CRenderer*>(vApp->userData);
+                vApp->userData = nullptr;
+                delete pCSequenceFrameRenderer;
             }
             break;
         default:
@@ -27,30 +27,34 @@ void handle_cmd(android_app *pApp, int32_t cmd)
     }
 }
 
-bool motion_event_filter_func(const GameActivityMotionEvent *motionEvent) {
-    auto sourceClass = motionEvent->source & AINPUT_SOURCE_CLASS_MASK;
+bool motion_event_filter_func(const GameActivityMotionEvent* vMotionEvent)
+{
+    auto sourceClass = vMotionEvent->source & AINPUT_SOURCE_CLASS_MASK;
     return (sourceClass == AINPUT_SOURCE_CLASS_POINTER || sourceClass == AINPUT_SOURCE_CLASS_JOYSTICK);
 }
 
-void android_main(struct android_app *pApp) {
-    pApp->onAppCmd = handle_cmd;
-    android_app_set_motion_event_filter(pApp, motion_event_filter_func);
+void android_main(struct android_app* vApp)
+{
+    vApp->onAppCmd = handleCmd;
+    android_app_set_motion_event_filter(vApp, motion_event_filter_func);
 
-    do {
-        bool done = false;
-        while (!done)
+    do
+    {
+        bool Done = false;
+        while (!Done)
         {
-            int timeout = 0;
-            int events;
-            android_poll_source *pSource;
-            int result = ALooper_pollOnce(timeout, nullptr, &events,
+            int Timeout = 0;
+            int Events;
+            android_poll_source* pSource;
+            int Result = ALooper_pollOnce(Timeout, nullptr, &Events,
                                           reinterpret_cast<void**>(&pSource));
-            switch (result)
+            switch (Result)
             {
                 case ALOOPER_POLL_TIMEOUT:
                     [[clang::fallthrough]];
                 case ALOOPER_POLL_WAKE:
-                    done = true;
+                    // No Events occurred before the Timeout or explicit wake. Stop checking for Events.
+                    Done = true;
                     break;
                 case ALOOPER_EVENT_ERROR:
                     LOG_ERROR(hiveVG::TAG_KEYWORD::MAIN_TAG, "ALooper_pollOnce returned an error");
@@ -60,16 +64,17 @@ void android_main(struct android_app *pApp) {
                 default:
                     if (pSource)
                     {
-                        pSource->process(pApp, pSource);
+                        pSource->process(vApp, pSource);
                     }
             }
         }
 
-        if (pApp->userData)
+        if (vApp->userData)
         {
-            auto *pRenderer = reinterpret_cast<hiveVG::CRenderer *>(pApp->userData);
-            pRenderer->renderScene();
+            auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CRenderer*>(vApp->userData);
+            pSeqFrameRenderer->handleInput();
+            pSeqFrameRenderer->renderScene();
         }
-    } while (!pApp->destroyRequested);
+    } while (!vApp->destroyRequested);
 }
 }

@@ -3,17 +3,17 @@
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
-#include "Common.h"
 #include "Renders/CombinedBigRainFrameRenderer.h"
-#include "Renders/CombinedSmallRainFrameRenderer.h"
-#include "Renders/CombinedBigSnowFrameRenderer.h"
-#include "Renders/CombinedSmallSnowFrameRenderer.h"
-#include "Renders/CombinedSnowCoverFrameRenderer.h"
 #include "Renders/CloudRendererBillBoard.h"
+#include "Renders/CombinedBigSnowFrameRenderer.h"
+#include "Renders/CombinedSmallRainFrameRenderer.h"
+#include "Renders/CombinedSnowCoverFrameRenderer.h"
+#include "Renders/CombinedSmallSnowFrameRenderer.h"
+#include "Common.h"
 
 using namespace hiveVG;
 
-CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
+CRenderer::CRenderer(android_app *vApp) : m_pApp(vApp)
 {
     __initRenderer();
 }
@@ -36,12 +36,18 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pCombinedBigRainRender)         delete m_pCombinedBigRainRender;
-    if (m_pCombinedSmallRainRender)       delete m_pCombinedSmallRainRender;
-    if (m_pCombinedBigSnowRender)         delete m_pCombinedBigSnowRender;
-    if (m_pCombinedSmallSnowRender)       delete m_pCombinedSmallSnowRender;
-    if (m_pCombinedSnowCoverRender)       delete m_pCombinedSnowCoverRender;
-    if (m_pCombinedCloudRender)           delete m_pCombinedCloudRender;
+    if (m_pCombinedSnowCoverRender)
+        delete m_pCombinedSnowCoverRender;
+    if (m_pCombinedBigRainRender)
+        delete m_pCombinedBigRainRender;
+    if (m_pCombinedBigSnowRender)
+        delete m_pCombinedBigSnowRender;
+    if (m_pCombinedSmallRainRender)
+        delete m_pCombinedSmallRainRender;
+    if (m_pCombinedSmallSnowRender)
+        delete m_pCombinedSmallSnowRender;
+    if (m_pCombinedCloudRender)
+        delete m_pCombinedCloudRender;
 }
 
 void CRenderer::__initRenderer()
@@ -53,28 +59,30 @@ void CRenderer::__initRenderer()
             EGL_GREEN_SIZE, 8,
             EGL_RED_SIZE, 8,
             EGL_DEPTH_SIZE, 24,
-            EGL_NONE
-    };
+            EGL_NONE};
 
+    // The default Display is probably what you want on Android
     auto Display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     eglInitialize(Display, nullptr, nullptr);
 
+    // figure out how many configs there are
     EGLint NumConfigs;
     eglChooseConfig(Display, Attributes, nullptr, 0, &NumConfigs);
 
+    // get the list of configurations
     std::unique_ptr<EGLConfig[]> pSupportedConfigs(new EGLConfig[NumConfigs]);
     eglChooseConfig(Display, Attributes, pSupportedConfigs.get(), NumConfigs, &NumConfigs);
 
+    // Find a pConfig we like.
+    // Could likely just grab the first if we don't care about anything else in the pConfig.
+    // Otherwise hook in your own heuristic
     auto pConfig = *std::find_if(
             pSupportedConfigs.get(),
             pSupportedConfigs.get() + NumConfigs,
             [&Display](const EGLConfig &Config)
             {
                 EGLint Red, Green, Blue, Depth;
-                if (eglGetConfigAttrib(Display, Config, EGL_RED_SIZE, &Red)
-                    && eglGetConfigAttrib(Display, Config, EGL_GREEN_SIZE, &Green)
-                    && eglGetConfigAttrib(Display, Config, EGL_BLUE_SIZE, &Blue)
-                    && eglGetConfigAttrib(Display, Config, EGL_DEPTH_SIZE, &Depth))
+                if (eglGetConfigAttrib(Display, Config, EGL_RED_SIZE, &Red) && eglGetConfigAttrib(Display, Config, EGL_GREEN_SIZE, &Green) && eglGetConfigAttrib(Display, Config, EGL_BLUE_SIZE, &Blue) && eglGetConfigAttrib(Display, Config, EGL_DEPTH_SIZE, &Depth))
                 {
 
                     LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Found pConfig with Red: %d, Green: %d, Blue: %d, Depth: %d", Red, Green, Blue, Depth);
@@ -85,13 +93,16 @@ void CRenderer::__initRenderer()
 
     LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Found %d configs", NumConfigs);
 
+    // create the proper window Surface
     EGLint Format;
     eglGetConfigAttrib(Display, pConfig, EGL_NATIVE_VISUAL_ID, &Format);
     EGLSurface Surface = eglCreateWindowSurface(Display, pConfig, m_pApp->window, nullptr);
 
+    // Create a GLES 3 Context
     EGLint ContextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
     EGLContext Context = eglCreateContext(Display, pConfig, nullptr, ContextAttribs);
 
+    // get some window metrics
     auto MadeCurrent = eglMakeCurrent(Display, Surface, Surface, Context);
     assert(MadeCurrent);
 
@@ -103,30 +114,10 @@ void CRenderer::__initRenderer()
 void CRenderer::renderScene()
 {
     __updateRenderArea();
-    //大雪
-    if (m_pCombinedBigSnowRender == nullptr)
-        m_pCombinedBigSnowRender = new CCombinedBigSnowFrameRenderer(m_pApp);
-        m_pCombinedBigSnowRender->renderScene(m_WindowWidth, m_WindowHeight);
-    //小雪
-   /* if (m_pCombinedSmallSnowRender == nullptr)
-        m_pCombinedSmallSnowRender = new CCombinedSmallSnowFrameRenderer(m_pApp);
-    m_pCombinedSmallSnowRender->renderScene(m_WindowWidth, m_WindowHeight);*/
-    //大雨
-   /* if (m_pCombinedBigRainRender == nullptr)
-        m_pCombinedBigRainRender = new CCombinedBigRainFrameRenderer(m_pApp);
-    m_pCombinedBigRainRender->renderScene(m_WindowWidth, m_WindowHeight);*/
-    //小雨
-    /*if (m_pCombinedSmallRainRender == nullptr)
-        m_pCombinedSmallRainRender = new CCombinedSmallRainFrameRenderer(m_pApp);
-    m_pCombinedSmallRainRender->renderScene(m_WindowWidth, m_WindowHeight);*/
-    //积雪
-    /*if (m_pCombinedSnowCoverRender == nullptr)
-        m_pCombinedSnowCoverRender = new CCombinedSnowCoverFrameRenderer(m_pApp);
-    m_pCombinedSnowCoverRender->renderScene(m_WindowWidth, m_WindowHeight);*/
-   //云
-    /*if (m_pCombinedCloudRender == nullptr)
-        m_pCombinedCloudRender = new CCloudRendererBillBoard(m_pApp);
-    m_pCombinedCloudRender->renderScene(m_WindowWidth, m_WindowHeight);*/
+
+    if (m_pCombinedBigSnowRender == nullptr) m_pCombinedBigSnowRender = new CCombinedBigSnowFrameRenderer(m_pApp);
+    m_pCombinedBigSnowRender->renderScene(m_WindowWidth, m_WindowHeight);
+
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
@@ -140,11 +131,12 @@ void CRenderer::__updateRenderArea()
 
     if (Width != m_WindowWidth || Height != m_WindowHeight)
     {
-        m_WindowWidth  = Width;
+        m_WindowWidth = Width;
         m_WindowHeight = Height;
         glViewport(0, 0, m_WindowWidth, m_WindowHeight);
     }
 }
+
 void CRenderer::handleInput()
 {
     auto *pInputBuffer = android_app_swap_input_buffers(m_pApp);
@@ -167,19 +159,74 @@ void CRenderer::handleInput()
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
                 m_IsPointerDown = true;
-
-                if (PointerX < m_WindowWidth / 2.0)
+                if (PointerY > m_WindowHeight / 2.0)
                 {
-                    m_RenderType = ERenderType::SNOW;
-                    m_EnableRenderType = ERenderType::BIG_SNOW_BACK;
-                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "大雪");
+                    if (PointerX < m_WindowWidth / 3.0)
+                    {
+                        m_RenderType = ERenderType::SNOW;
+                        if (PointerY < m_WindowHeight * 3.0 / 4.0)
+                        {
+                            if (PointerX < m_WindowWidth / 6.0)
+                            {
+                                m_EnableRenderType = ERenderType::SMALL_SNOW_FORE;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "小雪前景");
+                            }
+                            else
+                            {
+                                m_EnableRenderType = ERenderType::SMALL_SNOW_BACK;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "小雪背景");
+                            }
+                        }
+                        else
+                        {
+                            if (PointerX < m_WindowWidth / 6.0)
+                            {
+                                m_EnableRenderType = ERenderType::BIG_SNOW_FORE;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "大雪前景");
+                            }
+                            else
+                            {
+                                m_EnableRenderType = ERenderType::BIG_SNOW_BACK;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "大雪背景");
+                            }
+                        }
+                    }
+                    else if (PointerX < m_WindowWidth * 2.0 / 3.0)
+                    {
+                        m_RenderType = ERenderType::RAIN;
+                        if (PointerY < m_WindowHeight * 3.0 / 4.0)
+                        {
+                            if (PointerX < m_WindowWidth / 2.0)
+                            {
+                                m_EnableRenderType = ERenderType::SMALL_RAIN_FORE;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "小雨前景");
+                            }
+                            else
+                            {
+                                m_EnableRenderType = ERenderType::SMALL_RAIN_BACK;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "小雨背景");
+                            }
+                        }
+                        else
+                        {
+                            if (PointerX < m_WindowWidth / 2.0)
+                            {
+                                m_EnableRenderType = ERenderType::BIG_RAIN_FORE;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "大雨前景");
+                            }
+                            else
+                            {
+                                m_EnableRenderType = ERenderType::BIG_RAIN_BACK;
+                                LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "大雨背景");
+                            }
+                        }
+                    }
+                    else
+                        m_RenderType = ERenderType::CLOUD;
                 }
                 else
-                {
-                    m_RenderType = ERenderType::RAIN;
-                    m_EnableRenderType = ERenderType::BIG_RAIN_BACK;
-                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "大雨");
-                }
+                    m_RenderType = ERenderType::SNOW_SCENE;
+                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
                 break;
 
             case AMOTION_EVENT_ACTION_CANCEL:

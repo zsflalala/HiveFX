@@ -17,15 +17,15 @@ CCombinedBigSnowFrameRenderer::CCombinedBigSnowFrameRenderer(android_app *vApp) 
 CCombinedBigSnowFrameRenderer::~CCombinedBigSnowFrameRenderer()
 {
     if (m_pScreenQuad)          delete m_pScreenQuad;
-    if (m_pCombineBackFramePlayer) delete m_pCombineBackFramePlayer;
-    if (m_pCombineForeFramePlayer) delete m_pCombineForeFramePlayer;
+ /*   if (m_pCombineBackFramePlayer) delete m_pCombineBackFramePlayer;
+    if (m_pCombineForeFramePlayer) delete m_pCombineForeFramePlayer;*/
     if (m_pBackFramePlayer)     delete m_pBackFramePlayer;
 }
 
 void CCombinedBigSnowFrameRenderer::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    std::string  FileName = "configs/MainAppConfig.json";
+    /*std::string  FileName = "configs/MainAppConfig.json";
     CJsonReader JsonReader=CJsonReader(m_pApp->activity->assetManager,FileName);
     Json::Value SnowBackConfig=JsonReader.getObject("BigSnowBack");
     Json::Value SnowForeConfig=JsonReader.getObject("BigSnowFore");
@@ -54,10 +54,13 @@ void CCombinedBigSnowFrameRenderer::__initAlgorithm()
     m_pCombineForeFramePlayer = new CSequenceFramePlayer(SnowFramePath,SnowRows,SnowCols,SnowFrameCount,m_PictureType);
     m_pCombineForeFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pCombineForeFramePlayer->setFrameRate(SnowPlayFPS);
-    m_pCombineForeFramePlayer->setLoopPlayback(SnowIsLoop);
+    m_pCombineForeFramePlayer->setLoopPlayback(SnowIsLoop);*/
 
-    m_pBackFramePlayer   = new CSingleTexturePlayer(BackConfig["frames_path"].asString());
+   // m_pBackFramePlayer   = new CSingleTexturePlayer(BackConfig["frames_path"].asString());
+    m_pBackFramePlayer   = new CSingleTexturePlayer("textures/snowScene.png");
     m_pBackFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+
+
 
 }
 
@@ -72,14 +75,14 @@ void CCombinedBigSnowFrameRenderer::renderScene(int vWindowWidth, int vWindowHei
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
 
-    m_pCombineBackFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, 0.1);
-    m_pCombineBackFramePlayer->draw(m_pScreenQuad);
+   /* m_pCombineBackFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pCombineBackFramePlayer->draw(m_pScreenQuad);*/
 
     m_pBackFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
- /*   m_pCombineForeFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, 0.1);
+    /*m_pCombineForeFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
     m_pCombineForeFramePlayer->draw(m_pScreenQuad);*/
 
 
