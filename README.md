@@ -5,7 +5,23 @@
 
 Gradle : 8.9
 
+CMake ：3.30.5 
+
+SDK Platforms :  Android API 35  && Android 14.0
+
+Android SDK Command-line Tools (lastest) Version : 16
+
 第三方环境库配置：conan
+
+![](./attachments/8.jpg)
+
+![](./attachments/9.jpg)
+
+![](./attachments/10.jpg)
+
+![](./attachments/11.jpg)
+
+
 
 ## 运行步骤
 
@@ -16,8 +32,9 @@ Gradle : 8.9
 
 ![](./attachments/7.jpg)
 
-<center><font size = '2'> 图1. 生成的build文件夹</font>
+<center><font size = '2'> 图1. 生成的build文件夹</font></center>
 ## 手机配置
+
 
 ![](./attachments/4.jpg)
 
