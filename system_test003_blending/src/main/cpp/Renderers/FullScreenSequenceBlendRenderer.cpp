@@ -67,7 +67,6 @@ void CFullScreenSequenceBlendRenderer::render(int vWindowWidth, int vWindowHeigh
         SeqFrameDrawCallFunc = [this, vWindowWidth, vWindowHeight, DeltaTime] { __SequenceFrameDrawCallFunc(m_pForeSequFraPlayer, vWindowWidth, vWindowHeight, DeltaTime); };
         m_pTexBlender->drawAndBlend(SeqFrameDrawCallFunc);
     }
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_pTexBlender->blitToScreen();
@@ -80,21 +79,19 @@ void CFullScreenSequenceBlendRenderer::__initAlgorithm()
     m_pMediumShot = new CSingleTexturePlayer("textures/Background.png");
     m_pMediumShot->initTextureAndShaderProgram(m_pApp->activity->assetManager);
 
-    m_pForeSequFraPlayer = new CSequenceFramePlayer("textures/Rain", 1, 1, 64, EPictureType::PNG);
+    m_pForeSequFraPlayer = new CSequenceFramePlayer("textures/BigRain_fore", 1, 1, 64, EPictureType::PNG);
     if(!m_pForeSequFraPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Foreground sequence player initialization falied.");
         return ;
     }
 
-    m_pBackSequFraPlayer = new CSequenceFramePlayer("textures/Snow", 1, 1, 64, EPictureType::PNG);
+    m_pBackSequFraPlayer = new CSequenceFramePlayer("textures/BigRain_back", 1, 1, 64, EPictureType::PNG);
     if(!m_pBackSequFraPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Background sequence player initialization falied.");
         return ;
     }
-
-    __initBillBoardManager();
 
     m_pTexBlender = new CTextureBlender();
     int Width = 0, Height = 0;
@@ -106,6 +103,9 @@ void CFullScreenSequenceBlendRenderer::__initAlgorithm()
     }
 
     m_pTexBlender->init(m_pApp->activity->assetManager,Width, Height);
+
+    __initBillBoardManager();
+
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
@@ -150,6 +150,8 @@ void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
     m_pCloudManager->pushBack(Cloud4Scene);
     m_pCloudManager->pushBack(Cloud5Scene);
     m_pCloudManager->initSequenceState();
+    m_pCloudManager->setBlender(m_pTexBlender);
+    m_pCloudManager->transBlendStatus();
 }
 
 void CFullScreenSequenceBlendRenderer::__BillBoardDrawCallFunc(int vWindowWidth, int vWindowHeight, double vDeltaTime)

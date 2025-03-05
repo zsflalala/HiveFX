@@ -52,6 +52,8 @@ void CTextureBlender::drawAndBlend(const std::function<void()>& vDrawCall)
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE_BLENDER_TAG, "Initializing is not complete!");
         return;
     }
+    static bool IsBlend;
+    IsBlend = false;
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_SrcFBO);
     glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
@@ -60,9 +62,12 @@ void CTextureBlender::drawAndBlend(const std::function<void()>& vDrawCall)
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
     vDrawCall();
+    if(IsBlend)
+        return;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     assert(static_cast<std::size_t>(m_BlendingMode) < m_BlendShaderPrograms.size());
     __blend(m_BlendShaderPrograms[static_cast<std::size_t>(m_BlendingMode)]);
+    IsBlend = true;
 }
 
 void CTextureBlender::blitToScreen(CTexture2D *vTexture)

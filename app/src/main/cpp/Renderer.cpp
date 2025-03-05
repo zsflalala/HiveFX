@@ -250,7 +250,11 @@ void CRenderer::handleInput()
                     }
                 }
                 else
+                {
                     m_RenderType = ERenderType::CLOUD;
+                    if(m_pCloudScene)
+                        m_pCloudScene->transBlendStatus();
+                }       
             }
             else
                 m_RenderType = ERenderType::SNOW_SCENE;

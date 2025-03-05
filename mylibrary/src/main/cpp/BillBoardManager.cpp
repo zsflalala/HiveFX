@@ -1,5 +1,6 @@
 #include "BillBoardManager.h"
 #include <random>
+#include "TextureBlender.h"
 
 using namespace hiveVG;
 
@@ -9,6 +10,7 @@ CBillBoardManager::~CBillBoardManager()
     {
         delete m_SequencePlayers[i];
     }
+    if (m_pTexBlender) delete m_pTexBlender;
 }
 
 void CBillBoardManager::pushBack(CSequenceFramePlayer* vSequenceFramePlayer)
@@ -37,11 +39,19 @@ void CBillBoardManager::updateFrameAndUV(int vWindowWidth, int vWindowHeight, do
 
 void CBillBoardManager::draw(CScreenQuad* vQuad)
 {
+    auto DrawCallFunc = [this](CScreenQuad* vQuad, int Index)
+    {
+        this->m_SequencePlayers[Index]->draw(vQuad);
+    };
+
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
         if (!m_SequenceState[i]._IsAlive)
             continue;
-        m_SequencePlayers[i]->draw(vQuad)          ;
+        if(m_IsBlend)
+            m_pTexBlender->drawAndBlend(std::bind(DrawCallFunc, vQuad, i));
+        else
+            m_SequencePlayers[i]->draw(vQuad);
     }
 }
 
@@ -135,4 +145,29 @@ SSequenceState CBillBoardManager::__initSequenceParams()
     float MovingDistance = 2.0f + 2 * State._UVScale; // 2.0f is from -1.0 ~ 1.0; * 2 is from left to right
     State._MovingSpeed = MovingDistance / State._PlannedLivingTime;
     return State;
+}
+
+void CBillBoardManager::transBlendStatus()
+{
+    if(!m_pTexBlender)
+    {
+        m_IsBlend = false;
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE_BLENDER_TAG, "Blending cannot be started by no blender.");
+        return;
+    }
+    m_IsBlend = !m_IsBlend;
+    if(m_IsBlend)
+        LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"开启混合");
+    else
+        LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"关闭混合");
+}
+
+void CBillBoardManager::blitToScreen()
+{
+    if(m_IsBlend)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        m_pTexBlender->blitToScreen();
+    }
 }
