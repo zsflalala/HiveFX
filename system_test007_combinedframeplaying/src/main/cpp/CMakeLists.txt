@@ -18,18 +18,19 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 add_library(${CMAKE_PROJECT_NAME} SHARED
         system_test007_combinedframeplaying.cpp
         Renderer.cpp
-        Renders/CombinedBigSnowFrameRenderer.cpp
-        Renders/CombinedSmallSnowFrameRenderer.cpp
-        Renders/CombinedBigRainFrameRenderer.cpp
-        Renders/CombinedSmallRainFrameRenderer.cpp
-        Renders/CombinedSnowCoverFrameRenderer.cpp
-        Renders/CloudRendererBillBoard.cpp
+        Renderers/CloudRendererBillBoard.cpp
+        Renderers/CombinedBigSnowFrameRenderer.cpp
+        Renderers/CombinedSnowCoverFrameRenderer.cpp
+        Renderers/CombinedBigRainFrameRenderer.cpp
+        Renderers/CombinedSmallRainFrameRenderer.cpp
+        Renderers/CombinedSmallSnowFrameRenderer.cpp
 )
 
 find_package(game-activity REQUIRED CONFIG)
 
 set(REQUIRED_PACKAGES
         glm
+        WebP
         jsoncpp
 )
 
@@ -38,12 +39,14 @@ foreach(PACKAGE ${REQUIRED_PACKAGES})
 endforeach()
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    game-activity::game-activity
-    EGL
-    GLESv3
-    jnigraphics
-    android
-    log
-    hivefxso   # 链接第三方库
-    glm::glm
-    JsonCpp::JsonCpp)
+        game-activity::game-activity
+        EGL
+        GLESv3
+        jnigraphics
+        android
+        log
+        hivefxso   # 链接第三方库
+        glm::glm
+        libwebp::libwebp
+        JsonCpp::JsonCpp
+)

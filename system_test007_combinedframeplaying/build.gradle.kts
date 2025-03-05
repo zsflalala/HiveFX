@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.hivefx.system_test007_combinedframeplaying"
+    namespace = "com.hive.system_test007_combinedframeplaying"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.hivefx.system_test007_combinedframeplaying"
+        applicationId = "com.hive.system_test007_combinedframeplaying"
         minSdk = 30
         targetSdk = 34
         versionCode = 1
@@ -47,9 +47,9 @@ android {
 }
 
 dependencies {
-    implementation(libs.games.activity)
     implementation(libs.appcompat)
     implementation(libs.material)
+    implementation(libs.games.activity)
     implementation(project(":mylibrary"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
