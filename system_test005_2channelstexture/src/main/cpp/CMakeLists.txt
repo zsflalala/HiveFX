@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.22.1)
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 project("system_test005_2channelstexture")
@@ -15,9 +16,22 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 ########################## 第三方库 相关配置  结束################################
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
-    system_test005_2channelstexture.cpp)
+    system_test005_2channelstexture.cpp
+    Renderer.cpp
+    Renderers/TestSnowRenderer.cpp
+)
 
 find_package(game-activity REQUIRED CONFIG)
+
+set(REQUIRED_PACKAGES
+        glm
+        WebP
+        jsoncpp
+)
+
+foreach(PACKAGE ${REQUIRED_PACKAGES})
+    find_package(${PACKAGE} REQUIRED)
+endforeach()
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     game-activity::game-activity
@@ -25,4 +39,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     GLESv3
     jnigraphics
     android
-    log)
+    log
+    hivefxso
+    glm::glm
+    libwebp::libwebp
+    JsonCpp::JsonCpp
+)

@@ -16,6 +16,15 @@ CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, 
     m_ValidFrames = m_SequenceRows * m_SequenceCols;
 }
 
+CSequenceFramePlayer::CSequenceFramePlayer(const std::string &vTextureRootPath, int vSequenceRows,
+                                           int vSequenceCols, int vTextureCount,
+                                           bool vUseCompressedPNG)
+        : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_UseCompressedPNG(vUseCompressedPNG)
+{
+    m_ValidFrames = m_SequenceRows * m_SequenceCols;
+    m_TextureType = EPictureType::PNG;
+}
+
 CSequenceFramePlayer::~CSequenceFramePlayer()
 {
     for (int i = m_SeqTextures.size() - 1; i >= 0; i--)
@@ -46,17 +55,24 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetMana
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;;
-        CTexture2D* pSequenceTexture = CTexture2D::loadTexture(vAssetManager, TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
-        if (!pSequenceTexture)
+        if (!m_UseCompressedPNG)
         {
-            pSequenceTexture = CTexture2D::loadTextureFromMobile(TexturePath);
+            CTexture2D* pSequenceTexture = CTexture2D::loadTexture(vAssetManager, TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
             if (!pSequenceTexture)
             {
-                LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
-                return false;
+                pSequenceTexture = CTexture2D::loadTextureFromMobile(TexturePath);
+                if (!pSequenceTexture)
+                {
+                    LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+                    return false;
+                }
             }
+            m_SeqTextures.push_back(pSequenceTexture);
         }
-        m_SeqTextures.push_back(pSequenceTexture);
+        else
+        {
+            CTexture2D::loadTextureFromCompressedPNG(vAssetManager, TexturePath, m_SequenceWidth, m_SequenceHeight, m_SeqTextures);
+        }
     }
     m_SequenceSingleTextureWidth  = m_SequenceWidth / m_SequenceCols;
     m_SequenceSingleTextureHeight = m_SequenceHeight / m_SequenceRows;

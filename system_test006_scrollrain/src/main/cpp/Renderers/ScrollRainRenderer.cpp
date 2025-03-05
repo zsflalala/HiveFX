@@ -56,7 +56,7 @@ void CScrollRainRenderer::__initAlgorithm()
 {
     // TODO: 使用 json 文件初始化
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pSlideWindow = new CSlideWindow("Textures/LongTexRain1920_10800.png", -90, "vertical");
+    m_pSlideWindow = new CSlideWindow("Textures/LongTexRain1920_10800.webp", -90, "vertical", EPictureType::WEBP);
     m_pSlideWindow->createProgram(m_pApp->activity->assetManager);
     m_pSlideWindow->loadTextures(m_pApp->activity->assetManager);
 
