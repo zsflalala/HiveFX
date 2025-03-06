@@ -1,4 +1,4 @@
-#include "FullScreenSequenceBlendRenderer.h"
+#include "BlendRenderer.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include "Common.h"
 #include "TimeUtils.h"
@@ -12,12 +12,12 @@
 
 using namespace hiveVG;
 
-CFullScreenSequenceBlendRenderer::CFullScreenSequenceBlendRenderer(android_app *vApp) : m_pApp(vApp)
+CBlendRenderer::CBlendRenderer(android_app *vApp) : m_pApp(vApp)
 {
     __initAlgorithm();
 }
 
-CFullScreenSequenceBlendRenderer::~CFullScreenSequenceBlendRenderer()
+CBlendRenderer::~CBlendRenderer()
 {
     if (m_pScreenQuad) delete m_pScreenQuad;
     if (m_pTexBlender) delete m_pTexBlender;
@@ -27,7 +27,7 @@ CFullScreenSequenceBlendRenderer::~CFullScreenSequenceBlendRenderer()
     if (m_pBackSequFraPlayer) delete m_pBackSequFraPlayer;
 }
 
-void CFullScreenSequenceBlendRenderer::render(int vWindowWidth, int vWindowHeight)
+void CBlendRenderer::render(int vWindowWidth, int vWindowHeight)
 {
     m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
@@ -72,7 +72,7 @@ void CFullScreenSequenceBlendRenderer::render(int vWindowWidth, int vWindowHeigh
     m_pTexBlender->blit();
 }
 
-void CFullScreenSequenceBlendRenderer::__initAlgorithm()
+void CBlendRenderer::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pBackground = CTexture2D::loadTexture(m_pApp->activity->assetManager, "textures/park.png");
@@ -111,13 +111,13 @@ void CFullScreenSequenceBlendRenderer::__initAlgorithm()
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
-void CFullScreenSequenceBlendRenderer::__SequenceFrameDrawCallFunc(CSequenceFramePlayer* vSequFraPlayer, int vWindowWidth, int vWindowHeight, double vDeltaTime)
+void CBlendRenderer::__SequenceFrameDrawCallFunc(CSequenceFramePlayer* vSequFraPlayer, int vWindowWidth, int vWindowHeight, double vDeltaTime)
 {
     vSequFraPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, vDeltaTime);
     vSequFraPlayer->draw(m_pScreenQuad);
 }
 
-void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
+void CBlendRenderer::__initBillBoardManager()
 {
     std::string TexRootPath = "textures/Cloud2Scene";
     int SequenceRows = 1, SequenceCols = 1;
@@ -157,7 +157,7 @@ void CFullScreenSequenceBlendRenderer::__initBillBoardManager()
     m_pCloudManager->transBlendStatus();
 }
 
-void CFullScreenSequenceBlendRenderer::__BillBoardDrawCallFunc(int vWindowWidth, int vWindowHeight, double vDeltaTime)
+void CBlendRenderer::__BillBoardDrawCallFunc(int vWindowWidth, int vWindowHeight, double vDeltaTime)
 {
     m_pCloudManager->updateFrameAndUV(vWindowWidth, vWindowHeight, vDeltaTime);
     m_pCloudManager->updateSequenceState(vDeltaTime);
@@ -172,7 +172,7 @@ void CFullScreenSequenceBlendRenderer::__BillBoardDrawCallFunc(int vWindowWidth,
     m_pCloudManager->draw(m_pScreenQuad);
 }
 
-void CFullScreenSequenceBlendRenderer::changeLayerStatus(int vIndex)
+void CBlendRenderer::changeLayerStatus(int vIndex)
 {
     switch (vIndex)
     {
@@ -194,7 +194,7 @@ void CFullScreenSequenceBlendRenderer::changeLayerStatus(int vIndex)
     }
 }
 
-void CFullScreenSequenceBlendRenderer::changeBlendMode(int vMode)
+void CBlendRenderer::changeBlendMode(int vMode)
 {
     assert(vMode >= 0 && vMode < static_cast<int>(EBlendingMode::EBlendingMode::COUNT));
     auto Mode = static_cast<EBlendingMode::EBlendingMode>(vMode);

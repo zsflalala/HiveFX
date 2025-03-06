@@ -15,8 +15,8 @@ namespace hiveVG
     class CSequenceFramePlayer
     {
     public:
-        CSequenceFramePlayer(std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
-        CSequenceFramePlayer(std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG = false);
+        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
+        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG = false);
         ~CSequenceFramePlayer();
 
         void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }

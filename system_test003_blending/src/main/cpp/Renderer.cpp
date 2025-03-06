@@ -4,7 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
-#include "Renderers/FullScreenSequenceBlendRenderer.h"
+#include "Renderers/BlendRenderer.h"
 #include "Renderers/ConfigBlendRenderer.h"
 
 using namespace hiveVG;

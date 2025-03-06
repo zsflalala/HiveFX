@@ -10,13 +10,13 @@
 
 using namespace hiveVG;
 
-CSequenceFramePlayer::CSequenceFramePlayer(std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType)
+CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType)
         : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType)
 {
     m_ValidFrames = m_SequenceRows * m_SequenceCols;
 }
 
-CSequenceFramePlayer::CSequenceFramePlayer(std::string &vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG)
+CSequenceFramePlayer::CSequenceFramePlayer(const std::string &vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG)
         : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_UseCompressedPNG(vUseCompressedPNG)
 {
     m_ValidFrames = m_SequenceRows * m_SequenceCols;

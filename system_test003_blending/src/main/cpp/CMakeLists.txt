@@ -18,7 +18,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 add_library(${CMAKE_PROJECT_NAME} SHARED
     system_test003_blending.cpp
     Renderer.cpp
-    Renderers/FullScreenSequenceBlendRenderer.cpp
+        Renderers/BlendRenderer.cpp
     Renderers/ConfigBlendRenderer.cpp
 )
 
