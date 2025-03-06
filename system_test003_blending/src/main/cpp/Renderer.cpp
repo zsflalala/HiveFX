@@ -12,7 +12,7 @@ using namespace hiveVG;
 CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 {
     __initRenderer();
-    //m_pFullScreenSequenceBlendRenderer = new CFullScreenSequenceBlendRenderer(m_pApp);
+    //m_pBlendRenderer = new CBlendRenderer(m_pApp);
     m_pConfigBlendRenderer = new CConfigBlendRenderer(m_pApp);
 }
 
@@ -35,7 +35,7 @@ CRenderer::~CRenderer()
         m_Display = EGL_NO_DISPLAY;
     }
 
-    if (m_pFullScreenSequenceBlendRenderer) delete m_pFullScreenSequenceBlendRenderer;
+    if (m_pBlendRenderer) delete m_pBlendRenderer;
     if (m_pConfigBlendRenderer) delete m_pConfigBlendRenderer;
 }
 
@@ -103,7 +103,7 @@ void CRenderer::render()
     __updateRenderArea();
 
     m_pConfigBlendRenderer->render();
-    //m_pFullScreenSequenceBlendRenderer->render(m_WindowWidth,m_WindowHeight);
+    //m_pBlendRenderer->render(m_WindowWidth,m_WindowHeight);
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
@@ -147,13 +147,13 @@ void CRenderer::handleInput()
                 {
                     Layer = PointerX / (m_WindowWidth / 4);
                     m_pConfigBlendRenderer->switchRenderStatus(Layer);
-                    //m_pFullScreenSequenceBlendRenderer->changeLayerStatus(Area);
+                    //m_pBlendRenderer->changeLayerStatus(Area);
                 }
                 else if(PointerY < m_WindowHeight * 3.0 / 20.0)
                 {
                     int Mode = PointerX / (m_WindowWidth / 5);
                     m_pConfigBlendRenderer->setLayerBlendMode(Layer,Mode);
-//                    m_pFullScreenSequenceBlendRenderer->changeBlendMode(Area);
+//                    m_pBlendRenderer->changeBlendMode(Area);
                 }
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
                 break;

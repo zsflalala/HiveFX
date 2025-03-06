@@ -30,7 +30,7 @@ namespace hiveVG
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
 
-        CBlendRenderer* m_pFullScreenSequenceBlendRenderer = nullptr;
+        CBlendRenderer* m_pBlendRenderer = nullptr;
         CConfigBlendRenderer* m_pConfigBlendRenderer = nullptr;
     };
 
