@@ -10,6 +10,7 @@ namespace hiveVG
     {
     public:
         CJsonReader(AAssetManager *vAssetManager, const std::string& vFilePath);
+        CJsonReader(const Json::Value& vJson);
 
         [[nodiscard]] bool        hasKey(const std::string& vKey)     const;
         [[nodiscard]] std::string getString(const std::string& vKey)  const;

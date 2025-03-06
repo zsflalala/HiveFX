@@ -5,6 +5,10 @@
 
 using namespace hiveVG;
 
+AAssetManager* CTextureBlender::m_pAssetManager = nullptr;
+CShaderProgram* CTextureBlender::m_pBlitShaderProgram = nullptr;
+std::vector<CShaderProgram*> CTextureBlender::m_BlendShaderPrograms;
+
 CTextureBlender::CTextureBlender() : m_BlendingMode(EBlendingMode::NORMAL), m_IsInit(false), m_IsDstTex1Bound(false), m_DstFBO(0), m_SrcFBO(0)
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
@@ -30,13 +34,18 @@ CTextureBlender::~CTextureBlender()
     m_BlendShaderPrograms.clear();
 }
 
-bool CTextureBlender::init(AAssetManager* vAssetManager, int vWidth, int vHeight)
+bool CTextureBlender::init(int vWidth, int vHeight)
 {
     if(m_IsInit) return true;
+    if(!m_pAssetManager)
+    {
+        LOG_ERROR(TAG_KEYWORD::TEXTURE_BLENDER_TAG,"Asset manager is not set up.");
+        return false;
+    }
     m_IsInit = __createFBO() && __createTexture(vWidth, vHeight)
                && __bindTex2FBO(m_SrcFBO, m_pSrcTexture)
                && __bindTex2FBO(m_DstFBO, m_pDstTexture0)
-               && __compilerShaders(vAssetManager);
+               && __compilerShaders();
     return m_IsInit;
 }
 
@@ -52,8 +61,7 @@ void CTextureBlender::drawAndBlend(const std::function<void()>& vDrawCall)
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE_BLENDER_TAG, "Initializing is not complete!");
         return;
     }
-    static bool IsBlend;
-    IsBlend = false;
+    m_IsBlend = false;
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_SrcFBO);
     glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
@@ -62,15 +70,16 @@ void CTextureBlender::drawAndBlend(const std::function<void()>& vDrawCall)
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
     vDrawCall();
-    if(IsBlend)
+    if(m_IsBlend)
         return;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    assert(static_cast<std::size_t>(m_BlendingMode) < m_BlendShaderPrograms.size());
-    __blend(m_BlendShaderPrograms[static_cast<std::size_t>(m_BlendingMode)]);
-    IsBlend = true;
+//    assert(static_cast<std::size_t>(m_BlendingMode) < m_BlendShaderPrograms.size());
+//    __blend(m_BlendShaderPrograms[static_cast<std::size_t>(m_BlendingMode)]);
+    __blend();
+    m_IsBlend = true;
 }
 
-void CTextureBlender::blitToScreen(CTexture2D *vTexture)
+void CTextureBlender::blit(bool vIsBlitToScreen, CTexture2D *vTexture)
 {
     if(!m_IsInit)
     {
@@ -78,7 +87,8 @@ void CTextureBlender::blitToScreen(CTexture2D *vTexture)
         return;
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if(vIsBlitToScreen)
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     m_pBlitShaderProgram->useProgram();
     m_pBlitShaderProgram->setUniform("fboTexture", 0);
     glActiveTexture(GL_TEXTURE0);
@@ -100,9 +110,9 @@ void CTextureBlender::blitToScreen(CTexture2D *vTexture)
     }
 }
 
-void CTextureBlender::blitSrcToScreen()
+void CTextureBlender::blitSrc(bool vIsBlitToScreen)
 {
-    blitToScreen(m_pSrcTexture);
+    blit(vIsBlitToScreen, m_pSrcTexture);
 }
 
 bool CTextureBlender::__updateTexSize(GLuint &vFboId, CTexture2D* vTexture, int vWidth, int vHeight)
@@ -170,15 +180,15 @@ bool CTextureBlender::__bindTex2FBO(GLuint &vFboId, CTexture2D *vTexture)
     return true;
 }
 
-bool CTextureBlender::__compilerShaders(AAssetManager* vAssetManager)
+bool CTextureBlender::__compilerShaders()
 {
 
-    m_pBlitShaderProgram = CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlitTex2ScreenFrag);
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendAlphaFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendMultiplyFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendLightenFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendLinearDodgeFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendLighterColorFrag));
+    m_pBlitShaderProgram = CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlitTex2ScreenFrag);
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendAlphaFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendMultiplyFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendLightenFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendLinearDodgeFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendLighterColorFrag));
     // m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendOverlayFrag));
 
     if(!m_pBlitShaderProgram)
@@ -191,8 +201,10 @@ bool CTextureBlender::__compilerShaders(AAssetManager* vAssetManager)
     return true;
 }
 
-void CTextureBlender::__blend(CShaderProgram* vShaderProgram)
+void CTextureBlender::__blend()
 {
+    assert(static_cast<std::size_t>(m_BlendingMode) < m_BlendShaderPrograms.size());
+    CShaderProgram* vShaderProgram = m_BlendShaderPrograms[static_cast<std::size_t>(m_BlendingMode)];
     if(!vShaderProgram)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE_BLENDER_TAG, "Blend Shader isn't exist.");

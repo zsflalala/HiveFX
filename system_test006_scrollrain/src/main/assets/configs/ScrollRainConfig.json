@@ -1,0 +1,19 @@
+{
+    "1" : {
+        "layer_type" : "slide_window",
+        "blend_mode" : "normal",
+        "config" : {
+            "picture_path" : "textures/LongTexRain1920_10800.png",
+            "slide_speed" : -90,
+            "loop" : true,
+            "slide_direction" : "vertical"
+        }
+    },
+    "2" : {
+        "layer_type" : "single_picture",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/Background.png"
+        }
+    }
+}

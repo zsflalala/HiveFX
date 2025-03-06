@@ -4,15 +4,16 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
-#include "TextureBlender.h"
 #include "Renderers/FullScreenSequenceBlendRenderer.h"
+#include "Renderers/ConfigBlendRenderer.h"
 
 using namespace hiveVG;
 
 CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 {
     __initRenderer();
-    m_pFullScreenSequenceBlendRenderer = new CFullScreenSequenceBlendRenderer(m_pApp);
+    //m_pFullScreenSequenceBlendRenderer = new CFullScreenSequenceBlendRenderer(m_pApp);
+    m_pConfigBlendRenderer = new CConfigBlendRenderer(m_pApp);
 }
 
 CRenderer::~CRenderer()
@@ -35,6 +36,7 @@ CRenderer::~CRenderer()
     }
 
     if (m_pFullScreenSequenceBlendRenderer) delete m_pFullScreenSequenceBlendRenderer;
+    if (m_pConfigBlendRenderer) delete m_pConfigBlendRenderer;
 }
 
 void CRenderer::__initRenderer()
@@ -100,7 +102,8 @@ void CRenderer::render()
 {
     __updateRenderArea();
 
-    m_pFullScreenSequenceBlendRenderer->render(m_WindowWidth,m_WindowHeight);
+    m_pConfigBlendRenderer->render();
+    //m_pFullScreenSequenceBlendRenderer->render(m_WindowWidth,m_WindowHeight);
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
@@ -139,26 +142,18 @@ void CRenderer::handleInput()
         {
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
+                static int Layer = 0;
                 if (PointerY > m_WindowHeight * 17.0 / 20.0)
                 {
-                    if (PointerX < m_WindowWidth / 2.0) {
-                        if(PointerX < m_WindowWidth / 4.0)
-                            m_pFullScreenSequenceBlendRenderer->changeLayerStatus(1);
-                        else
-                            m_pFullScreenSequenceBlendRenderer->changeLayerStatus(2);
-                    }
-                    else
-                    {
-                        if(PointerX > (m_WindowWidth * 3.0 / 4))
-                            m_pFullScreenSequenceBlendRenderer->changeLayerStatus(4);
-                        else
-                            m_pFullScreenSequenceBlendRenderer->changeLayerStatus(3);
-                    }
+                    Layer = PointerX / (m_WindowWidth / 4);
+                    m_pConfigBlendRenderer->switchRenderStatus(Layer);
+                    //m_pFullScreenSequenceBlendRenderer->changeLayerStatus(Area);
                 }
                 else if(PointerY < m_WindowHeight * 3.0 / 20.0)
                 {
-                    int Area = PointerX / (m_WindowWidth / 5);
-                    m_pFullScreenSequenceBlendRenderer->changeBlendMode(Area);
+                    int Mode = PointerX / (m_WindowWidth / 5);
+                    m_pConfigBlendRenderer->setLayerBlendMode(Layer,Mode);
+//                    m_pFullScreenSequenceBlendRenderer->changeBlendMode(Area);
                 }
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
                 break;

@@ -69,7 +69,7 @@ void CFullScreenSequenceBlendRenderer::render(int vWindowWidth, int vWindowHeigh
     }
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    m_pTexBlender->blitToScreen();
+    m_pTexBlender->blit();
 }
 
 void CFullScreenSequenceBlendRenderer::__initAlgorithm()
@@ -96,13 +96,14 @@ void CFullScreenSequenceBlendRenderer::__initAlgorithm()
     m_pTexBlender = new CTextureBlender();
     int Width = 0, Height = 0;
     assert(m_pApp->window != nullptr);
-    if (m_pApp->window != nullptr)
+    if (m_pApp->window)
     {
         Width = ANativeWindow_getWidth(m_pApp->window);
         Height = ANativeWindow_getHeight(m_pApp->window);
     }
 
-    m_pTexBlender->init(m_pApp->activity->assetManager,Width, Height);
+    CTextureBlender::setAssetManager(m_pApp->activity->assetManager);
+    m_pTexBlender->init(Width, Height);
 
     __initBillBoardManager();
 
@@ -193,7 +194,7 @@ void CFullScreenSequenceBlendRenderer::changeLayerStatus(int vIndex)
 
 void CFullScreenSequenceBlendRenderer::changeBlendMode(int vMode)
 {
-    assert(vMode >= 0 && vMode < static_cast<int>(EBlendingMode::COUNT));
-    auto Mode = static_cast<EBlendingMode>(vMode);
+    assert(vMode >= 0 && vMode < static_cast<int>(EBlendingMode::EBlendingMode::COUNT));
+    auto Mode = static_cast<EBlendingMode::EBlendingMode>(vMode);
     m_pTexBlender->setBlendingMode(Mode);
 }

@@ -7,7 +7,7 @@ struct android_app;
 
 namespace hiveVG
 {
-
+    class CConfigBlendRenderer;
     class CFullScreenSequenceBlendRenderer;
     class CRenderer
     {
@@ -31,6 +31,7 @@ namespace hiveVG
         EGLContext   m_Context       = EGL_NO_CONTEXT;
 
         CFullScreenSequenceBlendRenderer* m_pFullScreenSequenceBlendRenderer = nullptr;
+        CConfigBlendRenderer* m_pConfigBlendRenderer = nullptr;
     };
 
 } // hiveVG
