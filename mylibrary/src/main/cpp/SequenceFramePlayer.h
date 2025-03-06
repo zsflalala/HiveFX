@@ -15,8 +15,8 @@ namespace hiveVG
     class CSequenceFramePlayer
     {
     public:
-        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
-        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG = false);
+        CSequenceFramePlayer(std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
+        CSequenceFramePlayer(std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG = false);
         ~CSequenceFramePlayer();
 
         void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
@@ -40,10 +40,10 @@ namespace hiveVG
     private:
         int               m_SequenceRows;
         int               m_SequenceCols;
-        int				  m_SequenceWidth;
-        int				  m_SequenceHeight;
-        int				  m_SequenceSingleTextureWidth;
-        int				  m_SequenceSingleTextureHeight;
+        int				  m_SequenceWidth    = 0;
+        int				  m_SequenceHeight   = 0;
+        int				  m_SequenceSingleTextureWidth  = 0;
+        int				  m_SequenceSingleTextureHeight = 0;
         int               m_ValidFrames;
         float             m_FramePerSecond   = 24.0f;
         bool              m_IsLoop           = true;

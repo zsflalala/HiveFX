@@ -1,0 +1,113 @@
+{
+  "BigRainBack": {
+    "frames_path": "textures/BigRain_Back",
+    "sequenceRows": 8,
+    "sequenceCols": 8,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "BigRainFore": {
+    "frames_path": "textures/BigRain_Fore",
+    "sequenceRows": 8,
+    "sequenceCols": 8,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "SmallRainBack": {
+    "frames_path": "textures/SmallRain_Back",
+    "sequenceRows": 8,
+    "sequenceCols": 8,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "SmallRainFore": {
+    "frames_path": "textures/SmallRain_Fore",
+    "sequenceRows": 8,
+    "sequenceCols": 8,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "BigSnowBack": {
+  "frames_path": "textures/BigSnow_Back",
+    "sequenceRows": 8,
+    "sequenceCols": 16,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "BigSnowFore": {
+    "frames_path": "textures/BigSnow_Fore",
+    "sequenceRows": 8,
+    "sequenceCols": 16,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "SmallSnowBack": {
+    "frames_path": "textures/SmallSnow_Back",
+    "sequenceRows": 8,
+    "sequenceCols": 16,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "SmallSnowFore": {
+    "frames_path": "textures/SmallSnow_Fore",
+    "sequenceRows": 8,
+    "sequenceCols": 16,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "SnowCover": {
+    "frames_path": "textures/SnowCover",
+    "sequenceRows": 8,
+    "sequenceCols": 16,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": false
+  },
+  "Cloud2Scene": {
+    "frames_path": "textures/Cloud2Scene",
+    "sequenceRows": 12,
+    "sequenceCols": 15,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": false
+  },
+  "Cloud4Scene": {
+    "frames_path": "textures/Cloud4Scene",
+    "sequenceRows": 11,
+    "sequenceCols": 16,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": false
+  },
+  "Cloud5Scene": {
+    "frames_path": "textures/Cloud5Scene",
+    "sequenceRows": 18,
+    "sequenceCols": 12,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": false
+  },
+  "Background":{
+    "frames_path": "textures/snowScene.png"
+  }
+}

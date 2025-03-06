@@ -10,15 +10,13 @@
 
 using namespace hiveVG;
 
-CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType)
+CSequenceFramePlayer::CSequenceFramePlayer(std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType)
         : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_TextureType(vPictureType)
 {
     m_ValidFrames = m_SequenceRows * m_SequenceCols;
 }
 
-CSequenceFramePlayer::CSequenceFramePlayer(const std::string &vTextureRootPath, int vSequenceRows,
-                                           int vSequenceCols, int vTextureCount,
-                                           bool vUseCompressedPNG)
+CSequenceFramePlayer::CSequenceFramePlayer(std::string &vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG)
         : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_UseCompressedPNG(vUseCompressedPNG)
 {
     m_ValidFrames = m_SequenceRows * m_SequenceCols;
@@ -54,7 +52,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetMana
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
     for (int i = 0; i < m_TextureCount; i++)
     {
-        std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;;
+        std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
         if (!m_UseCompressedPNG)
         {
             CTexture2D* pSequenceTexture = CTexture2D::loadTexture(vAssetManager, TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
@@ -81,6 +79,11 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetMana
             SeqTexPlayVert,
             SeqTexPlayFrag
     );
+    if (!m_pSequenceShaderProgram)
+    {
+        LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "[%s] ShaderProgram init Failed.", m_TextureRootPath.c_str());
+        return false;
+    }
     assert(m_pSequenceShaderProgram != nullptr);
     LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TextureRootPath.c_str());
     return true;
@@ -129,6 +132,7 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     glm::vec2 TextureUVOffset = glm::vec2(CurrentFrameU0, CurrentFrameV0);
     glm::vec2 TextureUVScale  = glm::vec2(CurrentFrameU1 - CurrentFrameU0, CurrentFrameV1 - CurrentFrameV0);
 
+    assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
     m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
     m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
