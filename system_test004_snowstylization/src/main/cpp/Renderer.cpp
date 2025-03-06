@@ -107,7 +107,7 @@ void CRenderer::__initAlgorithm()
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
     int Rows = 1, Cols = 1, TextureCount = 5;
-    m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, Rows, Cols, TextureCount);
+    m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, Rows, Cols, TextureCount,EPictureType::PNG);
     m_pTestPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
     m_pTestPlayer->setFrameRate(5);
 }

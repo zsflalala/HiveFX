@@ -15,7 +15,7 @@ namespace hiveVG
     class CSlideWindow
     {
     public:
-        CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection);
+        CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection, EPictureType::EPictureType vPictureType = EPictureType::PNG);
         virtual ~CSlideWindow();
 
         void createProgram(AAssetManager *vAssetManager);

@@ -15,7 +15,8 @@ namespace hiveVG
     class CSequenceFramePlayer
     {
     public:
-        CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
+        CSequenceFramePlayer(std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
+        CSequenceFramePlayer(std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG = false);
         ~CSequenceFramePlayer();
 
         void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
@@ -39,20 +40,21 @@ namespace hiveVG
     private:
         int               m_SequenceRows;
         int               m_SequenceCols;
-        int				  m_SequenceWidth;
-        int				  m_SequenceHeight;
-        int				  m_SequenceSingleTextureWidth;
-        int				  m_SequenceSingleTextureHeight;
+        int				  m_SequenceWidth    = 0;
+        int				  m_SequenceHeight   = 0;
+        int				  m_SequenceSingleTextureWidth  = 0;
+        int				  m_SequenceSingleTextureHeight = 0;
         int               m_ValidFrames;
-        float             m_FramePerSecond  = 24.0f;
-        bool              m_IsLoop          = true;
-        bool              m_IsFinished      = false;
-        float             m_RotationAngle   = 0.0f;
-        bool              m_IsMoving        = false;
-        int               m_CurrentFrame   = 0;
-        double            m_AccumFrameTime = 0.0f;
+        float             m_FramePerSecond   = 24.0f;
+        bool              m_IsLoop           = true;
+        bool              m_IsFinished       = false;
+        float             m_RotationAngle    = 0.0f;
+        bool              m_IsMoving         = false;
+        bool              m_UseCompressedPNG = false;
+        int               m_CurrentFrame     = 0;
+        double            m_AccumFrameTime   = 0.0f;
         std::string       m_TextureRootPath;
-        int               m_CurrentTexture = 0;
+        int               m_CurrentTexture   = 0;
         int               m_TextureCount;
         glm::vec2         m_ScreenUVScale        = glm::vec2(1.0f, 1.0f);
         glm::vec2         m_ScreenUVOffset       = glm::vec2(0.0f, 0.0f);

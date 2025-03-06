@@ -5,8 +5,8 @@
 
 using namespace hiveVG;
 
-CSlideWindow::CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection)
-                        : m_TexturePath(vTexturePath), m_SlideSpeed(vSpeed), m_SlideDirection(vDirection){}
+CSlideWindow::CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection, EPictureType::EPictureType vPictureType)
+                        : m_TexturePath(vTexturePath), m_SlideSpeed(vSpeed), m_SlideDirection(vDirection), m_TextureType(vPictureType){}
 
 CSlideWindow::~CSlideWindow()
 {
