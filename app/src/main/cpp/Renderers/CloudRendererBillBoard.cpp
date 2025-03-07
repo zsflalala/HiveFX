@@ -98,7 +98,7 @@ void CCloudRendererBillBoard::renderScene(int vWindowWidth, int vWindowHeight)
     m_pCloudManager->blit(true);
 }
 
-void CCloudRendererBillBoard::transBlendStatus()
+void CCloudRendererBillBoard::setBlendStatus(bool vStatus)
 {
-    m_pCloudManager->transBlendStatus();
+    m_pCloudManager->setBlendStatus(vStatus);
 }

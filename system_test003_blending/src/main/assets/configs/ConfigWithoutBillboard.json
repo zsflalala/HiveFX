@@ -1,0 +1,116 @@
+{
+    "1" : {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/BigRain_fore",
+            "frames_type" : "png",
+            "fps" : 60,
+            "loop" : true,
+            "frames_count" : 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode" : "fullscreen"
+        }
+    },
+    "2": {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/BigRain_back",
+            "frames_type" : "png",
+            "frames_count" : 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode" : "fullscreen",
+            "fps" : 60,
+            "loop" : true
+        }
+    },
+    "3": {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/SmallRain_fore",
+            "frames_type" : "png",
+            "frames_count" : 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode" : "fullscreen",
+            "fps" : 60,
+            "loop" : true
+        }
+    },
+    "4" : {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config": {
+            "frames_path": "textures/Cloud2Scene",
+            "frames_type" : "png",
+            "frames_count": 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode": "partial",
+            "position": {
+                "x": -1.0,
+                "y": -0.3
+            },
+            "fps": 60,
+            "loop": true,
+            "moving_speed": [0.2, 0.0],
+            "scale": 0.7
+        }
+    },
+    "5":{
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config": {
+            "frames_path": "textures/Cloud4Scene",
+            "frames_type" : "png",
+            "frames_count": 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode": "partial",
+            "position": {
+                "x": -1.0,
+                "y": 0.1
+            },
+            "fps": 60,
+            "loop": true,
+            "moving_speed": [0.1, 0.0],
+            "scale": 0.5
+        }
+    },
+    "6":{
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config": {
+            "frames_path": "textures/Cloud5Scene",
+            "frames_type" : "png",
+            "frames_count": 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode": "partial",
+            "position": {
+                "x": -1.2,
+                "y": 0.0
+            },
+            "fps": 60,
+            "loop": true,
+            "moving_speed": [0.1, 0.0],
+            "scale": 0.5
+        }
+    }
+}

@@ -17,7 +17,7 @@ namespace hiveVG
 
         void render();
         void switchRenderStatus(int vIndex);
-        void setLayerBlendMode(int vIndex, int vBlendMode);
+        void setLayerBlendMode(int vBlendMode);
 
     private:
         void __initAlgorithm();

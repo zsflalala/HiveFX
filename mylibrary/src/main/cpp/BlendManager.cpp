@@ -63,34 +63,34 @@ void CBlendManager::render()
     {
         if(!m_RenderStatus[i])
             continue;
+        EBlendingMode::EBlendingMode BlendMode = m_BlendModeList[i];
         if (CSingleTexturePlayer** p = std::get_if<CSingleTexturePlayer*>(&m_PlayerList[i]))
         {
             DrawCallFunc = std::bind(&CBlendManager::__SingleTexDrawCallFunc, this, *p);
-            m_pTexBlender->setBlendingMode(m_BlendModeList[i]);
-            m_pTexBlender->drawAndBlend(DrawCallFunc);
+            __draw(DrawCallFunc, BlendMode);
         }
         if (CSequenceFramePlayer** p = std::get_if<CSequenceFramePlayer*>(&m_PlayerList[i]))
         {
             DrawCallFunc = std::bind(&CBlendManager::__SequenceFrameDrawCallFunc, this, *p, DeltaTime);
-            m_pTexBlender->setBlendingMode(m_BlendModeList[i]);
-            m_pTexBlender->drawAndBlend(DrawCallFunc);
+            __draw(DrawCallFunc, BlendMode);
         }
-        if(CBillBoardManager** p = std::get_if<CBillBoardManager*>(&m_PlayerList[i]))
+        if (CBillBoardManager** p = std::get_if<CBillBoardManager*>(&m_PlayerList[i]))
         {
-            DrawCallFunc = std::bind(&CBlendManager::__BillBoardDrawCallFunc, this, *p, DeltaTime);
-            m_pTexBlender->setBlendingMode(m_BlendModeList[i]);
-            m_pTexBlender->drawAndBlend(DrawCallFunc);
+            DrawCallFunc = std::bind(&CBlendManager::__BillBoardDrawCallFunc, this, *p, DeltaTime, BlendMode);
+            __draw(DrawCallFunc, BlendMode);
         }
         if (CSlideWindow** p = std::get_if<CSlideWindow*>(&m_PlayerList[i]))
         {
             DrawCallFunc = std::bind(&CBlendManager::__SlideWindowDrawCallFunc, this, *p, DeltaTime);
-            m_pTexBlender->setBlendingMode(m_BlendModeList[i]);
-            m_pTexBlender->drawAndBlend(DrawCallFunc);
+            __draw(DrawCallFunc, BlendMode);
         }
     }
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    m_pTexBlender->blit();
+    if(m_IsBlendValid)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        m_pTexBlender->blit();
+    }
 }
 
 bool CBlendManager::__initPlayer(const std::string &vFilePath)
@@ -150,6 +150,21 @@ void CBlendManager::__createLayerPlayer(std::function<LayerPlayer()> vFunc, EBle
         m_PlayerList.push_back(pPlayer);
         m_BlendModeList.push_back(vBlendMode);
         m_RenderStatus.push_back(true);
+    }
+}
+
+void CBlendManager::__draw(const std::function<void()>& vDrawCall, EBlendingMode::EBlendingMode vBlendMode)
+{
+    if(vBlendMode == EBlendingMode::NONE)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        vDrawCall();
+    }
+    else
+    {
+        m_pTexBlender->setBlendingMode(vBlendMode);
+        m_pTexBlender->drawAndBlend(vDrawCall);
     }
 }
 
@@ -242,7 +257,7 @@ LayerPlayer CBlendManager::__createBillBoardManager(const Json::Value &vConfig)
 
     pManager->initSequenceState();
     pManager->initBlender(m_Width, m_Height);
-    pManager->transBlendStatus();
+    pManager->setBlendStatus(true);
 
     return pManager;
 }
@@ -273,7 +288,7 @@ void CBlendManager::__SequenceFrameDrawCallFunc(CSequenceFramePlayer *vSequFraPl
     vSequFraPlayer->draw(m_pScreenQuad);
 }
 
-void CBlendManager::__BillBoardDrawCallFunc(CBillBoardManager *vBillBoardManager, double vDeltaTime)
+void CBlendManager::__BillBoardDrawCallFunc(CBillBoardManager *vBillBoardManager, double vDeltaTime, EBlendingMode::EBlendingMode vMode)
 {
     vBillBoardManager->updateFrameAndUV(m_Width, m_Height, vDeltaTime);
     vBillBoardManager->updateSequenceState(vDeltaTime);
@@ -286,8 +301,13 @@ void CBlendManager::__BillBoardDrawCallFunc(CBillBoardManager *vBillBoardManager
         vBillBoardManager->setImageAspectRatioAt(i, ScreenUVScale[i]);
     }
     vBillBoardManager->draw(m_pScreenQuad);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_pTexBlender->getSrcFBO());
-    vBillBoardManager->blit(false);
+    if(vMode == EBlendingMode::NONE)
+        vBillBoardManager->blit(true);
+    else
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_pTexBlender->getSrcFBO());
+        vBillBoardManager->blit(false);
+    }
 }
 
 void CBlendManager::__SlideWindowDrawCallFunc(CSlideWindow *vSlideWindowPlayer, double vDeltaTime)
@@ -304,6 +324,32 @@ void CBlendManager::setBlendModeByIndex(EBlendingMode::EBlendingMode vMode, int 
         return;
     }
     m_BlendModeList[vIndex] = vMode;
+    if (CBillBoardManager** p = std::get_if<CBillBoardManager*>(&m_PlayerList[vIndex]))
+    {
+        if(vMode == EBlendingMode::NONE)
+            (*p)->setBlendStatus(false);
+        else
+            (*p)->setBlendStatus(true);
+    }
+}
+
+void CBlendManager::setBlendModeForAllLayer(EBlendingMode::EBlendingMode vMode)
+{
+    for(int i = 0; i< m_BlendModeList.size(); i++)
+    {
+        m_BlendModeList[i] = vMode;
+        if (CBillBoardManager** p = std::get_if<CBillBoardManager*>(&m_PlayerList[i]))
+        {
+            if(vMode == EBlendingMode::NONE)
+                (*p)->setBlendStatus(false);
+            else
+                (*p)->setBlendStatus(true);
+        }
+    }
+    if(vMode == EBlendingMode::NONE)
+        m_IsBlendValid = false;
+    else
+        m_IsBlendValid = true;
 }
 
 void CBlendManager::switchRenderStatus(int vIndex)

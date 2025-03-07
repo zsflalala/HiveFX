@@ -35,7 +35,8 @@ void CConfigBlendRenderer::__initAlgorithm()
     }
 
     m_pManager = new CBlendManager(m_pApp->activity->assetManager);
-    m_pManager->init("configs/BlendingConfig.json", Width, Height);
+    //m_pManager->init("configs/BlendingConfig.json", Width, Height);
+    m_pManager->init("configs/ConfigWithoutBillboard.json", Width, Height);
 }
 
 void CConfigBlendRenderer::switchRenderStatus(int vIndex)
@@ -43,9 +44,9 @@ void CConfigBlendRenderer::switchRenderStatus(int vIndex)
     m_pManager->switchRenderStatus(vIndex);
 }
 
-void CConfigBlendRenderer::setLayerBlendMode(int vIndex, int vBlendMode)
+void CConfigBlendRenderer::setLayerBlendMode(int vBlendMode)
 {
     assert(vBlendMode >= 0 && vBlendMode < static_cast<int>(EBlendingMode::EBlendingMode::COUNT));
     auto Mode = static_cast<EBlendingMode::EBlendingMode>(vBlendMode);
-    m_pManager->setBlendModeByIndex(Mode, vIndex);
+    m_pManager->setBlendModeForAllLayer(Mode);
 }

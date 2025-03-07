@@ -145,14 +145,14 @@ void CRenderer::handleInput()
                 static int Layer = 0;
                 if (PointerY > m_WindowHeight * 17.0 / 20.0)
                 {
-                    Layer = PointerX / (m_WindowWidth / 4);
+                    Layer = PointerX / (m_WindowWidth / 6);
                     m_pConfigBlendRenderer->switchRenderStatus(Layer);
                     //m_pBlendRenderer->changeLayerStatus(Area);
                 }
                 else if(PointerY < m_WindowHeight * 3.0 / 20.0)
                 {
-                    int Mode = PointerX / (m_WindowWidth / 5);
-                    m_pConfigBlendRenderer->setLayerBlendMode(Layer,Mode);
+                    int Mode = PointerX / (m_WindowWidth / 6);
+                    m_pConfigBlendRenderer->setLayerBlendMode(Mode);
 //                    m_pBlendRenderer->changeBlendMode(Area);
                 }
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);

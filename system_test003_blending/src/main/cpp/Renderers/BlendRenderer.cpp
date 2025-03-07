@@ -87,6 +87,7 @@ void CBlendRenderer::__initAlgorithm()
         return ;
     }
 
+    TexPath = "textures/BigRain_back";
     m_pBackSequFraPlayer = new CSequenceFramePlayer(TexPath, 1, 1, 64, EPictureType::PNG);
     if(!m_pBackSequFraPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
@@ -154,7 +155,7 @@ void CBlendRenderer::__initBillBoardManager()
     m_pCloudManager->pushBack(Cloud5Scene);
     m_pCloudManager->initSequenceState();
     m_pCloudManager->setBlender(m_pTexBlender);
-    m_pCloudManager->transBlendStatus();
+    m_pCloudManager->setBlendStatus(true);
 }
 
 void CBlendRenderer::__BillBoardDrawCallFunc(int vWindowWidth, int vWindowHeight, double vDeltaTime)
