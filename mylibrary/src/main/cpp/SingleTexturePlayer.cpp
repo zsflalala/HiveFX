@@ -3,6 +3,7 @@
 #include "Texture2D.h"
 #include "ShaderProgram.h"
 
+
 using namespace hiveVG;
 
 CSingleTexturePlayer::CSingleTexturePlayer(const std::string &vTexturePath) : m_TexturePath(vTexturePath){}

@@ -1,7 +1,5 @@
 #pragma once
-
 #include <string>
-#include <GLES3/gl3.h>
 #include <android/asset_manager.h>
 #include "Common.h"
 

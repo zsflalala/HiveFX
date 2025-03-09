@@ -1,4 +1,5 @@
 #include "SlideWindow.h"
+#include <glm/glm.hpp>
 #include "Texture2D.h"
 #include "ShaderProgram.h"
 #include "ScreenQuad.h"
