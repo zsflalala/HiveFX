@@ -18,7 +18,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 add_library(${CMAKE_PROJECT_NAME} SHARED
     system_test003_blending.cpp
     Renderer.cpp
-    Renderers/FullScreenSequenceBlendRenderer.cpp
+    Renderers/RendererWithConfig.cpp
 )
 
 find_package(game-activity REQUIRED CONFIG)
@@ -26,6 +26,7 @@ find_package(game-activity REQUIRED CONFIG)
 set(REQUIRED_PACKAGES
         glm
         WebP
+        jsoncpp
 )
 
 foreach(PACKAGE ${REQUIRED_PACKAGES})
@@ -41,4 +42,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     log
     mylibrary
     glm::glm
-    libwebp::libwebp)
+    libwebp::libwebp
+    JsonCpp::JsonCpp)

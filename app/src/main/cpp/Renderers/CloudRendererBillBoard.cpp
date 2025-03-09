@@ -65,7 +65,8 @@ void CCloudRendererBillBoard::__initAlgorithm()
         Width = ANativeWindow_getWidth(m_pApp->window);
         Height = ANativeWindow_getHeight(m_pApp->window);
     }
-    pTextureBlender->init(m_pApp->activity->assetManager,Width, Height);
+    CTextureBlender::setAssetManager(m_pApp->activity->assetManager);
+    pTextureBlender->init(Width, Height);
     m_pCloudManager->setBlender(pTextureBlender);
 
     m_LastFrameTime = CTimeUtils::getCurrentTime();
@@ -94,10 +95,10 @@ void CCloudRendererBillBoard::renderScene(int vWindowWidth, int vWindowHeight)
     }
     m_pCloudManager->draw(m_pScreenQuad);
 
-    m_pCloudManager->blitToScreen();
+    m_pCloudManager->blit(true);
 }
 
-void CCloudRendererBillBoard::transBlendStatus()
+void CCloudRendererBillBoard::setBlendStatus(bool vStatus)
 {
-    m_pCloudManager->transBlendStatus();
+    m_pCloudManager->setBlendStatus(vStatus);
 }

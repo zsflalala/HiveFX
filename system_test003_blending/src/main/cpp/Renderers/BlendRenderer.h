@@ -14,11 +14,11 @@ namespace hiveVG
     class CSequenceFramePlayer;
     class CBillBoardManager;
 
-    class CFullScreenSequenceBlendRenderer
+    class CBlendRenderer
     {
     public:
-        CFullScreenSequenceBlendRenderer(android_app *vApp);
-        ~CFullScreenSequenceBlendRenderer();
+        CBlendRenderer(android_app *vApp);
+        ~CBlendRenderer();
 
         void render(int vWindowWidth, int vWindowHeight);
         void changeLayerStatus(int vIndex);

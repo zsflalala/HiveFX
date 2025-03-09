@@ -18,7 +18,7 @@ namespace hiveVG
         ~CCloudRendererBillBoard();
 
         void renderScene(int vWindowWidth, int vWindowHeight);
-        void transBlendStatus();
+        void setBlendStatus(bool vStatus);
 
     private:
         void   __initAlgorithm();

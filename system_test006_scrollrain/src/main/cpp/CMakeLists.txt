@@ -18,13 +18,15 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 add_library(${CMAKE_PROJECT_NAME} SHARED
     system_test006_scrollrain.cpp
     Renderer.cpp
-    Renderers/ScrollRainRenderer.cpp)
+    Renderers/ScrollRainRenderer.cpp
+    Renderers/ScrollRainConfigRenderer.cpp)
 
 find_package(game-activity REQUIRED CONFIG)
 
 set(REQUIRED_PACKAGES
     glm
     WebP
+    jsoncpp
 )
 
 foreach(PACKAGE ${REQUIRED_PACKAGES})
@@ -40,4 +42,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     log
     hivefxso
     glm::glm
-    libwebp::libwebp)
+    libwebp::libwebp
+    JsonCpp::JsonCpp)

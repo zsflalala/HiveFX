@@ -31,6 +31,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         EnumReflect.cpp
         SnowStylizer.cpp
         TextureBlender.cpp
+        BlendManager.cpp
         TimeUtils.cpp)
 
 set(REQUIRED_PACKAGES

@@ -252,8 +252,10 @@ void CRenderer::handleInput()
                 else
                 {
                     m_RenderType = ERenderType::CLOUD;
+                    static bool IsCloudBlend = true;
+                    IsCloudBlend = !IsCloudBlend;
                     if(m_pCloudScene)
-                        m_pCloudScene->transBlendStatus();
+                        m_pCloudScene->setBlendStatus(IsCloudBlend);
                 }       
             }
             else

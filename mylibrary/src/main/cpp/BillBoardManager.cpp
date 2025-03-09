@@ -147,27 +147,31 @@ SSequenceState CBillBoardManager::__initSequenceParams()
     return State;
 }
 
-void CBillBoardManager::transBlendStatus()
+void CBillBoardManager::setBlendStatus(bool vStatus)
 {
     if(!m_pTexBlender)
     {
         m_IsBlend = false;
-        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE_BLENDER_TAG, "Blending cannot be started by no blender.");
+        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE_BLENDER_TAG, "Blending cannot be started by no blender.");
         return;
     }
-    m_IsBlend = !m_IsBlend;
+    m_IsBlend = vStatus;
     if(m_IsBlend)
         LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"开启混合");
     else
         LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"关闭混合");
 }
 
-void CBillBoardManager::blitToScreen()
+void CBillBoardManager::blit(bool vIsBlitToScreen)
 {
     if(m_IsBlend)
     {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        m_pTexBlender->blitToScreen();
+        m_pTexBlender->blit(vIsBlitToScreen);
     }
+}
+
+bool CBillBoardManager::initBlender(int vWidth, int vHeight)
+{
+    m_pTexBlender = new CTextureBlender();
+    return m_pTexBlender->init(vWidth, vHeight);
 }

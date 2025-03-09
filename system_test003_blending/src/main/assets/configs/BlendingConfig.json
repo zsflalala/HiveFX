@@ -1,0 +1,119 @@
+{
+    "1" : {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/BigRain_fore",
+            "frames_type" : "png",
+            "fps" : 60,
+            "loop" : true,
+            "frames_count" : 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode" : "fullscreen"
+        }
+    },
+    "2" : {
+        "layer_type" : "billboard",
+        "blend_mode" : "normal",
+        "config" : {
+            "1":{
+                "layer_type" : "sequence_frame",
+                "blend_mode" : "normal",
+                "config": {
+                    "frames_path": "textures/Cloud2Scene",
+                    "frames_type" : "png",
+                    "frames_count": 64,
+                    "ranks":{
+                        "rows" : 1,
+                        "cols" : 1
+                    },
+                    "play_mode": "partical",
+                    "position": {
+                        "x": -1.0,
+                        "y": -0.3
+                    },
+                    "fps": 60,
+                    "loop": true,
+                    "moving_speed": [0.2, 0.0],
+                    "scale": 0.5
+                }
+            },
+            "2":{
+                "layer_type" : "sequence_frame",
+                "blend_mode" : "normal",
+                "config": {
+                    "frames_path": "textures/Cloud4Scene",
+                    "frames_type" : "png",
+                    "frames_count": 64,
+                    "ranks":{
+                        "rows" : 1,
+                        "cols" : 1
+                    },
+                    "play_mode": "partical",
+                    "position": {
+                        "x": -1.0,
+                        "y": -0.3
+                    },
+                    "fps": 60,
+                    "loop": true,
+                    "moving_speed": [0.2, 0.0],
+                    "scale": 0.5
+                }
+            },
+            "3":{
+                "layer_type" : "sequence_frame",
+                "blend_mode" : "normal",
+                "config": {
+                    "frames_path": "textures/Cloud5Scene",
+                    "frames_type" : "png",
+                    "frames_count": 64,
+                    "ranks":{
+                        "rows" : 1,
+                        "cols" : 1
+                    },
+                    "play_mode": "partical",
+                    "position": {
+                        "x": -1.0,
+                        "y": -0.3
+                    },
+                    "fps": 60,
+                    "loop": true,
+                    "moving_speed": [0.2, 0.0],
+                    "scale": 0.5
+                }
+            }
+        }
+    },
+    "3" : {
+        "layer_type" : "single_picture",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/Background.png"
+        }
+    },
+    "4": {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/BigRain_back",
+            "frames_type" : "png",
+            "frames_count" : 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode" : "fullscreen",
+            "position" : {
+                "x" : -1.0,
+                "y" : -0.3
+            },
+            "fps" : 60,
+            "loop" : true,
+            "moving_speed": [0.2, 0.0],
+            "scale": 0.5
+        }
+    }
+}

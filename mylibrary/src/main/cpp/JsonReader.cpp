@@ -31,6 +31,9 @@ CJsonReader::CJsonReader(AAssetManager *vAssetManager, const std::string& vFileP
     }
 }
 
+CJsonReader::CJsonReader(const Json::Value &vJson) : m_Root(vJson)
+{ }
+
 bool CJsonReader::hasKey(const std::string& vKey) const
 {
     return m_Root.isMember(vKey);

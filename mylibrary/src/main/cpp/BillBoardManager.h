@@ -29,13 +29,14 @@ namespace hiveVG
 
         void  pushBack(CSequenceFramePlayer* vSequenceFramePlayer);
         void  initSequenceState();
+        bool  initBlender(int vWidth, int vHeight);
         void  updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
         void  draw(CScreenQuad* vQuad);
         int   getSequencePlayerLength() { return m_SequencePlayers.size(); }
         float getImageAspectRatioAt(int i) { return static_cast<float>(m_SequencePlayers[i]->getSingleTextureWidth()) / static_cast<float>(m_SequencePlayers[i]->getSingleTextureHeight()); }
         void  updateSequenceState(float vDeltaTime);
-        void  transBlendStatus();
-        void  blitToScreen();
+        void  setBlendStatus(bool vStatus);
+        void  blit(bool vIsBlitToScreen = true);
 
         void  setLoop(bool vLoop);
         void  setFrameRate(int vFrameRate);
