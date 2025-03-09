@@ -5,15 +5,13 @@
 #include <algorithm>
 #include "Common.h"
 #include "Renderers/BlendRenderer.h"
-#include "Renderers/ConfigBlendRenderer.h"
+#include "Renderers/RendererWithConfig.h"
 
 using namespace hiveVG;
 
 CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 {
     __initRenderer();
-    //m_pBlendRenderer = new CBlendRenderer(m_pApp);
-    m_pConfigBlendRenderer = new CConfigBlendRenderer(m_pApp);
 }
 
 CRenderer::~CRenderer()
@@ -35,8 +33,8 @@ CRenderer::~CRenderer()
         m_Display = EGL_NO_DISPLAY;
     }
 
-    if (m_pBlendRenderer) delete m_pBlendRenderer;
-    if (m_pConfigBlendRenderer) delete m_pConfigBlendRenderer;
+    if (m_pRainRenderer) delete m_pRainRenderer;
+    if (m_pCloudRenderer) delete m_pCloudRenderer;
 }
 
 void CRenderer::__initRenderer()
@@ -101,8 +99,13 @@ void CRenderer::__initRenderer()
 void CRenderer::render()
 {
     __updateRenderArea();
+    glClearColor(0.1f,0.2f,0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    m_pConfigBlendRenderer->render();
+    if(m_IsRainRendering)
+        m_pRainRenderer->render();
+    if(m_IsCloudRendering)
+        m_pCloudRenderer->render();
     //m_pBlendRenderer->render(m_WindowWidth,m_WindowHeight);
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
@@ -146,14 +149,38 @@ void CRenderer::handleInput()
                 if (PointerY > m_WindowHeight * 17.0 / 20.0)
                 {
                     Layer = PointerX / (m_WindowWidth / 6);
-                    m_pConfigBlendRenderer->switchRenderStatus(Layer);
-                    //m_pBlendRenderer->changeLayerStatus(Area);
+                    if(Layer < 3)
+                    {
+                        if (!m_pRainRenderer)
+                        {
+                            m_pRainRenderer = new CRendererWithConfig(m_pApp);
+                            m_pRainRenderer->init("configs/ConfigRainOnly.json");
+                            for(int i = 0; i<3;i++)
+                                m_pRainRenderer->switchRenderStatus(i);
+                        }
+                        m_pRainRenderer->switchRenderStatus(Layer);
+                        m_IsRainRendering = true;
+                        m_IsCloudRendering = false;
+                    }
+                    else
+                    {
+                        if(!m_pCloudRenderer)
+                        {
+                            m_pCloudRenderer = new CRendererWithConfig(m_pApp);
+                            m_pCloudRenderer->init("configs/ConfigCloudOnly.json");
+                            for(int i = 0; i<3;i++)
+                                m_pCloudRenderer->switchRenderStatus(i);
+                        }
+                        m_pCloudRenderer->switchRenderStatus(Layer - 3);
+                        m_IsRainRendering = false;
+                        m_IsCloudRendering = true;
+                    }
                 }
                 else if(PointerY < m_WindowHeight * 3.0 / 20.0)
                 {
                     int Mode = PointerX / (m_WindowWidth / 6);
-                    m_pConfigBlendRenderer->setLayerBlendMode(Mode);
-//                    m_pBlendRenderer->changeBlendMode(Area);
+                    if(m_IsRainRendering) m_pRainRenderer->setLayerBlendMode(Mode);
+                    if(m_IsCloudRendering) m_pCloudRenderer->setLayerBlendMode(Mode);
                 }
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
                 break;

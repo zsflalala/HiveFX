@@ -9,21 +9,19 @@ namespace hiveVG
 {
     class CBlendManager;
 
-    class CConfigBlendRenderer
+    class CRendererWithConfig
     {
     public:
-        CConfigBlendRenderer(android_app *vApp);
-        ~CConfigBlendRenderer();
+        CRendererWithConfig(android_app *vApp);
+        ~CRendererWithConfig();
 
+        bool init(const std::string vConfigFile);
         void render();
         void switchRenderStatus(int vIndex);
         void setLayerBlendMode(int vBlendMode);
 
     private:
-        void __initAlgorithm();
-
         android_app* m_pApp = nullptr;
         CBlendManager* m_pManager = nullptr;
     };
-
 }

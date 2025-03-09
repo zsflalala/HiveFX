@@ -1,4 +1,4 @@
-#include "ConfigBlendRenderer.h"
+#include "RendererWithConfig.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include <GLES3/gl3.h>
 #include <assert.h>
@@ -6,25 +6,15 @@
 
 using namespace hiveVG;
 
-CConfigBlendRenderer::CConfigBlendRenderer(android_app *vApp) : m_pApp(vApp)
-{
-    __initAlgorithm();
-}
+CRendererWithConfig::CRendererWithConfig(android_app *vApp) : m_pApp(vApp)
+{ }
 
-CConfigBlendRenderer::~CConfigBlendRenderer()
+CRendererWithConfig::~CRendererWithConfig()
 {
     if(m_pManager) delete m_pManager;
 }
 
-void CConfigBlendRenderer::render()
-{
-    glClearColor(0.1f,0.2f,0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    m_pManager->render();
-}
-
-void CConfigBlendRenderer::__initAlgorithm()
+bool CRendererWithConfig::init(const std::string vConfigFile)
 {
     int Width = 0, Height = 0;
     assert(m_pApp->window != nullptr);
@@ -35,18 +25,24 @@ void CConfigBlendRenderer::__initAlgorithm()
     }
 
     m_pManager = new CBlendManager(m_pApp->activity->assetManager);
-    //m_pManager->init("configs/BlendingConfig.json", Width, Height);
-    m_pManager->init("configs/ConfigWithoutBillboard.json", Width, Height);
+    m_pManager->init(vConfigFile, Width, Height);
+    return true;
 }
 
-void CConfigBlendRenderer::switchRenderStatus(int vIndex)
+void CRendererWithConfig::render()
+{
+    m_pManager->render();
+}
+
+void CRendererWithConfig::switchRenderStatus(int vIndex)
 {
     m_pManager->switchRenderStatus(vIndex);
 }
 
-void CConfigBlendRenderer::setLayerBlendMode(int vBlendMode)
+void CRendererWithConfig::setLayerBlendMode(int vBlendMode)
 {
     assert(vBlendMode >= 0 && vBlendMode < static_cast<int>(EBlendingMode::EBlendingMode::COUNT));
     auto Mode = static_cast<EBlendingMode::EBlendingMode>(vBlendMode);
     m_pManager->setBlendModeForAllLayer(Mode);
+    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "Set blending mode: %s", EBlendingMode::ToString(Mode));
 }

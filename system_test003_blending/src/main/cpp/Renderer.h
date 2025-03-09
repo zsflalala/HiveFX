@@ -7,8 +7,7 @@ struct android_app;
 
 namespace hiveVG
 {
-    class CConfigBlendRenderer;
-    class CBlendRenderer;
+    class CRendererWithConfig;
     class CRenderer
     {
     public:
@@ -29,9 +28,11 @@ namespace hiveVG
         EGLDisplay   m_Display       = EGL_NO_DISPLAY;
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
+        bool         m_IsRainRendering  = false;
+        bool         m_IsCloudRendering = false;
 
-        CBlendRenderer* m_pBlendRenderer = nullptr;
-        CConfigBlendRenderer* m_pConfigBlendRenderer = nullptr;
+        CRendererWithConfig* m_pRainRenderer = nullptr;
+        CRendererWithConfig* m_pCloudRenderer = nullptr;
     };
 
 } // hiveVG

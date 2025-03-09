@@ -1,0 +1,50 @@
+{
+    "1" : {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/BigRain_fore",
+            "frames_type" : "png",
+            "fps" : 60,
+            "loop" : true,
+            "frames_count" : 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode" : "fullscreen"
+        }
+    },
+    "2": {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/BigRain_back",
+            "frames_type" : "png",
+            "frames_count" : 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode" : "fullscreen",
+            "fps" : 60,
+            "loop" : true
+        }
+    },
+    "3": {
+        "layer_type" : "sequence_frame",
+        "blend_mode" : "normal",
+        "config" : {
+            "frames_path" : "textures/SmallRain_fore",
+            "frames_type" : "png",
+            "frames_count" : 64,
+            "ranks":{
+                "rows" : 1,
+                "cols" : 1
+            },
+            "play_mode" : "fullscreen",
+            "fps" : 60,
+            "loop" : true
+        }
+    }
+}
