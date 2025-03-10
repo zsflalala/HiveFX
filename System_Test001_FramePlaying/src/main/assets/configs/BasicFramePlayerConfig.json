@@ -1,9 +1,9 @@
 {
   "sequence_config": {
-    "frames_path": "textures/BigRainJPG",
-    "frames_type" : "jpg",
+    "frames_path": "textures/SnowCover",
+    "frames_type" : "png",
     "frames_count": 64,
-    "play_mode": "fullscreen",
+    "play_mode": "partial",
     "position": {
       "x": -1.0,
       "y": -0.3
@@ -11,7 +11,7 @@
     "fps": 60,
     "loop": true,
     "moving_speed": [0.2, 0.0],
-    "scale": 0.5,
+    "scale": 0.6,
     "blend_mode": "additive"
   }
 }
