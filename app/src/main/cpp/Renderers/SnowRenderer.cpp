@@ -75,7 +75,8 @@ void CSnowRenderer::__initAlgorithm()
     }
     m_pBigSnowBackPlayer->setFrameRate(60.0f);
 
-    m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer("textures/SnowCover", SequenceRows, SequenceCols, TextureCount, PictureType);
+    TexRootPath = "textures/SnowCover";
+    m_pSnowSceneSeqFramePlayer = new CSequenceFramePlayer(TexRootPath, SequenceRows, SequenceCols, TextureCount, PictureType);
     if (!m_pSnowSceneSeqFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SnowScene initialization falied.");

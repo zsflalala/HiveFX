@@ -32,8 +32,16 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pBigSnowRenderer) delete m_pBigSnowRenderer;
-    if (m_pCloudRenderer)   delete m_pCloudRenderer;
+    if (m_pBigSnowRenderer != nullptr)
+    {
+        delete m_pBigSnowRenderer;
+        m_pBigSnowRenderer = nullptr;
+    }
+    if (m_pCloudRenderer != nullptr)
+    {
+        delete m_pCloudRenderer;
+        m_pCloudRenderer = nullptr;
+    }
 }
 
 void CRenderer::__initRenderer()

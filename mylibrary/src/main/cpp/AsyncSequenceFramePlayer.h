@@ -74,6 +74,6 @@ namespace hiveVG
         unsigned int*	                     m_pTextureHandles      = nullptr;
         CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
         std::vector<std::future<void>>       m_TextureLoadFutures;
-        ThreadPool                           m_ThreadPool;
+        CThreadPool                           m_ThreadPool;
     };
 }

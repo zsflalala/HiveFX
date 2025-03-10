@@ -2,6 +2,7 @@
 
 #include <android/log.h>
 #include <cstdint>
+#include <glm/glm.hpp>
 #include "EnumReflect.h"
 
 DECLARE_ENUM(EPlayType, FULLSCREEN = 0, PARTIAL)
@@ -66,4 +67,17 @@ namespace hiveVG
     const static std::string BlendLinearDodgeFrag  = "shaders/blendLinearDodge.frag";
     const static std::string BlendLighterColorFrag = "shaders/blendLighterColor.frag";
     const static std::string BlendOverlayFrag      = "shaders/blendOverlay.frag";
+
+    struct SSequenceState
+    {
+        bool      _IsAlive;
+        float     _PlannedLivingTime;
+        float     _PlannedDeadTime;
+        float     _AlreadyLivingTime;
+        float     _AlreadyDeadTime;
+        float     _MovingDirection;
+        float     _MovingSpeed;
+        glm::vec2 _UVOffset;
+        float     _UVScale;
+    };
 }

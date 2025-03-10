@@ -33,7 +33,11 @@ CRenderer::~CRenderer()
         m_Display = EGL_NO_DISPLAY;
     }
     //if (m_pTestPlayer)       delete m_pTestPlayer;
-    if (m_pRendererWithConfig) delete m_pRendererWithConfig;
+    if (m_pRendererWithConfig)
+    {
+        delete m_pRendererWithConfig;
+        m_pRendererWithConfig = nullptr;
+    }
 }
 
 void CRenderer::__initRenderer()
@@ -99,7 +103,7 @@ void CRenderer::renderScene()
 //    if (m_pTestPlayer == nullptr) m_pTestPlayer = new CScrollRainRenderer(m_pApp);
 //    m_pTestPlayer->renderScene(m_WindowWidth, m_WindowHeight);
     if(!m_pRendererWithConfig) m_pRendererWithConfig = new CScrollRainConfigRenderer(m_pApp);
-    m_pRendererWithConfig -> render();
+    m_pRendererWithConfig->render();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

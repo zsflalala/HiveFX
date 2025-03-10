@@ -26,8 +26,8 @@ void CCombinedBigSnowFrameRenderer::__initAlgorithm()
 {
     std::string FileName   = "configs/MainAppConfig.json";
     CJsonReader JsonReader = CJsonReader(m_pApp->activity->assetManager,FileName);
-    Json::Value SnowBackConfig = JsonReader.getObject("BigSnowBack");
-    Json::Value SnowForeConfig = JsonReader.getObject("BigSnowFore");
+    Json::Value SnowBackConfig = JsonReader.getObject("SmallSnowBack");
+    Json::Value SnowForeConfig = JsonReader.getObject("SmallSnowFore");
     Json::Value BackConfig     = JsonReader.getObject("Background");
 
     std::string SnowFramePath = SnowBackConfig["frames_path"].asString();

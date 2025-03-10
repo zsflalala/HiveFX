@@ -11,10 +11,14 @@ CRendererWithConfig::CRendererWithConfig(android_app *vApp) : m_pApp(vApp)
 
 CRendererWithConfig::~CRendererWithConfig()
 {
-    if(m_pManager) delete m_pManager;
+    if (m_pManager != nullptr)
+    {
+        delete m_pManager;
+        m_pManager = nullptr;
+    }
 }
 
-bool CRendererWithConfig::init(const std::string vConfigFile)
+bool CRendererWithConfig::init(const std::string& vConfigFile)
 {
     int Width = 0, Height = 0;
     assert(m_pApp->window != nullptr);
