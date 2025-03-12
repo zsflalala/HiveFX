@@ -55,7 +55,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetMana
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
         if (!m_UseCompressedPNG)
         {
-            CTexture2D* pSequenceTexture = CTexture2D::loadTexture(vAssetManager, TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
+            CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
             if (!pSequenceTexture)
             {
                 pSequenceTexture = CTexture2D::loadTextureFromMobile(TexturePath);
@@ -69,16 +69,12 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetMana
         }
         else
         {
-            CTexture2D::loadTextureFromCompressedPNG(vAssetManager, TexturePath, m_SequenceWidth, m_SequenceHeight, m_SeqTextures);
+            CTexture2D::loadTextureFromCompressedPNG(TexturePath, m_SequenceWidth, m_SequenceHeight, m_SeqTextures);
         }
     }
     m_SequenceSingleTextureWidth  = m_SequenceWidth / m_SequenceCols;
     m_SequenceSingleTextureHeight = m_SequenceHeight / m_SequenceRows;
-    m_pSequenceShaderProgram = CShaderProgram::createProgram(
-            vAssetManager,
-            SeqTexPlayVert,
-            SeqTexPlayFrag
-    );
+    m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert, SeqTexPlayFrag);
     if (!m_pSequenceShaderProgram)
     {
         LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "[%s] ShaderProgram init Failed.", m_TextureRootPath.c_str());

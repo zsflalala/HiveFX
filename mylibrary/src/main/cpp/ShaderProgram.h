@@ -5,18 +5,14 @@
 #include <unordered_map>
 #include <glm/glm.hpp>
 
-#ifdef HIVE_ANDROID
-    #include <android/asset_manager.h>
-#endif
-
 namespace hiveVG
 {
     class CShaderProgram
     {
     public:
-#ifdef HIVE_ANDROID
-        static CShaderProgram* createProgram(AAssetManager *vAssetManager, const std::string& vVertFilePath, const std::string& vFragFilePath);
-#endif
+//#ifdef HIVE_ANDROID
+//        static CShaderProgram* createProgram(AAssetManager *vAssetManager, const std::string& vVertFilePath, const std::string& vFragFilePath);
+//#endif
         static CShaderProgram* createProgram(const std::string& vVertFilePath, const std::string& vFragFilePath);
         ~CShaderProgram();
 
@@ -30,9 +26,9 @@ namespace hiveVG
         void setUniform(const std::string& vName, const glm::mat4& vMat);
 
     private:
-#ifdef HIVE_ANDROID
-        static bool __dumpShaderCodeFromFile(AAssetManager *vAssetManager, const std::string& vShaderPath, std::string& voShaderCode);
-#endif
+//#ifdef HIVE_ANDROID
+//        static bool __dumpShaderCodeFromFile(AAssetManager *vAssetManager, const std::string& vShaderPath, std::string& voShaderCode);
+//#endif
         static bool __dumpShaderCodeFromFile(const std::string& vShaderPath, std::string& voShaderCode);
         static bool __compileShader(GLenum vType, const std::string& vShaderPath, const std::string& vShaderCode, GLuint& voShaderHandle);
         static bool __linkProgram(const std::vector<GLuint>& vShaderHandles, GLuint& voProgramHandle);

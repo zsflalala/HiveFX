@@ -183,13 +183,13 @@ bool CTextureBlender::__bindTex2FBO(GLuint &vFboId, CTexture2D *vTexture)
 bool CTextureBlender::__compilerShaders()
 {
 
-    m_pBlitShaderProgram = CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlitTex2ScreenFrag);
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendAlphaFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendMultiplyFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendLightenFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendLinearDodgeFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendLighterColorFrag));
-    // m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendOverlayFrag));
+    m_pBlitShaderProgram = CShaderProgram::createProgram(BlitTex2ScreenVert, BlitTex2ScreenFrag);
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendAlphaFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendMultiplyFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendLightenFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendLinearDodgeFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendLighterColorFrag));
+    // m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendOverlayFrag));
 
     if(!m_pBlitShaderProgram)
         return false;

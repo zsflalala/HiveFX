@@ -4,7 +4,6 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
-#include "AppContext.h"
 #include "Renderers/BlendRenderer.h"
 #include "Renderers/RendererWithConfig.h"
 

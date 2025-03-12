@@ -8,6 +8,7 @@
 #ifdef HIVE_ANDROID
     #include <GLES3/gl3.h>
     #include <android/asset_manager.h>
+    #include "AppContext.h"
 
 #elif defined HIVE_UNIT_TEST
     #include <glad/glad.h>

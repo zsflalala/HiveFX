@@ -2,20 +2,11 @@
 #include <string>
 #include "Common.h"
 
-#ifdef HIVE_ANDROID
-    #include <android/asset_manager.h>
-#endif
-
 namespace hiveVG
 {
     class CTexture2D
     {
     public:
-        #ifdef HIVE_ANDROID
-        static CTexture2D* loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath);
-        static CTexture2D* loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType);
-        static void        loadTextureFromCompressedPNG(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D*>& vTexture2DVec);
-        #endif
         static CTexture2D* loadTexture(const std::string &vTexturePath);
         static CTexture2D* loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType);
         static void        loadTextureFromCompressedPNG(const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D*>& vTexture2DVec);

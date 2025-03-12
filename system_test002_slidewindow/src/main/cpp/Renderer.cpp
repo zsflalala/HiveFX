@@ -5,7 +5,6 @@
 #include <algorithm>
 #include "Renderers/TestSlideWindowRenderer.h"
 #include "Common.h"
-#include "AppContext.h"
 
 using namespace hiveVG;
 

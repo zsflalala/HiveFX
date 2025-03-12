@@ -4,7 +4,7 @@
 #include "FileUtils.h"
 
 using namespace hiveVG;
-
+/*
 #ifdef HIVE_ANDROID
 CShaderProgram* CShaderProgram::createProgram(AAssetManager *vAssetManager, const std::string& vVertFilePath, const std::string& vFragFilePath)
 {
@@ -52,7 +52,7 @@ bool CShaderProgram::__dumpShaderCodeFromFile(AAssetManager* vAssetManager, cons
     return true;
 }
 #endif
-
+*/
 CShaderProgram* CShaderProgram::createProgram(const std::string& vVertFilePath, const std::string& vFragFilePath)
 {
     std::string VertCode, FragCode;
