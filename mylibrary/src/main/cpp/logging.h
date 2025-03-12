@@ -3,14 +3,13 @@
 
 #ifdef HIVE_ANDROID
     #include <android/log.h>
-    #include <android/asset_manager.h>
 
     #define LOG_DEBUG(...) __android_log_print(ANDROID_LOG_DEBUG, __VA_ARGS__)
     #define LOG_INFO(...) __android_log_print(ANDROID_LOG_INFO, __VA_ARGS__)
     #define LOG_WARN(...) __android_log_print(ANDROID_LOG_WARN, __VA_ARGS__)
     #define LOG_ERROR(...) __android_log_print(ANDROID_LOG_ERROR, __VA_ARGS__)
 
-#elif defined(HIVE_WINDOWS)
+#elif defined(HIVE_UNIT_TEST)
     #include <iostream>
     #include <format>
 

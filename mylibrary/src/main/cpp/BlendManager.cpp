@@ -271,8 +271,8 @@ LayerPlayer CBlendManager::__createSlideWindow(const Json::Value &vConfig)
     bool IsLoop     = vConfig["loop"].asBool();
 
     CSlideWindow* pSlideWindowPlayer = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection);
-    pSlideWindowPlayer->createProgram(m_pAssetManager);
-    pSlideWindowPlayer->loadTextures(m_pAssetManager);
+    pSlideWindowPlayer->createProgram();
+    pSlideWindowPlayer->loadTextures();
     return pSlideWindowPlayer;
 }
 

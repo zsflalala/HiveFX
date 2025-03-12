@@ -32,7 +32,10 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         SnowStylizer.cpp
         TextureBlender.cpp
         BlendManager.cpp
-        TimeUtils.cpp)
+        TimeUtils.cpp
+        AppContext.cpp
+        FileUtils.cpp
+)
 
 set(REQUIRED_PACKAGES
         glm

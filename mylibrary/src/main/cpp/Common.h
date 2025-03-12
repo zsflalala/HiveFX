@@ -7,6 +7,8 @@
 
 #ifdef HIVE_ANDROID
     #include <GLES3/gl3.h>
+    #include <android/asset_manager.h>
+
 #elif defined HIVE_UNIT_TEST
     #include <glad/glad.h>
     #include <GLFW/glfw3.h>
@@ -31,6 +33,8 @@ namespace hiveVG::TAG_KEYWORD
     const char *const BLENDER_MANAGER_TAG       = "CBlendManager";
     const char *const SYSTEMTEST_TAG            = "SystemTest";
     const char *const SNOW_STYLIZE_TAG          = "SnowStylize";
+    const char *const FILE_UTILS_TAG            = "FileUtils";
+    const char *const APP_CONTEXT_TAG           = "AppContext";
 }
 
 namespace hiveVG::CONFIG_KEYWORD

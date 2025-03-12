@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{d44b17de-f8ee-4b31-bcbf-25dcbbc292c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{95481276-3ce6-447c-b4c7-ab2faeaa93fa}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\mylibrary\src\main\cpp\AsyncSequenceFramePlayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\BillBoardManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\BlendManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\EnumReflect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\JsonReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\ScreenQuad.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\SequenceFramePlayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\SingleTexturePlayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\SlideWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\SnowStylizer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\TextureBlender.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\ThreadPool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\FileUtils.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\Texture2D.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\ShaderProgram.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mylibrary\src\main\cpp\TimeUtils.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\mylibrary\src\main\cpp\AsyncSequenceFramePlayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\BillBoardManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\BlendManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\EnumReflect.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\JsonReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\ScreenQuad.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\SequenceFramePlayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\SingleTexturePlayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\SlideWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\SnowStylizer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\TextureBlender.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\ThreadPool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\pch.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\platform.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\logging.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\Common.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\FileUtils.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\Texture2D.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\ShaderProgram.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\TimeUtils.h">
+      <Filter>common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

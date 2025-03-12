@@ -39,13 +39,13 @@ void CSlideWindow::updateFrameAndDraw(int vWindowWidth, int vWindowHeight, doubl
     vQuad->bindAndDraw();
 }
 
-void CSlideWindow::createProgram(AAssetManager *vAssetManager)
+void CSlideWindow::createProgram()
 {
-    if (m_SlideDirection == "horizontal") m_pShaderProgram = CShaderProgram::createProgram(vAssetManager, SlideWindowVert, SlideWindowHFrag);
-    if (m_SlideDirection == "vertical")   m_pShaderProgram = CShaderProgram::createProgram(vAssetManager, SlideWindowVert, SlideWindowVFrag);
+    if (m_SlideDirection == "horizontal") m_pShaderProgram = CShaderProgram::createProgram(SlideWindowVert, SlideWindowHFrag);
+    if (m_SlideDirection == "vertical")   m_pShaderProgram = CShaderProgram::createProgram(SlideWindowVert, SlideWindowVFrag);
 }
 
-void CSlideWindow::loadTextures(AAssetManager* vAssetManager)
+void CSlideWindow::loadTextures()
 {
-    m_pTexture = CTexture2D::loadTexture(vAssetManager, m_TexturePath, m_TextureWidth, m_TextureHeight, m_TextureType);
+    m_pTexture = CTexture2D::loadTexture(m_TexturePath, m_TextureWidth, m_TextureHeight, m_TextureType);
 }

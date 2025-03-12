@@ -9,7 +9,6 @@
 #include <condition_variable>
 #include <functional>
 #include <GLES3/gl3.h>
-#include <android/asset_manager.h>
 #include "Common.h"
 #include "ThreadPool.h"
 

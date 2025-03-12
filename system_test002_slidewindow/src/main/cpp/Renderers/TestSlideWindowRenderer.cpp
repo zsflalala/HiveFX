@@ -32,8 +32,8 @@ void CTestSlideWindowRenderer::__initAlgorithm()
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pSlideWindow = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection);
-    m_pSlideWindow->createProgram(m_pApp->activity->assetManager);
-    m_pSlideWindow->loadTextures(m_pApp->activity->assetManager);
+    m_pSlideWindow->createProgram();
+    m_pSlideWindow->loadTextures();
 
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }

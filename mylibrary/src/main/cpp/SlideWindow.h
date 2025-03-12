@@ -18,8 +18,8 @@ namespace hiveVG
         CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection, EPictureType::EPictureType vPictureType = EPictureType::PNG);
         virtual ~CSlideWindow();
 
-        void createProgram(AAssetManager *vAssetManager);
-        void loadTextures(AAssetManager *vAssetManager);
+        void createProgram();
+        void loadTextures();
         void updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad);
 
     private:
