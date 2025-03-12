@@ -4,55 +4,7 @@
 #include "FileUtils.h"
 
 using namespace hiveVG;
-/*
-#ifdef HIVE_ANDROID
-CShaderProgram* CShaderProgram::createProgram(AAssetManager *vAssetManager, const std::string& vVertFilePath, const std::string& vFragFilePath)
-{
-    std::string VertCode, FragCode;
-    if (!__dumpShaderCodeFromFile(vAssetManager, vVertFilePath, VertCode)) return nullptr;
-    if (!__dumpShaderCodeFromFile(vAssetManager, vFragFilePath, FragCode)) return nullptr;
-    GLuint VertHandle, FragHandle;
-    if (!__compileShader(GL_VERTEX_SHADER, vVertFilePath, VertCode, VertHandle)) return nullptr;
-    if (!__compileShader(GL_FRAGMENT_SHADER, vFragFilePath, FragCode, FragHandle)) return nullptr;
-    const std::vector ShaderHandles{ VertHandle, FragHandle };
-    GLuint ProgramHandle;
-    if (!__linkProgram(ShaderHandles, ProgramHandle))
-    {
-        for (const auto& ShaderHandle : ShaderHandles)
-        {
-            glDeleteShader(ShaderHandle);
-        }
-        return nullptr;
-    }
-    return new CShaderProgram(ShaderHandles, ProgramHandle);
-}
 
-bool CShaderProgram::__dumpShaderCodeFromFile(AAssetManager* vAssetManager, const std::string& vShaderPath, std::string& voShaderCode)
-{
-    if (!vAssetManager)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SHADER_PROGRAM_TAG, "AssetManager is null.");
-        return false;
-    }
-
-    AAsset* pAsset = AAssetManager_open(vAssetManager, vShaderPath.c_str(), AASSET_MODE_BUFFER);
-    if (!pAsset)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SHADER_PROGRAM_TAG, "Failed to open asset: %s", vShaderPath.c_str());
-        return false;
-    }
-
-    size_t AssetSize = AAsset_getLength(pAsset);
-    std::unique_ptr<char[]> pBuffer(new char[AssetSize + 1]);
-    AAsset_read(pAsset, pBuffer.get(), AssetSize);
-    AAsset_close(pAsset);
-
-    pBuffer[AssetSize] = '\0';
-    voShaderCode = std::string(pBuffer.get());
-    return true;
-}
-#endif
-*/
 CShaderProgram* CShaderProgram::createProgram(const std::string& vVertFilePath, const std::string& vFragFilePath)
 {
     std::string VertCode, FragCode;
