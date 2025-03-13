@@ -1,6 +1,6 @@
 {
   "sequence_config": {
-    "frames_path": "textures/SnowCover",
+    "frames_path": "textures/BigRainPNG",
     "frames_type" : "png",
     "frames_count": 64,
     "play_mode": "partial",
