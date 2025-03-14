@@ -7,6 +7,7 @@
 #include "TimeUtils.h"
 #include "stb_image.h"
 #include "webp/decode.h"
+#include "FileUtils.h"
 
 using namespace hiveVG;
 
@@ -34,7 +35,7 @@ CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
     }
 }
 
-bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAssetManager)
+bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram()
 {
     if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
         m_TextureRootPath += '/';
@@ -50,8 +51,8 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager *vAsse
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
-        m_ThreadPool.enqueueTask([this, vAssetManager, i, TexturePath]()
-                                 { this->__loadTextureDataAsync(vAssetManager, i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex, m_FramesToUploadGPU); });
+        m_ThreadPool.enqueueTask([this, i, TexturePath]()
+                                 { this->__loadTextureDataAsync(i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex, m_FramesToUploadGPU); });
     }
 
     m_pAsyncShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert,SingleTexPlayFrag);
@@ -146,27 +147,22 @@ void CAsyncSequenceFramePlayer::updateFrames()
     glActiveTexture(GL_TEXTURE0);
 }
 
-void CAsyncSequenceFramePlayer::__loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex,
+void CAsyncSequenceFramePlayer::__loadTextureDataAsync(int vFrameIndex,
                                                        const std::string &vTexturePath,
                                                        std::vector<STextureData> &vLoadedTextures,
                                                        std::mutex &vTextureMutex,
                                                        std::set<int> &vFramesToUploadGPU)
 {
-    if (!vAssetManager)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "AssetManager is null.");
-        return;
-    }
-    AAsset *pAsset = AAssetManager_open(vAssetManager, vTexturePath.c_str(), AASSET_MODE_BUFFER);
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
+    assert(pAsset);
     if (!pAsset)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Failed to open asset: %s", vTexturePath.c_str());
         return;
-    }
-    size_t AssetSize = AAsset_getLength(pAsset);
+    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    AAsset_read(pAsset, pBuffer.get(), AssetSize);
-    AAsset_close(pAsset);
+    size_t Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
+    if(Flag < 0)
+        return;
+    CFileUtils::closeFile(pAsset);
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Width, Height, Channels;

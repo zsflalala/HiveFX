@@ -61,9 +61,8 @@ void CScrollRainRenderer::__initAlgorithm()
     m_pSlideWindow->loadTextures();
 
     m_pBackground = new CSingleTexturePlayer("textures/Background.png");
-    m_pBackground->initTextureAndShaderProgram(m_pApp->activity->assetManager);
-
-    CTextureBlender::setAssetManager(m_pApp->activity->assetManager);
+    m_pBackground->initTextureAndShaderProgram();
+    
     m_pTexBlender = new CTextureBlender();
     int Width = 0, Height = 0;
     assert(m_pApp->window != nullptr);

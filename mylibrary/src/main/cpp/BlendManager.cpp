@@ -10,9 +10,8 @@
 
 using namespace hiveVG;
 
-CBlendManager::CBlendManager(AAssetManager *vAssetManager) : m_pAssetManager(vAssetManager)
+CBlendManager::CBlendManager()
 {
-    CTextureBlender::setAssetManager( vAssetManager );
 }
 
 CBlendManager::~CBlendManager()
@@ -95,7 +94,7 @@ void CBlendManager::render()
 
 bool CBlendManager::__initPlayer(const std::string &vFilePath)
 {
-    CJsonReader JsonReader = CJsonReader(m_pAssetManager, vFilePath);
+    CJsonReader JsonReader = CJsonReader(vFilePath);
     int Layer = 1;
     while(true)
     {
@@ -172,7 +171,7 @@ LayerPlayer CBlendManager::__createSingleTexPlayer(const Json::Value &vConfig)
 {
     std::string FramePath = vConfig["frames_path"].asString();
     CSingleTexturePlayer* pPlayer = new CSingleTexturePlayer(FramePath);
-    pPlayer->initTextureAndShaderProgram(m_pAssetManager);
+    pPlayer->initTextureAndShaderProgram();
     return pPlayer;
 }
 
@@ -192,7 +191,7 @@ LayerPlayer CBlendManager::__createSequenceFramePlayer(const Json::Value &vConfi
     EPlayType::EPlayType PlayType = EPlayType::FromString(PlayMode);
 
     CSequenceFramePlayer* pPlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, PictureType);
-    if(!pPlayer->initTextureAndShaderProgram(m_pAssetManager))
+    if(!pPlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return nullptr;

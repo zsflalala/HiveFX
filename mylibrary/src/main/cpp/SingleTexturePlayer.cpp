@@ -22,7 +22,7 @@ CSingleTexturePlayer::~CSingleTexturePlayer()
     }
 }
 
-bool CSingleTexturePlayer::initTextureAndShaderProgram(AAssetManager *vAssetManager)
+bool CSingleTexturePlayer::initTextureAndShaderProgram()
 {
     m_pSingleTexture = CTexture2D::loadTexture(m_TexturePath);
     if (!m_pSingleTexture)

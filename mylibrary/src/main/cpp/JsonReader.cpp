@@ -1,26 +1,21 @@
 #include "JsonReader.h"
 #include "Common.h"
+#include "FileUtils.h"
 
 using namespace hiveVG;
 
-CJsonReader::CJsonReader(AAssetManager *vAssetManager, const std::string& vFilePath)
+CJsonReader::CJsonReader(const std::string& vFilePath)
 {
-    AAsset* pAsset = AAssetManager_open(vAssetManager, vFilePath.c_str(), AASSET_MODE_BUFFER);
+    auto pAsset = CFileUtils::openFile(vFilePath.c_str());
+    assert(pAsset);
     if (!pAsset)
-    {
-        throw std::runtime_error("Failed to open asset file: " + vFilePath);
-    }
-
-    const char* pData = static_cast<const char*>(AAsset_getBuffer(pAsset));
-    size_t Size = AAsset_getLength(pAsset);
-    if (!pData || Size == 0)
-    {
-        AAsset_close(pAsset);
-        throw std::runtime_error("Failed to read asset file: " + vFilePath);
-    }
+        return;
+    size_t Size = CFileUtils::getFileBytes(pAsset);
+    char* pData = new char[Size];
+    CFileUtils::readFile<char>(pAsset, pData, Size);
+    CFileUtils::closeFile(pAsset);
 
     std::string JsonContent(pData, Size);
-    AAsset_close(pAsset);
 
     Json::CharReaderBuilder ReaderBuilder;
     std::unique_ptr<Json::CharReader> Reader(ReaderBuilder.newCharReader());

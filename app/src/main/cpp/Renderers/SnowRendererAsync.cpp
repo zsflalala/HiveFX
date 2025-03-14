@@ -29,15 +29,15 @@ void CSnowRendererAsync::__initAlgorithm()
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
     m_pSmallSnowForePlayer = new CAsyncSequenceFramePlayer("textures/SmallSnow_fore", TextureCount, PictureType);
-    m_pSmallSnowForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pSmallSnowForePlayer->initTextureAndShaderProgram();
     m_pSmallSnowBackPlayer = new CAsyncSequenceFramePlayer("textures/SmallSnow_back", TextureCount, PictureType);
-    m_pSmallSnowBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pSmallSnowBackPlayer->initTextureAndShaderProgram();
     m_pBigSnowForePlayer   = new CAsyncSequenceFramePlayer("textures/BigSnow_fore", TextureCount, PictureType);
-    m_pBigSnowForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pBigSnowForePlayer->initTextureAndShaderProgram();
     m_pBigSnowBackPlayer   = new CAsyncSequenceFramePlayer("textures/BigSnow_back", TextureCount, PictureType);
-    m_pBigSnowBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pBigSnowBackPlayer->initTextureAndShaderProgram();
     m_pSingleFramePlayer   = new CSingleTexturePlayer("textures/snowScene.png");
-    m_pSingleFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pSingleFramePlayer->initTextureAndShaderProgram();
 }
 
 void CSnowRendererAsync::renderScene()

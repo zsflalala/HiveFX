@@ -24,7 +24,7 @@ bool CRendererWithConfig::init(const std::string vConfigFile)
         Height = ANativeWindow_getHeight(m_pApp->window);
     }
 
-    m_pManager = new CBlendManager(m_pApp->activity->assetManager);
+    m_pManager = new CBlendManager();
     m_pManager->init(vConfigFile, Width, Height);
     return true;
 }

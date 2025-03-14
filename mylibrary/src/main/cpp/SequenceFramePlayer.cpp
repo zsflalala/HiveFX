@@ -42,7 +42,7 @@ CSequenceFramePlayer::~CSequenceFramePlayer()
     }
 }
 
-bool CSequenceFramePlayer::initTextureAndShaderProgram(AAssetManager* vAssetManager)
+bool CSequenceFramePlayer::initTextureAndShaderProgram()
 {
     if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
         m_TextureRootPath += '/';

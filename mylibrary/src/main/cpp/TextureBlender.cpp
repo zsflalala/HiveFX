@@ -5,7 +5,6 @@
 
 using namespace hiveVG;
 
-AAssetManager* CTextureBlender::m_pAssetManager = nullptr;
 CShaderProgram* CTextureBlender::m_pBlitShaderProgram = nullptr;
 std::vector<CShaderProgram*> CTextureBlender::m_BlendShaderPrograms;
 
@@ -37,11 +36,7 @@ CTextureBlender::~CTextureBlender()
 bool CTextureBlender::init(int vWidth, int vHeight)
 {
     if(m_IsInit) return true;
-    if(!m_pAssetManager)
-    {
-        LOG_ERROR(TAG_KEYWORD::TEXTURE_BLENDER_TAG,"Asset manager is not set up.");
-        return false;
-    }
+
     m_IsInit = __createFBO() && __createTexture(vWidth, vHeight)
                && __bindTex2FBO(m_SrcFBO, m_pSrcTexture)
                && __bindTex2FBO(m_DstFBO, m_pDstTexture0)

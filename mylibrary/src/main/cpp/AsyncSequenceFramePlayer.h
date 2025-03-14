@@ -33,7 +33,7 @@ namespace hiveVG
         CAsyncSequenceFramePlayer(const std::string& vTextureRootPath, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
         ~CAsyncSequenceFramePlayer();
 
-        bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
+        bool initTextureAndShaderProgram();
         void updateFrames();
         void setFrameRate(int vFrameRate) { m_FrameRate = vFrameRate; }
         void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
@@ -45,7 +45,7 @@ namespace hiveVG
         [[nodiscard]] int  getSingleTextureHeight() const { return m_SequeceSingleTextureHeight; }
 
     private:
-        void   __loadTextureDataAsync(AAssetManager *vAssetManager, int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::set<int> &vFramesToUploadGPU);
+        void   __loadTextureDataAsync(int vFrameIndex, const std::string &vTexturePath, std::vector<STextureData> &vLoadedTextures, std::mutex &vTextureMutex, std::set<int> &vFramesToUploadGPU);
         void   __uploadTexturesToGPU(int vTextureIndex, std::vector<STextureData> &vLoadedTextures, unsigned int *vTextureHandles, std::vector<std::atomic<bool>>& vFrameLoadedGPU);
         double __getCostTime(std::vector<double> &vCostTime);
 

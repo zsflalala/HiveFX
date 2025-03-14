@@ -24,7 +24,7 @@ CTestSlideWindowRenderer::~CTestSlideWindowRenderer()
 void CTestSlideWindowRenderer::__initAlgorithm()
 {
     std::string FileName = "configs/SlideWindowConfig.json";
-    CJsonReader JsonReader = CJsonReader(m_pApp->activity->assetManager, FileName);
+    CJsonReader JsonReader = CJsonReader(FileName);
     Json::Value SlideConfig = JsonReader.getObject("slide_config");
     std::string PicturePath = SlideConfig["picture_path"].asString();
     float SlideSpeed = SlideConfig["slide_speed"].asFloat();

@@ -26,7 +26,7 @@ CTestSequencePlayerRenderer::~CTestSequencePlayerRenderer()
 void CTestSequencePlayerRenderer::__initAlgorithm()
 {
     std::string FileName = "configs/BasicFramePlayerConfig.json";
-    CJsonReader JsonReader = CJsonReader(m_pApp->activity->assetManager, FileName);
+    CJsonReader JsonReader = CJsonReader(FileName);
     Json::Value SequenceConfig = JsonReader.getObject("sequence_config");
     std::string FramePath = SequenceConfig["frames_path"].asString();
     std::string FrameType = SequenceConfig["frames_type"].asString();
@@ -47,7 +47,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pSmallSnowForePlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, m_PictureType);
-    if(!m_pSmallSnowForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
+    if(!m_pSmallSnowForePlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;

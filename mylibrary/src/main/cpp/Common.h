@@ -36,6 +36,7 @@ namespace hiveVG::TAG_KEYWORD
     const char *const SNOW_STYLIZE_TAG          = "SnowStylize";
     const char *const FILE_UTILS_TAG            = "FileUtils";
     const char *const APP_CONTEXT_TAG           = "AppContext";
+    const char* const UNIT_TEST_TAG             = "UnitTest";
 }
 
 namespace hiveVG::CONFIG_KEYWORD

@@ -69,6 +69,9 @@
     <ClCompile Include="..\mylibrary\src\main\cpp\TimeUtils.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="RenderEnv.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mylibrary\src\main\cpp\AsyncSequenceFramePlayer.h">
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="..\mylibrary\src\main\cpp\TimeUtils.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderEnv.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

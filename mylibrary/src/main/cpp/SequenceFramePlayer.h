@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
-#include <android/asset_manager.h>
 #include "Common.h"
 
 namespace hiveVG
@@ -33,7 +32,7 @@ namespace hiveVG
         [[nodiscard]] bool getLoopState()   const { return m_IsLoop; }
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
 
-        bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
+        bool initTextureAndShaderProgram();
         void updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
         void draw(CScreenQuad* vQuad);
 
