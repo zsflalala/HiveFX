@@ -21,8 +21,6 @@ public:
 	static void SetUpTestCase()
 	{
 		char buffer[MAX_PATH];
-		DWORD result = GetCurrentDirectoryA(MAX_PATH, buffer);
-		assert(!printf(buffer));
 		m_pRenderEnv = new CRenderEnv();
 		m_pRenderEnv->init();
 		std::cout << fmt::format("{}", 2) << std::endl;
