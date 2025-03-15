@@ -1,9 +1,9 @@
 #pragma once
 
-#include <GLES3/gl3.h>
 #include <vector>
 #include <unordered_map>
 #include <glm/glm.hpp>
+#include "OpenGLCommon.h"
 
 namespace hiveVG
 {
@@ -27,6 +27,9 @@ namespace hiveVG
         static bool __compileShader(GLenum vType, const std::string& vShaderPath, const std::string& vShaderCode, GLuint& voShaderHandle);
         static bool __linkProgram(const std::vector<GLuint>& vShaderHandles, GLuint& voProgramHandle);
         CShaderProgram(const std::vector<GLuint>& vShaderHandles, GLuint vProgramHandle);
+#ifdef HIVE_UNIT_TEST
+    public:
+#endif
         GLint  __getOrCreateUniformId(const std::string& vUniformName);
 
         GLuint                                 m_ProgramHandle;

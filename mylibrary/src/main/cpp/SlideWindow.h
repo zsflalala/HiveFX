@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <android/asset_manager.h>
 #include "Common.h"
 
 struct android_app;

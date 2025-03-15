@@ -103,7 +103,7 @@ bool CBlendManager::__initPlayer(const std::string &vFilePath)
         {
             LayerConfig = JsonReader.getObject(std::to_string(Layer));
         }
-        catch (std::runtime_error& e)
+        catch (...)
         {
             break;
         }
@@ -228,7 +228,7 @@ LayerPlayer CBlendManager::__createBillBoardManager(const Json::Value &vConfig)
         {
             LayerConfig = JsonReader.getObject(std::to_string(Layer));
         }
-        catch (std::runtime_error& e)
+        catch (...)
         {
             break;
         }

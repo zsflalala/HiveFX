@@ -2,6 +2,7 @@
 #include <json/json.h>
 #include <functional>
 #include <vector>
+#include <variant>
 
 namespace hiveVG
 {

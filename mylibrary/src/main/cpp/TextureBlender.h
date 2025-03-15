@@ -3,7 +3,6 @@
 #include <functional>
 #include <string>
 #include <vector>
-#include <GLES3/gl3.h>
 #include "Common.h"
 
 namespace hiveVG
@@ -24,7 +23,7 @@ namespace hiveVG
         void drawAndBlend(const std::function<void()>& vDrawCall);
         void blit(bool vIsBlitToScreen = true, CTexture2D *vTexture = nullptr);
         void blitSrc(bool vIsBlitToScreen = true);
-        void blitTex(CTexture2D *vSrcTex);
+//        void blitTex(CTexture2D *vSrcTex);
         bool isInit() {return m_IsInit;}
 
         GLuint getDstFBO() const { return m_DstFBO; }

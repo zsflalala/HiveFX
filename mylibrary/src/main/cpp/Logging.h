@@ -12,9 +12,29 @@
 #elif defined(HIVE_UNIT_TEST)
     #include <iostream>
     #include <format>
-
+/*
     #define LOG_DEBUG(tag, fmt, ...) std::cout << std::format("[DEBUG][{}] {}", tag, std::format(fmt, ##__VA_ARGS__)) << std::endl
     #define LOG_INFO(tag, fmt, ...)  std::cout << std::format("[INFO][{}] {}",  tag, std::format(fmt, ##__VA_ARGS__)) << std::endl
     #define LOG_WARN(tag, fmt, ...)  std::cout << std::format("[WARN][{}] {}",  tag, std::format(fmt, ##__VA_ARGS__)) << std::endl
     #define LOG_ERROR(tag, fmt, ...) std::cout << std::format("[ERROR][{}] {}", tag, std::format(fmt, ##__VA_ARGS__)) << std::endl
+*/
+#define LOG_DEBUG(tag, fmt, ...) \
+    fprintf(stderr, "[DEBUG][%s]: ", tag), \
+    fprintf(stderr, fmt, ##__VA_ARGS__), \
+    fprintf(stderr, "\n")
+
+#define LOG_INFO(tag, fmt, ...) \
+    fprintf(stderr, "[INFO][%s]: ", tag), \
+    fprintf(stderr, fmt, ##__VA_ARGS__), \
+    fprintf(stderr, "\n")
+
+    #define LOG_WARN(tag, fmt, ...) \
+    fprintf(stderr, "[WARN][%s]: ", tag), \
+    fprintf(stderr, fmt, ##__VA_ARGS__), \
+    fprintf(stderr, "\n")
+
+    #define LOG_ERROR(tag, fmt, ...) \
+    fprintf(stderr, "[ERROR][%s]: ", tag), \
+    fprintf(stderr, fmt, ##__VA_ARGS__), \
+    fprintf(stderr, "\n")
 #endif

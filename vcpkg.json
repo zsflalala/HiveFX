@@ -1,0 +1,15 @@
+{
+  "dependencies": [
+    "fmt",
+    "glm",
+    "jsoncpp",
+    "glfw3",
+    {
+      "name": "glad",
+      "features": [
+        "gl-api-46"
+      ]
+    },
+    "libwebp"
+  ]
+}

@@ -6,6 +6,7 @@ using namespace hiveVG;
 #include <random>
 #include <cassert>
 #include "Common.h"
+#include "FileUtils.h"
 
 namespace fs = std::filesystem;
 
@@ -15,18 +16,18 @@ CSnowStylizer::CSnowStylizer()
         : m_SnowHighThreshold(3.0 / 4), m_SnowMaxHighProportion(1.0 / 40), m_SnowShapeFreq(13), m_SnowShapeAmplitude(3), m_ShapeFreqMultiplier(9.0 / 10), m_ShapeAmplitudeMultiplier(9.0 / 10)
 { }
 
-bool CSnowStylizer::loadImg(AAssetManager* vAssetManager, const std::string& vImgPath)
+bool CSnowStylizer::loadImg(const std::string& vImgPath)
 {
-    AAsset* pAsset = AAssetManager_open(vAssetManager, vImgPath.c_str(), AASSET_MODE_BUFFER);
+    auto pAsset = CFileUtils::openFile(vImgPath.c_str());
+    assert(pAsset);
     if (!pAsset)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SYSTEMTEST_TAG, "Asset initialization falied.");
         return false;
-    }
-    size_t FileSize = AAsset_getLength(pAsset);
+    size_t FileSize = CFileUtils::getFileBytes(pAsset);
     std::vector<uchar> Buffer(FileSize);
-    AAsset_read(pAsset, Buffer.data(), FileSize);
-    AAsset_close(pAsset);
+    size_t Flag = CFileUtils::readFile<uchar>(pAsset, Buffer.data(), FileSize);
+    if (Flag < 0)
+        return false;
+    CFileUtils::closeFile(pAsset);
 
     m_OriginImage = cv::imdecode(Buffer, cv::IMREAD_UNCHANGED);
     if (m_OriginImage.empty())
@@ -47,18 +48,18 @@ bool CSnowStylizer::loadImg(AAssetManager* vAssetManager, const std::string& vIm
     return true;
 }
 
-bool CSnowStylizer::loadImg(AAssetManager* vAssetManager, const std::string& vImgPath, const cv::Vec3b& BackgroundColor)
+bool CSnowStylizer::loadImg(const std::string& vImgPath, const cv::Vec3b& BackgroundColor)
 {
-    AAsset* pAsset = AAssetManager_open(vAssetManager, vImgPath.c_str(), AASSET_MODE_BUFFER);
+    auto pAsset = CFileUtils::openFile(vImgPath.c_str());
+    assert(pAsset);
     if (!pAsset)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SYSTEMTEST_TAG, "Asset initialization falied.");
         return false;
-    }
-    size_t FileSize = AAsset_getLength(pAsset);
+    size_t FileSize = CFileUtils::getFileBytes(pAsset);
     std::vector<uchar> Buffer(FileSize);
-    AAsset_read(pAsset, Buffer.data(), FileSize);
-    AAsset_close(pAsset);
+    size_t Flag = CFileUtils::readFile<uchar>(pAsset, Buffer.data(), FileSize);
+    if (Flag < 0)
+        return false;
+    CFileUtils::closeFile(pAsset);
 
     m_OriginImage = cv::imdecode(Buffer, cv::IMREAD_UNCHANGED);
     if (m_OriginImage.empty())

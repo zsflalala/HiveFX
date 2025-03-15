@@ -1,6 +1,7 @@
 #include "BillBoardManager.h"
 #include <random>
 #include "TextureBlender.h"
+#include "Common.h"
 
 using namespace hiveVG;
 
@@ -156,10 +157,10 @@ void CBillBoardManager::setBlendStatus(bool vStatus)
         return;
     }
     m_IsBlend = vStatus;
-    if(m_IsBlend)
-        LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"开启混合");
+    if (m_IsBlend)
+        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "Turn on blending.");
     else
-        LOG_INFO(TAG_KEYWORD::RENDERER_TAG,"关闭混合");
+        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "Turn off blending.");
 }
 
 void CBillBoardManager::blit(bool vIsBlitToScreen)

@@ -48,9 +48,6 @@
     <ClCompile Include="..\mylibrary\src\main\cpp\SlideWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\mylibrary\src\main\cpp\SnowStylizer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\mylibrary\src\main\cpp\TextureBlender.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -101,9 +98,6 @@
     <ClInclude Include="..\mylibrary\src\main\cpp\SlideWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\mylibrary\src\main\cpp\SnowStylizer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\mylibrary\src\main\cpp\stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -117,9 +111,6 @@
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\mylibrary\src\main\cpp\platform.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\mylibrary\src\main\cpp\logging.h">
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\mylibrary\src\main\cpp\Common.h">
@@ -140,8 +131,11 @@
     <ClInclude Include="RenderEnv.h">
       <Filter>头文件</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ClInclude Include="..\mylibrary\src\main\cpp\OpenGLCommon.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mylibrary\src\main\cpp\Logging.h">
+      <Filter>common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

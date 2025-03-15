@@ -1,6 +1,7 @@
 #pragma once
+#include <functional>
 
-class GLFWwindow;
+struct GLFWwindow;
 
 namespace hiveTest
 {
@@ -11,7 +12,9 @@ namespace hiveTest
 		~CRenderEnv();
 
 		bool init();
-		void render();
+		void render(const std::function<void()>& vDrawCall);
+
+		GLFWwindow* fetchWindow() { return m_pWindow; }
 
 	private:
 		void __processInput();

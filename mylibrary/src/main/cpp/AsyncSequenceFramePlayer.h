@@ -8,7 +8,6 @@
 #include <queue>
 #include <condition_variable>
 #include <functional>
-#include <GLES3/gl3.h>
 #include "Common.h"
 #include "ThreadPool.h"
 

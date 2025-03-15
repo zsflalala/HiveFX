@@ -4,7 +4,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Common.h"
-#include "logging.h"
+#include "Logging.h"
 #include "FileUtils.h"
 #include "TimeUtils.h"
 #include <omp.h>

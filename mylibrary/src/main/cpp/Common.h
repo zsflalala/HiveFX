@@ -2,17 +2,13 @@
 #include <cstdint>
 #include <cassert>
 #include "platform.h"
-#include "logging.h"
+#include "Logging.h"
 #include "EnumReflect.h"
+#include "OpenGLCommon.h"
 
 #ifdef HIVE_ANDROID
-    #include <GLES3/gl3.h>
     #include <android/asset_manager.h>
     #include "AppContext.h"
-
-#elif defined HIVE_UNIT_TEST
-    #include <glad/glad.h>
-    #include <GLFW/glfw3.h>
 #endif
 
 DECLARE_ENUM(EPlayType, FULLSCREEN = 0, PARTIAL)

@@ -1,12 +1,12 @@
 #include "AsyncSequenceFramePlayer.h"
 #include <thread>
 #include <numeric>
+#include <webp/decode.h>
 #include "ShaderProgram.h"
 #include "ScreenQuad.h"
 #include "Common.h"
 #include "TimeUtils.h"
 #include "stb_image.h"
-#include "webp/decode.h"
 #include "FileUtils.h"
 
 using namespace hiveVG;

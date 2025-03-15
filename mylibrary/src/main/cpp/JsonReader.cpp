@@ -1,6 +1,9 @@
 #include "JsonReader.h"
 #include "Common.h"
 #include "FileUtils.h"
+#ifdef HIVE_UNIT_TEST
+#include <json/reader.h>
+#endif
 
 using namespace hiveVG;
 

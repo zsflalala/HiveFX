@@ -2,8 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <GLES3/gl3.h>
-#include <android/asset_manager.h>
 
 namespace hiveVG
 {

@@ -1,7 +1,7 @@
 #include "FileUtils.h"
 #include "Common.h"
 #include "platform.h"
-#include "logging.h"
+#include "Logging.h"
 
 using namespace hiveVG;
 
@@ -69,9 +69,9 @@ using namespace hiveVG;
 
     void *CFileUtils::openFile(const char *vPath)
     {
-        FILE* pFile = fopen(vPath, "rb");
-        if (!pFile)
-        {
+        FILE* pFile = nullptr;
+        errno_t Flag = fopen_s(&pFile, vPath, "rb");
+        if (Flag != 0) {
             LOG_ERROR(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open file: %s", vPath);
             return nullptr;
         }

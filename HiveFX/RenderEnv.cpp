@@ -19,11 +19,11 @@ hiveTest::CRenderEnv::~CRenderEnv()
 bool hiveTest::CRenderEnv::init()
 {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_pWindow = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    m_pWindow = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "UnitTest", NULL, NULL);
     if (!m_pWindow)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::UNIT_TEST_TAG, "Failed to create GLFW window.");
@@ -41,11 +41,13 @@ bool hiveTest::CRenderEnv::init()
 	return false;
 }
 
-void hiveTest::CRenderEnv::render()
+void hiveTest::CRenderEnv::render(const std::function<void()>& vDrawCall)
 {
     while (!glfwWindowShouldClose(m_pWindow))
     {
         __processInput();
+
+        vDrawCall();
 
         glfwSwapBuffers(m_pWindow);
         glfwPollEvents();
