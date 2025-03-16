@@ -4,30 +4,25 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Common.h"
+#include "Logging.h"
+#include "FileUtils.h"
 #include "TimeUtils.h"
 #include <omp.h>
 
 using namespace hiveVG;
 
-CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath)
+CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
 {
-    if (!vAssetManager)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "AssetManager is null.");
-        return nullptr;
-    }
-
-    AAsset* pAsset = AAssetManager_open(vAssetManager, vTexturePath.c_str(), AASSET_MODE_BUFFER);
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
+    assert(pAsset);
     if (!pAsset)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to open asset: %s", vTexturePath.c_str());
         return nullptr;
-    }
-
-    size_t AssetSize = AAsset_getLength(pAsset);
+    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    AAsset_read(pAsset, pBuffer.get(), AssetSize);
-    AAsset_close(pAsset);
+    size_t Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
+    if(Flag < 0)
+        return nullptr;
+    CFileUtils::closeFile(pAsset);
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Width, Height, Channels;
@@ -77,25 +72,18 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     return new CTexture2D(TextureHandle);
 }
 
-CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType)
+CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType)
 {
-    if (!vAssetManager)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "AssetManager is null.");
-        return nullptr;
-    }
-
-    AAsset* pAsset = AAssetManager_open(vAssetManager, vTexturePath.c_str(), AASSET_MODE_BUFFER);
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
+    assert(pAsset);
     if (!pAsset)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to open asset: %s. Try searching in mobile.", vTexturePath.c_str());
         return nullptr;
-    }
-
-    size_t AssetSize = AAsset_getLength(pAsset);
+    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    AAsset_read(pAsset, pBuffer.get(), AssetSize);
-    AAsset_close(pAsset);
+    size_t Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
+    if(Flag < 0)
+        return nullptr;
+    CFileUtils::closeFile(pAsset);
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;
@@ -172,65 +160,18 @@ CTexture2D* CTexture2D::loadTexture(AAssetManager *vAssetManager, const std::str
     return new CTexture2D(TextureHandle);
 }
 
-CTexture2D *CTexture2D::loadTextureFromMobile(const std::string &vTexturePath)
+void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D*>& vTexture2DVec)
 {
-    int Width, Height, Channels;
-    unsigned char* pData = stbi_load(vTexturePath.c_str(), &Width, &Height, &Channels, 0);
-    if (pData == nullptr)
-    {
-        LOG_ERROR(TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load texture asset: [%s]", vTexturePath.c_str());
-        return nullptr;
-    }
-
-    GLint Format = GL_RGB;
-    if (Channels == 3) Format = GL_RGB;
-    else if (Channels == 4) Format = GL_RGBA;
-    else if (Channels == 1) Format = GL_RED;
-
-    GLuint TextureHandle;
-    glGenTextures(1, &TextureHandle);
-    glBindTexture(GL_TEXTURE_2D, TextureHandle);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, Format, Width, Height, 0, Format, GL_UNSIGNED_BYTE, pData);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
-    if (!IsValid)
-    {
-        LOG_ERROR(TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: [%s]", vTexturePath.c_str());
-        return nullptr;
-    }
-    stbi_image_free(pData);
-    return new CTexture2D(TextureHandle);
-}
-
-void CTexture2D::loadTextureFromCompressedPNG(AAssetManager *vAssetManager,
-                                              const std::string &vTexturePath, int &voWidth,
-                                              int &voHeight,
-                                              std::vector<CTexture2D *> &vTexture2DVec)
-{
-    if (!vAssetManager)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "AssetManager is null.");
-        return ;
-    }
-
-    AAsset* pAsset = AAssetManager_open(vAssetManager, vTexturePath.c_str(), AASSET_MODE_BUFFER);
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
+    assert(pAsset);
     if (!pAsset)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to open asset: %s. Try searching in mobile.", vTexturePath.c_str());
-        return ;
-    }
-
-    size_t AssetSize = AAsset_getLength(pAsset);
+        return;
+    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    AAsset_read(pAsset, pBuffer.get(), AssetSize);
-    AAsset_close(pAsset);
+    size_t Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
+    if(Flag < 0)
+        return;
+    CFileUtils::closeFile(pAsset);
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;
@@ -239,7 +180,7 @@ void CTexture2D::loadTextureFromCompressedPNG(AAssetManager *vAssetManager,
     if (!pImageData)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load image from memory: %s", vTexturePath.c_str());
-        return ;
+        return;
     }
     else
     {
@@ -303,6 +244,43 @@ void CTexture2D::loadTextureFromCompressedPNG(AAssetManager *vAssetManager,
     stbi_image_free(pImageData);
     delete [] pImage1;
     delete [] pImage2;
+}
+
+CTexture2D *CTexture2D::loadTextureFromMobile(const std::string &vTexturePath)
+{
+    int Width, Height, Channels;
+    unsigned char* pData = stbi_load(vTexturePath.c_str(), &Width, &Height, &Channels, 0);
+    if (pData == nullptr)
+    {
+        LOG_ERROR(TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load texture asset: [%s]", vTexturePath.c_str());
+        return nullptr;
+    }
+
+    GLint Format = GL_RGB;
+    if (Channels == 3) Format = GL_RGB;
+    else if (Channels == 4) Format = GL_RGBA;
+    else if (Channels == 1) Format = GL_RED;
+
+    GLuint TextureHandle;
+    glGenTextures(1, &TextureHandle);
+    glBindTexture(GL_TEXTURE_2D, TextureHandle);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, Format, Width, Height, 0, Format, GL_UNSIGNED_BYTE, pData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
+    if (!IsValid)
+    {
+        LOG_ERROR(TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: [%s]", vTexturePath.c_str());
+        return nullptr;
+    }
+    stbi_image_free(pData);
+    return new CTexture2D(TextureHandle);
 }
 
 CTexture2D* CTexture2D::createEmptyTexture(int vWidth, int vHeight, int vChannels)

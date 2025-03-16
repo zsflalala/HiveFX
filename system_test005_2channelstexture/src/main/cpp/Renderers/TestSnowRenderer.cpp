@@ -31,7 +31,7 @@ void CTestSnowRenderer::__initAlgorithm()
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pSmallSnowForePlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, UseCompressedPNG);
-    if(!m_pSmallSnowForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
+    if(!m_pSmallSnowForePlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
@@ -39,7 +39,7 @@ void CTestSnowRenderer::__initAlgorithm()
 
     FramePath = "textures/SmallSnow_fore_compressed";
     m_pSmallSnowBackPlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, UseCompressedPNG);
-    if(!m_pSmallSnowBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
+    if(!m_pSmallSnowBackPlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
@@ -47,7 +47,7 @@ void CTestSnowRenderer::__initAlgorithm()
 
     FramePath = "textures/snowScene.png";
     m_pSinglePlayer = new CSingleTexturePlayer(FramePath);
-    m_pSinglePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pSinglePlayer->initTextureAndShaderProgram();
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 

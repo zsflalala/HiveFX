@@ -3,8 +3,6 @@
 #include <functional>
 #include <string>
 #include <vector>
-#include <GLES3/gl3.h>
-#include <android/asset_manager.h>
 #include "Common.h"
 
 namespace hiveVG
@@ -19,15 +17,13 @@ namespace hiveVG
         CTextureBlender();
         ~CTextureBlender();
 
-        static void setAssetManager(AAssetManager* vAssetManager) { m_pAssetManager = vAssetManager; }
-
         bool init(int vWidth, int vHeight);
         void setBlendingMode(EBlendingMode::EBlendingMode vMode) { m_BlendingMode = vMode; }
         void updateResolution(int vWidth, int vHeight);
         void drawAndBlend(const std::function<void()>& vDrawCall);
         void blit(bool vIsBlitToScreen = true, CTexture2D *vTexture = nullptr);
         void blitSrc(bool vIsBlitToScreen = true);
-        void blitTex(CTexture2D *vSrcTex);
+//        void blitTex(CTexture2D *vSrcTex);
         bool isInit() {return m_IsInit;}
 
         GLuint getDstFBO() const { return m_DstFBO; }
@@ -53,7 +49,6 @@ namespace hiveVG
         CTexture2D*     m_pSrcTexture  = nullptr;
         CScreenQuad*    m_pScreenQuad  = nullptr;
 
-        static AAssetManager*               m_pAssetManager;
         static CShaderProgram*              m_pBlitShaderProgram;
         static std::vector<CShaderProgram*> m_BlendShaderPrograms;
         std::string                  m_BlitVertShaderFile;

@@ -1,14 +1,15 @@
 #include "pch.h"
 #include "ShaderProgram.h"
 #include "Common.h"
+#include "FileUtils.h"
 
 using namespace hiveVG;
 
-CShaderProgram* CShaderProgram::createProgram(AAssetManager *vAssetManager, const std::string& vVertFilePath, const std::string& vFragFilePath)
+CShaderProgram* CShaderProgram::createProgram(const std::string& vVertFilePath, const std::string& vFragFilePath)
 {
     std::string VertCode, FragCode;
-    if (!__dumpShaderCodeFromFile(vAssetManager, vVertFilePath, VertCode)) return nullptr;
-    if (!__dumpShaderCodeFromFile(vAssetManager, vFragFilePath, FragCode)) return nullptr;
+    if (!__dumpShaderCodeFromFile(vVertFilePath, VertCode)) return nullptr;
+    if (!__dumpShaderCodeFromFile(vFragFilePath, FragCode)) return nullptr;
     GLuint VertHandle, FragHandle;
     if (!__compileShader(GL_VERTEX_SHADER, vVertFilePath, VertCode, VertHandle)) return nullptr;
     if (!__compileShader(GL_FRAGMENT_SHADER, vFragFilePath, FragCode, FragHandle)) return nullptr;
@@ -76,25 +77,18 @@ void CShaderProgram::setUniform(const std::string& vName, const glm::mat4& vMat)
     glUniformMatrix4fv(__getOrCreateUniformId(vName), 1, GL_FALSE, &vMat[0][0]);
 }
 
-bool CShaderProgram::__dumpShaderCodeFromFile(AAssetManager *vAssetManager, const std::string& vShaderPath, std::string& voShaderCode)
+bool CShaderProgram::__dumpShaderCodeFromFile(const std::string& vShaderPath, std::string& voShaderCode)
 {
-    if (!vAssetManager)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SHADER_PROGRAM_TAG, "AssetManager is null.");
-        return false;
-    }
-
-    AAsset* pAsset = AAssetManager_open(vAssetManager, vShaderPath.c_str(), AASSET_MODE_BUFFER);
+    auto pAsset = CFileUtils::openFile(vShaderPath.c_str());
+    assert(pAsset);
     if (!pAsset)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SHADER_PROGRAM_TAG, "Failed to open asset: %s", vShaderPath.c_str());
         return false;
-    }
-
-    size_t AssetSize = AAsset_getLength(pAsset);
+    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<char[]> pBuffer(new char[AssetSize + 1]);
-    AAsset_read(pAsset, pBuffer.get(), AssetSize);
-    AAsset_close(pAsset);
+    size_t Flag = CFileUtils::readFile<char>(pAsset, pBuffer.get(), AssetSize);
+    if(Flag < 0)
+        return false;
+    CFileUtils::closeFile(pAsset);
 
     pBuffer[AssetSize] = '\0';
     voShaderCode = std::string(pBuffer.get());

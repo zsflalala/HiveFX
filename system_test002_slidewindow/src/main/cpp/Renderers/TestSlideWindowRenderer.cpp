@@ -24,7 +24,7 @@ CTestSlideWindowRenderer::~CTestSlideWindowRenderer()
 void CTestSlideWindowRenderer::__initAlgorithm()
 {
     std::string FileName = "configs/SlideWindowConfig.json";
-    CJsonReader JsonReader = CJsonReader(m_pApp->activity->assetManager, FileName);
+    CJsonReader JsonReader = CJsonReader(FileName);
     Json::Value SlideConfig = JsonReader.getObject("slide_config");
     std::string PicturePath = SlideConfig["picture_path"].asString();
     float SlideSpeed = SlideConfig["slide_speed"].asFloat();
@@ -32,8 +32,8 @@ void CTestSlideWindowRenderer::__initAlgorithm()
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pSlideWindow = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection);
-    m_pSlideWindow->createProgram(m_pApp->activity->assetManager);
-    m_pSlideWindow->loadTextures(m_pApp->activity->assetManager);
+    m_pSlideWindow->createProgram();
+    m_pSlideWindow->loadTextures();
 
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }

@@ -1,10 +1,10 @@
 #pragma once
-
 #include <string>
+#include "platform.h"
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <android/asset_manager.h>
 
 namespace hiveVG
 {
@@ -19,8 +19,8 @@ namespace hiveVG
     {
     public:
         CSnowStylizer();
-        bool loadImg(AAssetManager* vAssetManager, const std::string& vImgPath);
-        bool loadImg(AAssetManager* vAssetManager, const std::string& vImgPath, const cv::Vec3b& BackgroundColor);
+        bool loadImg(const std::string& vImgPath);
+        bool loadImg(const std::string& vImgPath, const cv::Vec3b& BackgroundColor);
         bool setShapeFreq(float vFrequency);
         bool setSnowHighProportion(float vProportion);
         bool setShapeAmplitude(float vAmplitude);

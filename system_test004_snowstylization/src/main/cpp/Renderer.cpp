@@ -17,6 +17,7 @@ using namespace hiveVG;
 
 CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 {
+    setAssetManager(vApp->activity->assetManager);
     __initRenderer();
     __initAlgorithm();
 }
@@ -101,14 +102,14 @@ void CRenderer::__initRenderer()
 void CRenderer::__initAlgorithm()
 {
     std::string ConfigFilePath = "configs/SnowStylizeConfig.json";
-    CJsonReader JsonConfig = CJsonReader(m_pApp->activity->assetManager, ConfigFilePath);
+    CJsonReader JsonConfig = CJsonReader(ConfigFilePath);
     m_TexturePath = JsonConfig.getString(hiveVG::CONFIG_KEYWORD::TexturePath);
     __generateSnowScene();
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
     int Rows = 1, Cols = 1, TextureCount = 5;
     m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, Rows, Cols, TextureCount,EPictureType::PNG);
-    m_pTestPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pTestPlayer->initTextureAndShaderProgram();
     m_pTestPlayer->setFrameRate(5);
 }
 

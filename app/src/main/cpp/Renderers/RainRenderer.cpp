@@ -30,23 +30,23 @@ void CRainRenderer::__initAlgorithm()
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
     m_pSmallRainForePlayer = new CSequenceFramePlayer("textures/SmallRain_fore", SequenceRows, SequenceCols, TextureCount, PictureType);
-    m_pSmallRainForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pSmallRainForePlayer->initTextureAndShaderProgram();
     m_pSmallRainForePlayer->setFrameRate(60.0);
 
     m_pSmallRainBackPlayer = new CSequenceFramePlayer("textures/SmallRain_back", SequenceRows, SequenceCols, TextureCount, PictureType);
-    m_pSmallRainBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pSmallRainBackPlayer->initTextureAndShaderProgram();
     m_pSmallRainBackPlayer->setFrameRate(60.0);
 
     m_pBigRainForePlayer   = new CSequenceFramePlayer("textures/BigRain_fore", SequenceRows, SequenceCols, TextureCount, PictureType);
-    m_pBigRainForePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pBigRainForePlayer->initTextureAndShaderProgram();
     m_pBigRainForePlayer->setFrameRate(60.0);
 
     m_pBigRainBackPlayer   = new CSequenceFramePlayer("textures/BigRain_back", SequenceRows, SequenceCols, TextureCount, PictureType);
-    m_pBigRainBackPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pBigRainBackPlayer->initTextureAndShaderProgram();
     m_pBigRainBackPlayer->setFrameRate(60.0);
 
     m_pBackFramePlayer     = new CSingleTexturePlayer("textures/snowScene.png");
-    m_pBackFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pBackFramePlayer->initTextureAndShaderProgram();
 }
 
 void CRainRenderer::renderScene(int vWindowWidth, int vWindowHeight)

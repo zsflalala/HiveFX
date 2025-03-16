@@ -1,6 +1,5 @@
 #pragma once
 
-#include <android/asset_manager.h>
 #include <string>
 #include <json/json.h>
 
@@ -9,7 +8,7 @@ namespace hiveVG
     class CJsonReader
     {
     public:
-        CJsonReader(AAssetManager *vAssetManager, const std::string& vFilePath);
+        CJsonReader(const std::string& vFilePath);
         CJsonReader(const Json::Value& vJson);
 
         [[nodiscard]] bool        hasKey(const std::string& vKey)     const;

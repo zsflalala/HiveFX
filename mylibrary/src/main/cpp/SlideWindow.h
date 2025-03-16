@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <android/asset_manager.h>
 #include "Common.h"
 
 struct android_app;
@@ -18,8 +17,8 @@ namespace hiveVG
         CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection, EPictureType::EPictureType vPictureType = EPictureType::PNG);
         virtual ~CSlideWindow();
 
-        void createProgram(AAssetManager *vAssetManager);
-        void loadTextures(AAssetManager *vAssetManager);
+        void createProgram();
+        void loadTextures();
         void updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad);
 
     private:

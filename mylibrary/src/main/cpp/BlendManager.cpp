@@ -10,9 +10,8 @@
 
 using namespace hiveVG;
 
-CBlendManager::CBlendManager(AAssetManager *vAssetManager) : m_pAssetManager(vAssetManager)
+CBlendManager::CBlendManager()
 {
-    CTextureBlender::setAssetManager( vAssetManager );
 }
 
 CBlendManager::~CBlendManager()
@@ -101,7 +100,7 @@ void CBlendManager::render()
 
 bool CBlendManager::__initPlayer(const std::string &vFilePath)
 {
-    CJsonReader JsonReader = CJsonReader(m_pAssetManager, vFilePath);
+    CJsonReader JsonReader = CJsonReader(vFilePath);
     int Layer = 1;
     while(true)
     {
@@ -110,7 +109,7 @@ bool CBlendManager::__initPlayer(const std::string &vFilePath)
         {
             LayerConfig = JsonReader.getObject(std::to_string(Layer));
         }
-        catch (std::runtime_error& e)
+        catch (...)
         {
             break;
         }
@@ -178,7 +177,7 @@ LayerPlayer CBlendManager::__createSingleTexPlayer(const Json::Value &vConfig)
 {
     std::string FramePath = vConfig["frames_path"].asString();
     auto* pPlayer = new CSingleTexturePlayer(FramePath);
-    pPlayer->initTextureAndShaderProgram(m_pAssetManager);
+    pPlayer->initTextureAndShaderProgram();
     return pPlayer;
 }
 
@@ -197,8 +196,8 @@ LayerPlayer CBlendManager::__createSequenceFramePlayer(const Json::Value &vConfi
     EPictureType::EPictureType PictureType = EPictureType::FromString(FrameType);
     EPlayType::EPlayType PlayType = EPlayType::FromString(PlayMode);
 
-    auto* pPlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, PictureType);
-    if(!pPlayer->initTextureAndShaderProgram(m_pAssetManager))
+    CSequenceFramePlayer* pPlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, PictureType);
+    if(!pPlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return nullptr;
@@ -235,7 +234,7 @@ LayerPlayer CBlendManager::__createBillBoardManager(const Json::Value &vConfig)
         {
             LayerConfig = JsonReader.getObject(std::to_string(Layer));
         }
-        catch (std::runtime_error& e)
+        catch (...)
         {
             break;
         }
@@ -277,8 +276,8 @@ LayerPlayer CBlendManager::__createSlideWindow(const Json::Value &vConfig)
     bool IsLoop     = vConfig["loop"].asBool();
 
     CSlideWindow* pSlideWindowPlayer = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection);
-    pSlideWindowPlayer->createProgram(m_pAssetManager);
-    pSlideWindowPlayer->loadTextures(m_pAssetManager);
+    pSlideWindowPlayer->createProgram();
+    pSlideWindowPlayer->loadTextures();
     return pSlideWindowPlayer;
 }
 

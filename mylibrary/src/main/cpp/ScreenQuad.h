@@ -1,6 +1,6 @@
 #pragma once
-
-#include <GLES3/gl3.h>
+#include <mutex>
+#include "OpenGLCommon.h"
 
 namespace hiveVG
 {

@@ -1,8 +1,8 @@
 #include "Common.h"
-#include <android/asset_manager.h>
 #include <json/json.h>
 #include <functional>
 #include <vector>
+#include <variant>
 
 namespace hiveVG
 {
@@ -22,7 +22,7 @@ namespace hiveVG
     class CBlendManager
     {
     public:
-        CBlendManager(AAssetManager *vAssetManager);
+        CBlendManager();
         ~CBlendManager();
 
         bool init(const std::string& vFilePath, int vWidth, int vHeight);
@@ -55,7 +55,6 @@ namespace hiveVG
         // TODO: 为了测试设置的全图层bool
         bool   m_IsBlendValid = true;
 
-        AAssetManager*   m_pAssetManager = nullptr;
         CScreenQuad*     m_pScreenQuad   = nullptr;
         CTextureBlender* m_pTexBlender   = nullptr;
 

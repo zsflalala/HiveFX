@@ -33,7 +33,10 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         TextureBlender.cpp
         BlendManager.cpp
         TimeUtils.cpp
-        ThreadPool.cpp)
+        AppContext.cpp
+        FileUtils.cpp
+        ThreadPool.cpp
+)
 
 set(REQUIRED_PACKAGES
         glm

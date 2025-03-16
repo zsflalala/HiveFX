@@ -5,11 +5,10 @@
 
 using namespace hiveVG;
 
-AAssetManager* CTextureBlender::m_pAssetManager = nullptr;
 CShaderProgram* CTextureBlender::m_pBlitShaderProgram = nullptr;
 std::vector<CShaderProgram*> CTextureBlender::m_BlendShaderPrograms;
 
-CTextureBlender::CTextureBlender() : m_BlendingMode(EBlendingMode::NORMAL), m_IsInit(false), m_IsDstTex1Bound(false), m_DstFBO(0), m_SrcFBO(0)
+CTextureBlender::CTextureBlender() : m_BlendingMode(EBlendingMode::NORMAL), m_IsBlend(false), m_IsInit(false), m_IsDstTex1Bound(false), m_DstFBO(0), m_SrcFBO(0)
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
     // TODO: 用其他方式管理混合 shader。当使用到某 blend 算法时再生成
@@ -59,11 +58,7 @@ CTextureBlender::~CTextureBlender()
 bool CTextureBlender::init(int vWidth, int vHeight)
 {
     if(m_IsInit) return true;
-    if(!m_pAssetManager)
-    {
-        LOG_ERROR(TAG_KEYWORD::TEXTURE_BLENDER_TAG,"Asset manager is not set up.");
-        return false;
-    }
+
     m_IsInit = __createFBO() && __createTexture(vWidth, vHeight)
                && __bindTex2FBO(m_SrcFBO, m_pSrcTexture)
                && __bindTex2FBO(m_DstFBO, m_pDstTexture0)
@@ -205,13 +200,13 @@ bool CTextureBlender::__bindTex2FBO(GLuint &vFboId, CTexture2D *vTexture)
 bool CTextureBlender::__compilerShaders()
 {
 
-    m_pBlitShaderProgram = CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlitTex2ScreenFrag);
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendAlphaFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendMultiplyFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendLightenFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendLinearDodgeFrag));
-    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(m_pAssetManager, BlitTex2ScreenVert, BlendLighterColorFrag));
-    // m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(vAssetManager, BlitTex2ScreenVert, BlendOverlayFrag));
+    m_pBlitShaderProgram = CShaderProgram::createProgram(BlitTex2ScreenVert, BlitTex2ScreenFrag);
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendAlphaFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendMultiplyFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendLightenFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendLinearDodgeFrag));
+    m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendLighterColorFrag));
+    // m_BlendShaderPrograms.push_back(CShaderProgram::createProgram(BlitTex2ScreenVert, BlendOverlayFrag));
 
     if(!m_pBlitShaderProgram)
         return false;

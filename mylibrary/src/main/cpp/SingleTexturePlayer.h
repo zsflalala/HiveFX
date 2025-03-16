@@ -2,8 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <GLES3/gl3.h>
-#include <android/asset_manager.h>
 
 namespace hiveVG
 {
@@ -16,7 +14,7 @@ namespace hiveVG
         CSingleTexturePlayer(const std::string& vTexturePath);
         ~CSingleTexturePlayer();
 
-        bool initTextureAndShaderProgram(AAssetManager* vAssetManager);
+        bool initTextureAndShaderProgram();
         void updateFrame();
 
     private:

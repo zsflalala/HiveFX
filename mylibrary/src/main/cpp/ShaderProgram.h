@@ -1,17 +1,16 @@
 #pragma once
 
-#include <GLES3/gl3.h>
 #include <vector>
 #include <unordered_map>
 #include <glm/glm.hpp>
-#include <android/asset_manager.h>
+#include "OpenGLCommon.h"
 
 namespace hiveVG
 {
     class CShaderProgram
     {
     public:
-        static CShaderProgram* createProgram(AAssetManager *vAssetManager, const std::string& vVertFilePath, const std::string& vFragFilePath);
+        static CShaderProgram* createProgram(const std::string& vVertFilePath, const std::string& vFragFilePath);
         ~CShaderProgram();
 
         void useProgram() const;
@@ -24,10 +23,13 @@ namespace hiveVG
         void setUniform(const std::string& vName, const glm::mat4& vMat);
 
     private:
-        static bool __dumpShaderCodeFromFile(AAssetManager *vAssetManager, const std::string& vShaderPath, std::string& voShaderCode);
+        static bool __dumpShaderCodeFromFile(const std::string& vShaderPath, std::string& voShaderCode);
         static bool __compileShader(GLenum vType, const std::string& vShaderPath, const std::string& vShaderCode, GLuint& voShaderHandle);
         static bool __linkProgram(const std::vector<GLuint>& vShaderHandles, GLuint& voProgramHandle);
         CShaderProgram(const std::vector<GLuint>& vShaderHandles, GLuint vProgramHandle);
+#ifdef HIVE_UNIT_TEST
+    public:
+#endif
         GLint  __getOrCreateUniformId(const std::string& vUniformName);
 
         GLuint                                 m_ProgramHandle;

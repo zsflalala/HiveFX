@@ -34,6 +34,6 @@ void CScrollRainConfigRenderer::__initAlgorithm()
         Height = ANativeWindow_getHeight(m_pApp->window);
     }
 
-    m_pManager = new CBlendManager(m_pApp->activity->assetManager);
+    m_pManager = new CBlendManager();
     m_pManager->init("configs/ScrollRainConfig.json", Width, Height);
 }

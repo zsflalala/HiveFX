@@ -1,5 +1,4 @@
 #pragma once
-
 #include <EGL/egl.h>
 #include "Common.h"
 
@@ -34,6 +33,5 @@ namespace hiveVG
         CRendererWithConfig* m_pRainRenderer = nullptr;
         CRendererWithConfig* m_pCloudRenderer = nullptr;
     };
-
-} // hiveVG
+}
 
