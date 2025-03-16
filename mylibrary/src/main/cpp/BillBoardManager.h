@@ -1,26 +1,15 @@
 #pragma once
 
 #include <vector>
-#include <glm/glm.hpp>
 #include "SequenceFramePlayer.h"
+#include "Common.h"
 
 namespace hiveVG
 {
     class CScreenQuad;
     class CTextureBlender;
-
-    struct SSequenceState
-    {
-        bool      _IsAlive;
-        float     _PlannedLivingTime;
-        float     _PlannedDeadTime;
-        float     _AlreadyLivingTime;
-        float     _AlreadyDeadTime;
-        float     _MovingDirection;
-        float     _MovingSpeed;
-        glm::vec2 _UVOffset;
-        float     _UVScale;
-    };
+    class CSequenceFramePlayer;
+    struct SSequenceState;
 
     class CBillBoardManager
     {

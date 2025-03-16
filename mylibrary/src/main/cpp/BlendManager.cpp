@@ -16,11 +16,17 @@ CBlendManager::CBlendManager()
 
 CBlendManager::~CBlendManager()
 {
-    if (m_pScreenQuad) delete m_pScreenQuad;
-    if (m_pTexBlender) delete m_pTexBlender;
+    CScreenQuad::destory();
+    if (m_pTexBlender)
+    {
+        delete m_pTexBlender;
+        m_pTexBlender = nullptr;
+    }
 
-    for (auto& pPlayer : m_PlayerList) {
-        std::visit([&pPlayer](auto p) {
+    for (auto& pPlayer : m_PlayerList)
+    {
+        std::visit([&pPlayer](auto p)
+        {
             using T = decltype(p);
             if constexpr (
                     std::is_same_v<T, CSingleTexturePlayer*> ||
@@ -46,7 +52,7 @@ bool CBlendManager::init(const std::string& vFilePath, int vWidth, int vHeight)
 
 void CBlendManager::render()
 {
-    if(m_PlayerList.size() == 0 || !m_pTexBlender->isInit())
+    if(m_PlayerList.empty() || !m_pTexBlender->isInit())
     {
         LOG_ERROR(TAG_KEYWORD::BLENDER_MANAGER_TAG, "Error occurred in rendering");
         return;
@@ -63,22 +69,22 @@ void CBlendManager::render()
         if(!m_RenderStatus[i])
             continue;
         EBlendingMode::EBlendingMode BlendMode = m_BlendModeList[i];
-        if (CSingleTexturePlayer** p = std::get_if<CSingleTexturePlayer*>(&m_PlayerList[i]))
+        if (auto** p = std::get_if<CSingleTexturePlayer*>(&m_PlayerList[i]))
         {
             DrawCallFunc = std::bind(&CBlendManager::__SingleTexDrawCallFunc, this, *p);
             __draw(DrawCallFunc, BlendMode);
         }
-        if (CSequenceFramePlayer** p = std::get_if<CSequenceFramePlayer*>(&m_PlayerList[i]))
+        if (auto** p = std::get_if<CSequenceFramePlayer*>(&m_PlayerList[i]))
         {
             DrawCallFunc = std::bind(&CBlendManager::__SequenceFrameDrawCallFunc, this, *p, DeltaTime);
             __draw(DrawCallFunc, BlendMode);
         }
-        if (CBillBoardManager** p = std::get_if<CBillBoardManager*>(&m_PlayerList[i]))
+        if (auto** p = std::get_if<CBillBoardManager*>(&m_PlayerList[i]))
         {
             DrawCallFunc = std::bind(&CBlendManager::__BillBoardDrawCallFunc, this, *p, DeltaTime, BlendMode);
             __draw(DrawCallFunc, BlendMode);
         }
-        if (CSlideWindow** p = std::get_if<CSlideWindow*>(&m_PlayerList[i]))
+        if (auto** p = std::get_if<CSlideWindow*>(&m_PlayerList[i]))
         {
             DrawCallFunc = std::bind(&CBlendManager::__SlideWindowDrawCallFunc, this, *p, DeltaTime);
             __draw(DrawCallFunc, BlendMode);
@@ -170,7 +176,7 @@ void CBlendManager::__draw(const std::function<void()>& vDrawCall, EBlendingMode
 LayerPlayer CBlendManager::__createSingleTexPlayer(const Json::Value &vConfig)
 {
     std::string FramePath = vConfig["frames_path"].asString();
-    CSingleTexturePlayer* pPlayer = new CSingleTexturePlayer(FramePath);
+    auto* pPlayer = new CSingleTexturePlayer(FramePath);
     pPlayer->initTextureAndShaderProgram();
     return pPlayer;
 }

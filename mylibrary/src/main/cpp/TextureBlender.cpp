@@ -24,12 +24,34 @@ CTextureBlender::~CTextureBlender()
 {
     // TODO: ScreenQuad 单例如何释放
     //if (m_pScreenQuad) delete m_pScreenQuad;
-    if (m_pDstTexture0) delete m_pDstTexture0;
-    if (m_pDstTexture1) delete m_pDstTexture1;
-    if (m_pSrcTexture) delete m_pSrcTexture;
-    if (m_pBlitShaderProgram) delete m_pBlitShaderProgram;
+    if (m_pDstTexture0)
+    {
+        delete m_pDstTexture0;
+        m_pDstTexture0 = nullptr;
+    }
+    if (m_pDstTexture1)
+    {
+        delete m_pDstTexture1;
+        m_pDstTexture1 = nullptr;
+    }
+    if (m_pSrcTexture)
+    {
+        delete m_pSrcTexture;
+        m_pSrcTexture = nullptr;
+    }
+    if (m_pBlitShaderProgram)
+    {
+        delete m_pBlitShaderProgram;
+        m_pBlitShaderProgram = nullptr;
+    }
     for (auto ShaderProgram : m_BlendShaderPrograms)
-        if(ShaderProgram) delete ShaderProgram;
+    {
+        if(ShaderProgram)
+        {
+            delete ShaderProgram;
+            ShaderProgram = nullptr;
+        }
+    }
     m_BlendShaderPrograms.clear();
 }
 

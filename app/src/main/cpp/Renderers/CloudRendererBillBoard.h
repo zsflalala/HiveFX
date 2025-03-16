@@ -28,7 +28,7 @@ namespace hiveVG
 
         android_app* m_pApp          = nullptr;
         CScreenQuad* m_pScreenQuad   = nullptr;
-        std::unique_ptr<CBillBoardManager>  m_pCloudManager = nullptr;
+        std::unique_ptr<CBillBoardManager> m_pCloudManager = nullptr;
     };
 }
 

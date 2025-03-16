@@ -156,8 +156,8 @@ void CRenderer::handleInput()
                         {
                             m_pRainRenderer = new CRendererWithConfig(m_pApp);
                             m_pRainRenderer->init("configs/ConfigRainOnly.json");
-                            for(int i = 0; i<3;i++)
-                                m_pRainRenderer->switchRenderStatus(i);
+                            for(int index = 0; index < 3; index++)
+                                m_pRainRenderer->switchRenderStatus(index);
                         }
                         m_pRainRenderer->switchRenderStatus(Layer);
                         m_IsRainRendering = true;
@@ -169,8 +169,8 @@ void CRenderer::handleInput()
                         {
                             m_pCloudRenderer = new CRendererWithConfig(m_pApp);
                             m_pCloudRenderer->init("configs/ConfigCloudOnly.json");
-                            for(int i = 0; i<3;i++)
-                                m_pCloudRenderer->switchRenderStatus(i);
+                            for(int index = 0; index < 3; index++)
+                                m_pCloudRenderer->switchRenderStatus(index);
                         }
                         m_pCloudRenderer->switchRenderStatus(Layer - 3);
                         m_IsRainRendering = false;

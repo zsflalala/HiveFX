@@ -27,11 +27,26 @@ CSlideWindow::~CSlideWindow()
 void CSlideWindow::updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad *vQuad)
 {
     glm::vec2 ScreenParams = glm::vec2(vWindowWidth, vWindowHeight);
-    m_CoordBias += static_cast<float>(vDeltaTime);
+    m_CoordBias += static_cast<float>(vDeltaTime) * m_SlideSpeed;
+
+    auto TextureWidth = static_cast<float>(m_TextureWidth);
+    auto TextureHeight = static_cast<float>(m_TextureHeight);
+
+    if (m_SlideDirection == "horizontal")
+    {
+        if (m_CoordBias / TextureWidth > 1.0) m_CoordBias -= TextureWidth;
+        if (m_CoordBias / TextureWidth < -1.0) m_CoordBias += TextureWidth;
+    }
+    if (m_SlideDirection == "vertical")
+    {
+        if (m_CoordBias / TextureHeight > 1.0) m_CoordBias -= TextureHeight;
+        if (m_CoordBias / TextureHeight < -1.0) m_CoordBias += TextureHeight;
+    }
+    
     m_pShaderProgram->useProgram();
     m_pShaderProgram->setUniform("_ScreenParams", ScreenParams);
     m_pShaderProgram->setUniform("_TextureParams", glm::vec2(m_TextureWidth, m_TextureHeight));
-    m_pShaderProgram->setUniform("_CoordBias", m_CoordBias * m_SlideSpeed);
+    m_pShaderProgram->setUniform("_CoordBias", m_CoordBias);
     m_pShaderProgram->setUniform("Texture", 0);
     glActiveTexture(GL_TEXTURE0);
     m_pTexture->bindTexture();

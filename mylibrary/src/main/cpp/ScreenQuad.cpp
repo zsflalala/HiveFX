@@ -3,11 +3,32 @@
 
 using namespace hiveVG;
 
+CScreenQuad* CScreenQuad::m_pQuad = nullptr;
+std::mutex   CScreenQuad::m_Mutex;
+
 CScreenQuad* CScreenQuad::getOrCreate()
 {
-    static CScreenQuad* pQuad = nullptr;
-    if (pQuad == nullptr) pQuad = new CScreenQuad;
-    return pQuad;
+    if (m_pQuad == nullptr)
+    {
+        std::lock_guard Lock(m_Mutex);
+        if (m_pQuad == nullptr)
+        {
+            auto t = new CScreenQuad;
+            // C++11 内存屏障
+            std::atomic_thread_fence(std::memory_order_acquire);
+            m_pQuad = t;
+        }
+    }
+    return m_pQuad;
+}
+
+void CScreenQuad::destory()
+{
+    if (m_pQuad != nullptr)
+    {
+        delete m_pQuad;
+        m_pQuad = nullptr;
+    }
 }
 
 CScreenQuad::~CScreenQuad()

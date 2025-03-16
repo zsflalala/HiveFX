@@ -15,7 +15,7 @@ namespace hiveVG
         CRendererWithConfig(android_app *vApp);
         ~CRendererWithConfig();
 
-        bool init(const std::string vConfigFile);
+        bool init(const std::string& vConfigFile);
         void render();
         void switchRenderStatus(int vIndex);
         void setLayerBlendMode(int vBlendMode);

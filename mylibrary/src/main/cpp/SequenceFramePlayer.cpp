@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "SequenceFramePlayer.h"
+#include <random>
+#include <webp/decode.h>
 #include "Texture2D.h"
 #include "ShaderProgram.h"
 #include "ScreenQuad.h"
 #include "Common.h"
-#include "webp/decode.h"
 
 #define M_PI 3.14159265358979323846
 
@@ -64,6 +65,8 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
                     LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
                     return false;
                 }
+                else
+                    LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Load texture from mobile path [%s] successfully.", TexturePath.c_str());
             }
             m_SeqTextures.push_back(pSequenceTexture);
         }
@@ -72,9 +75,12 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
             CTexture2D::loadTextureFromCompressedPNG(TexturePath, m_SequenceWidth, m_SequenceHeight, m_SeqTextures);
         }
     }
-    m_SequenceSingleTextureWidth  = m_SequenceWidth / m_SequenceCols;
-    m_SequenceSingleTextureHeight = m_SequenceHeight / m_SequenceRows;
-    m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert, SeqTexPlayFrag);
+    m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
+    m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
+    m_pSequenceShaderProgram = CShaderProgram::createProgram(
+            SeqTexPlayVert,
+            SeqTexPlayFrag
+    );
     if (!m_pSequenceShaderProgram)
     {
         LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "[%s] ShaderProgram init Failed.", m_TextureRootPath.c_str());
@@ -102,17 +108,48 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight,
     m_WindowSize = glm::vec2(vWindowWidth, vWindowHeight);
     if (m_IsMoving)
     {
-        m_ScreenUVOffset += m_ScreenUVMovingSpeed * float(vDeltaTime);
-        float ScreenMaxUV = 1.0f;
-        if (m_ScreenUVOffset.x > ScreenMaxUV + m_ScreenUVScale.x || m_ScreenUVOffset.x < -ScreenMaxUV - m_ScreenUVScale.x)
-            m_ScreenUVOffset.x = -ScreenMaxUV - m_ScreenUVScale.x;
-        if (m_ScreenUVOffset.y > ScreenMaxUV + m_ScreenUVScale.y || m_ScreenUVOffset.y < -ScreenMaxUV - m_ScreenUVScale.y)
-            m_ScreenUVOffset.y = -ScreenMaxUV - m_ScreenUVScale.y;
+        if (m_IsRandomPlay)
+        {
+            // TODO : update logic
+            if (!m_SequenceState._IsAlive)
+            {
+                m_SequenceState._AlreadyDeadTime += float(vDeltaTime);
+                if (m_SequenceState._AlreadyDeadTime > m_SequenceState._PlannedDeadTime)
+                {
+                    __initSequenceParams();
+                    m_SequenceState._IsAlive = true;
+                }
+            }
+            else
+            {
+                m_SequenceState._AlreadyLivingTime += float(vDeltaTime);
+                if (m_SequenceState._AlreadyLivingTime > m_SequenceState._PlannedLivingTime)
+                    m_SequenceState._IsAlive = false;
+                m_ScreenUVOffset += m_MovingSpeed * float(vDeltaTime);
+                float ScreenMaxUV = 1.0f;
+                if (m_ScreenUVOffset.x > ScreenMaxUV + m_ScreenUVScale.x || m_ScreenUVOffset.x < -ScreenMaxUV - m_ScreenUVScale.x)
+                    m_ScreenUVOffset.x = -ScreenMaxUV - m_ScreenUVScale.x;
+                if (m_ScreenUVOffset.y > ScreenMaxUV + m_ScreenUVScale.y || m_ScreenUVOffset.y < -ScreenMaxUV - m_ScreenUVScale.y)
+                    m_ScreenUVOffset.y = -ScreenMaxUV - m_ScreenUVScale.y;
+            }
+        }
+        else
+        {
+            m_ScreenUVOffset += m_MovingSpeed * float(vDeltaTime);
+            float ScreenMaxUV = 1.0f;
+            if (m_ScreenUVOffset.x > ScreenMaxUV + m_ScreenUVScale.x || m_ScreenUVOffset.x < -ScreenMaxUV - m_ScreenUVScale.x)
+                m_ScreenUVOffset.x = -ScreenMaxUV - m_ScreenUVScale.x;
+            if (m_ScreenUVOffset.y > ScreenMaxUV + m_ScreenUVScale.y || m_ScreenUVOffset.y < -ScreenMaxUV - m_ScreenUVScale.y)
+                m_ScreenUVOffset.y = -ScreenMaxUV - m_ScreenUVScale.y;
+        }
     }
 }
 
 void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
 {
+    if (m_IsRandomPlay && !m_SequenceState._IsAlive)
+        return ;
+
     if (!m_IsLoop && m_IsFinished)
     {
         m_CurrentFrame   = m_ValidFrames - 1;
@@ -139,4 +176,36 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     vQuad->bindAndDraw();
+}
+
+void CSequenceFramePlayer::__initSequenceParams()
+{
+    std::random_device Rd;
+    std::mt19937 Gen(Rd());
+    std::uniform_int_distribution<> IntDistribution(0, 1);
+    std::uniform_real_distribution<float> FloatDistribution(0.0, 1.0);
+
+    m_SequenceState._IsAlive = true;
+
+    FloatDistribution.param(std::uniform_real_distribution<float>::param_type(30.0f, 40.0f));
+    m_SequenceState._PlannedLivingTime = FloatDistribution(Gen);
+
+    FloatDistribution.param(std::uniform_real_distribution<float>::param_type(1.0f, 2.0f));
+    m_SequenceState._PlannedDeadTime   = FloatDistribution(Gen);
+    m_SequenceState._AlreadyDeadTime   = 0;
+    m_SequenceState._AlreadyLivingTime = 0;
+
+    FloatDistribution.param(std::uniform_real_distribution<float>::param_type(0.2f, 1.0f));
+    float ScreenRandomUV = FloatDistribution(Gen);
+    m_ScreenUVScale = glm::vec2(ScreenRandomUV, ScreenRandomUV);
+
+    FloatDistribution.param(std::uniform_real_distribution<float>::param_type(-0.5f, 0.5f));
+    float ScreenRandomOffset = FloatDistribution(Gen);
+    // TODO : move from up to down is to be completed later
+    float ScreenMaxUV = 1.0f;
+    m_ScreenUVOffset = m_MovingSpeed.x > 0 ? glm::vec2(-ScreenMaxUV - ScreenRandomUV, ScreenRandomOffset) : glm::vec2(ScreenMaxUV + ScreenRandomUV, ScreenRandomOffset);
+
+    float MovingDistance = 2.0f + 2 * m_SequenceState._UVScale; // 2.0f is from -1.0 ~ 1.0; * 2 is from left to right
+    float Speed = MovingDistance / m_SequenceState._PlannedLivingTime;
+    m_MovingSpeed.x = m_MovingSpeed.x > 0 ? Speed : -Speed;
 }
