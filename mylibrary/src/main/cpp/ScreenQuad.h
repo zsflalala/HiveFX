@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 #include "OpenGLCommon.h"
 
 namespace hiveVG
