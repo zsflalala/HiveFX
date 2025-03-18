@@ -25,7 +25,7 @@ CCombinedBigSnowFrameRenderer::~CCombinedBigSnowFrameRenderer()
 void CCombinedBigSnowFrameRenderer::__initAlgorithm()
 {
     std::string FileName   = "configs/MainAppConfig.json";
-    CJsonReader JsonReader = CJsonReader(m_pApp->activity->assetManager,FileName);
+    CJsonReader JsonReader = CJsonReader(FileName);
     Json::Value SnowBackConfig = JsonReader.getObject("SmallSnowBack");
     Json::Value SnowForeConfig = JsonReader.getObject("SmallSnowFore");
     Json::Value BackConfig     = JsonReader.getObject("Background");
@@ -39,7 +39,7 @@ void CCombinedBigSnowFrameRenderer::__initAlgorithm()
     int  SnowPlayFPS = SnowBackConfig["fps"].asInt();
 
     m_pCombineBackFramePlayer = new CSequenceFramePlayer(SnowFramePath,SnowRows,SnowCols,SnowFrameCount,m_PictureType);
-    m_pCombineBackFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pCombineBackFramePlayer->initTextureAndShaderProgram();
     m_pCombineBackFramePlayer->setFrameRate(SnowPlayFPS);
     m_pCombineBackFramePlayer->setLoopPlayback(SnowIsLoop);
 
@@ -51,13 +51,13 @@ void CCombinedBigSnowFrameRenderer::__initAlgorithm()
     SnowIsLoop     = SnowForeConfig["loop"].asBool();
     SnowPlayFPS    = SnowForeConfig["fps"].asInt();
     m_pCombineForeFramePlayer = new CSequenceFramePlayer(SnowFramePath,SnowRows,SnowCols,SnowFrameCount,m_PictureType);
-    m_pCombineForeFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pCombineForeFramePlayer->initTextureAndShaderProgram();
     m_pCombineForeFramePlayer->setFrameRate(SnowPlayFPS);
     m_pCombineForeFramePlayer->setLoopPlayback(SnowIsLoop);
 
     std::string BackgroundPath = BackConfig["frames_path"].asString();
     m_pBackFramePlayer   = new CSingleTexturePlayer(BackgroundPath);
-    m_pBackFramePlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pBackFramePlayer->initTextureAndShaderProgram();
     m_pScreenQuad   = CScreenQuad::getOrCreate();
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }

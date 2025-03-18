@@ -23,7 +23,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
     std::string  FileName = "configs/MainAppConfig.json";
-    CJsonReader JsonReader = CJsonReader(m_pApp->activity->assetManager,FileName);
+    CJsonReader JsonReader = CJsonReader(FileName);
     Json::Value Cloud2SceneConfig = JsonReader.getObject("Cloud2Scene");
     Json::Value Cloud4SceneConfig = JsonReader.getObject("Cloud4Scene");
     Json::Value Cloud5SceneConfig = JsonReader.getObject("Cloud5Scene");
@@ -36,7 +36,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
     bool CloudIsLoop  = Cloud2SceneConfig["loop"].asBool();
     int  CloudPlayFPS = Cloud2SceneConfig["fps"].asInt();
     auto* Cloud2Scene = new CSequenceFramePlayer(CloudFramePath, CloudRows, CloudCols, CloudFrameCount,m_PictureType);
-    Cloud2Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    Cloud2Scene->initTextureAndShaderProgram();
 
     CloudFramePath = Cloud4SceneConfig["frames_path"].asString();
     m_PictureType= EPictureType::FromString(Cloud4SceneConfig["frames_type"].asString());
@@ -46,7 +46,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
     CloudIsLoop  = Cloud4SceneConfig["loop"].asBool();
     CloudPlayFPS = Cloud4SceneConfig["fps"].asInt();
     auto* Cloud4Scene = new CSequenceFramePlayer(CloudFramePath, CloudRows, CloudCols, CloudFrameCount,m_PictureType);
-    Cloud4Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    Cloud4Scene->initTextureAndShaderProgram();
 
     CloudFramePath = Cloud5SceneConfig["frames_path"].asString();
     m_PictureType= EPictureType::FromString(Cloud5SceneConfig["frames_type"].asString());
@@ -56,7 +56,7 @@ void CCloudRendererBillBoard::__initAlgorithm()
     CloudIsLoop  = Cloud5SceneConfig["loop"].asBool();
     CloudPlayFPS = Cloud5SceneConfig["fps"].asInt();
     auto* Cloud5Scene = new CSequenceFramePlayer(CloudFramePath, CloudRows, CloudCols, CloudFrameCount,m_PictureType);
-    Cloud5Scene->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    Cloud5Scene->initTextureAndShaderProgram();
 
     m_pCloudManager = std::make_unique<CBillBoardManager>();
     m_pCloudManager->pushBack(Cloud2Scene);
