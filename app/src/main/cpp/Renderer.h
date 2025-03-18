@@ -28,8 +28,8 @@ namespace hiveVG
         void __initRenderer();
         void __updateRenderArea();
 
-        ERenderType  m_RenderType        = ERenderType::SNOW;
-        ERenderType  m_EnableRenderType  = ERenderType::SMALL_SNOW_FORE;
+        ERenderType  m_RenderType        = ERenderType::RAIN;
+        ERenderType  m_EnableRenderType  = ERenderType::SMALL_RAIN_FORE;
         bool         m_IsPointerDown     = false;
         int          m_WindowWidth       = -1;
         int          m_WindowHeight      = -1;
