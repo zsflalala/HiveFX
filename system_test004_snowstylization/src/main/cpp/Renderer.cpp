@@ -151,7 +151,7 @@ void CRenderer::__generateSnowScene()
 {
     double TimeStart = CTimeUtils::getCurrentTime();
     CSnowStylizer SnowGenerator;
-    SnowGenerator.loadImg(m_pApp->activity->assetManager,m_TexturePath);
+    SnowGenerator.loadImg(m_TexturePath);
     SnowGenerator.setShapeFreq(15);
     SnowGenerator.setShapeAmplitude(5);
     SnowGenerator.generateSnow(5);

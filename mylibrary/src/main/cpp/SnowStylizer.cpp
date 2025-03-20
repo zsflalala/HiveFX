@@ -19,7 +19,6 @@ CSnowStylizer::CSnowStylizer()
 bool CSnowStylizer::loadImg(const std::string& vImgPath)
 {
     auto pAsset = CFileUtils::openFile(vImgPath.c_str());
-    assert(pAsset);
     if (!pAsset)
         return false;
     size_t FileSize = CFileUtils::getFileBytes(pAsset);
@@ -51,7 +50,6 @@ bool CSnowStylizer::loadImg(const std::string& vImgPath)
 bool CSnowStylizer::loadImg(const std::string& vImgPath, const cv::Vec3b& BackgroundColor)
 {
     auto pAsset = CFileUtils::openFile(vImgPath.c_str());
-    assert(pAsset);
     if (!pAsset)
         return false;
     size_t FileSize = CFileUtils::getFileBytes(pAsset);
