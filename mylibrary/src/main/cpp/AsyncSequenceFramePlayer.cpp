@@ -159,7 +159,7 @@ void CAsyncSequenceFramePlayer::__loadTextureDataAsync(int vFrameIndex,
         return;
     size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    size_t Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
+    int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
     if(Flag < 0)
         return;
     CFileUtils::closeFile(pAsset);

@@ -85,7 +85,7 @@ bool CShaderProgram::__dumpShaderCodeFromFile(const std::string& vShaderPath, st
         return false;
     size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<char[]> pBuffer(new char[AssetSize + 1]);
-    size_t Flag = CFileUtils::readFile<char>(pAsset, pBuffer.get(), AssetSize);
+    int Flag = CFileUtils::readFile<char>(pAsset, pBuffer.get(), AssetSize);
     if(Flag < 0)
         return false;
     CFileUtils::closeFile(pAsset);
