@@ -3,7 +3,9 @@
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
-#include "Renderers/GenerateAPKRenderer.h"
+#include "Renderers/WeatherAPKRenderer.h"
+#include "Renderers/BackGroundAPKRenderer.h"
+#include "Renderers/WeatherSeqRenderer.h"
 #include "Common.h"
 
 using namespace hiveVG;
@@ -32,10 +34,20 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pBigSnowRenderer != nullptr)
+    if (m_pWeatherRenderer != nullptr)
     {
-        delete m_pBigSnowRenderer;
-        m_pBigSnowRenderer = nullptr;
+        delete m_pWeatherRenderer;
+        m_pWeatherRenderer = nullptr;
+    }
+    if (m_pWeatherSeqRenderer != nullptr)
+    {
+        delete m_pWeatherSeqRenderer;
+        m_pWeatherSeqRenderer = nullptr;
+    }
+    if (m_pBackgroundRenderer != nullptr)
+    {
+        delete m_pBackgroundRenderer;
+        m_pBackgroundRenderer = nullptr;
     }
 }
 
@@ -99,9 +111,23 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    if (m_pBigSnowRenderer == nullptr)
-        m_pBigSnowRenderer = new CGenerateAPKRenderer(m_pApp);
-    m_pBigSnowRenderer->renderScene(m_WindowWidth, m_WindowHeight);
+//    if (m_pBackgroundRenderer == nullptr)
+//        m_pBackgroundRenderer = new CBackgroundAPKRenderer();
+//    m_pBackgroundRenderer->renderScene(m_WindowWidth, m_WindowHeight);
+
+    if (m_pWeatherRenderer == nullptr)
+    {
+        m_pWeatherRenderer = new CWeatherAPKRenderer();
+        m_pWeatherRenderer->initTextureAndShaderProgram();
+    }
+    m_pWeatherRenderer->renderScene();
+
+//    if (m_pWeatherSeqRenderer == nullptr)
+//    {
+//        m_pWeatherSeqRenderer = new CWeatherSeqRenderer();
+//        m_pWeatherSeqRenderer->initTextureAndShaderProgram();
+//    }
+//    m_pWeatherSeqRenderer->renderScene();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

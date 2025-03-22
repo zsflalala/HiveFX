@@ -22,7 +22,7 @@ CScreenQuad* CScreenQuad::getOrCreate()
     return m_pQuad;
 }
 
-void CScreenQuad::destory()
+void CScreenQuad::destroy()
 {
     if (m_pQuad != nullptr)
     {

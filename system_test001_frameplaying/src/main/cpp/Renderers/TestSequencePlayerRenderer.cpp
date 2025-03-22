@@ -1,7 +1,5 @@
 #include "TestSequencePlayerRenderer.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
-#include <android/asset_manager.h>
-#include <json/json.h>
 #include "Common.h"
 #include "TimeUtils.h"
 #include "ScreenQuad.h"
@@ -14,7 +12,6 @@ using namespace hiveVG;
 
 CTestSequencePlayerRenderer::CTestSequencePlayerRenderer(android_app *vApp) : m_pApp(vApp)
 {
-    setAssetManager(vApp->activity->assetManager);
     __initAlgorithm();
 }
 
@@ -46,7 +43,6 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     m_PictureType = EPictureType::FromString(FrameType);
     m_PlayMode    = EPlayType::FromString(PlayMode);
 
-    m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pSmallSnowForePlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, m_PictureType);
     if(!m_pSmallSnowForePlayer->initTextureAndShaderProgram())
     {
@@ -62,6 +58,7 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
         m_pSmallSnowForePlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
         m_pSmallSnowForePlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
     }
+    m_pScreenQuad = CScreenQuad::getOrCreate();
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 

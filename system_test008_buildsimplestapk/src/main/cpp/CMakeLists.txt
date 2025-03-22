@@ -14,9 +14,11 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 ########################## 第三方库 相关配置  结束################################
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
-    system_test008_buildsimplestapk.cpp
-    Renderer.cpp
-    Renderers/GenerateAPKRenderer.cpp
+        system_test008_buildsimplestapk.cpp
+        Renderer.cpp
+        Renderers/WeatherAPKRenderer.cpp
+        Renderers/BackGroundAPKRenderer.cpp
+        Renderers/WeatherSeqRenderer.cpp
 )
 
 set(REQUIRED_PACKAGES

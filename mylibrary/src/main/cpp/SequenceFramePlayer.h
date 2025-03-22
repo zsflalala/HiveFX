@@ -19,8 +19,8 @@ namespace hiveVG
         CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG = false);
         ~CSequenceFramePlayer();
 
-        void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
-        void setScreenUVScale(float vScreenScale)   { m_ScreenUVScale = glm::vec2(vScreenScale, vScreenScale); }
+        void setLoopPlayback(bool vLoopTag) { m_IsLoop = vLoopTag; }
+        void setScreenUVScale(float vScreenScale) { m_ScreenUVScale = glm::vec2(vScreenScale, vScreenScale); }
         void setScreenUVScale(const glm::vec2& vScreenScale)   { m_ScreenUVScale = vScreenScale; }
         void setScreenUVOffset(const glm::vec2& vScreenOffset) { m_ScreenUVOffset = vScreenOffset; }
         void setFrameRate(int vFrameRate)       { m_FramePerSecond = static_cast<float>(vFrameRate); }

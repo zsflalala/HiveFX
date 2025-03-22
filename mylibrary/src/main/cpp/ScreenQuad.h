@@ -9,7 +9,7 @@ namespace hiveVG
     public:
         static CScreenQuad* getOrCreate();
 
-        static void destory();
+        static void destroy();
 
         ~CScreenQuad();
 

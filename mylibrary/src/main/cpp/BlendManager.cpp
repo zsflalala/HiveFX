@@ -16,7 +16,7 @@ CBlendManager::CBlendManager()
 
 CBlendManager::~CBlendManager()
 {
-    CScreenQuad::destory();
+    CScreenQuad::destroy();
     if (m_pTexBlender)
     {
         delete m_pTexBlender;

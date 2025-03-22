@@ -7,7 +7,9 @@ struct android_app;
 
 namespace hiveVG
 {
-    class CGenerateAPKRenderer;
+    class CWeatherAPKRenderer;
+    class CBackgroundAPKRenderer;
+    class CWeatherSeqRenderer;
 
     class CRenderer
     {
@@ -27,6 +29,8 @@ namespace hiveVG
         EGLDisplay   m_Display       = EGL_NO_DISPLAY;
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
-        CGenerateAPKRenderer* m_pBigSnowRenderer = nullptr;
+        CWeatherAPKRenderer*    m_pWeatherRenderer    = nullptr;
+        CBackgroundAPKRenderer* m_pBackgroundRenderer = nullptr;
+        CWeatherSeqRenderer*    m_pWeatherSeqRenderer = nullptr;
     };
 }
