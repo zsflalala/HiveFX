@@ -2,25 +2,6 @@ cmake_minimum_required(VERSION 3.22.1)
 
 project("system_test008_buildsimplestapk")
 
-########################## 第三方库 相关配置  开始################################
-
-add_library(hivefxso SHARED IMPORTED)
-
-set_target_properties(hivefxso PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/jniLibs/${CMAKE_ANDROID_ARCH_ABI}/libhivefxso.so)
-
-include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
-
-########################## 第三方库 相关配置  结束################################
-
-add_library(${CMAKE_PROJECT_NAME} SHARED
-        system_test008_buildsimplestapk.cpp
-        Renderer.cpp
-        Renderers/WeatherAPKRenderer.cpp
-        Renderers/BackGroundAPKRenderer.cpp
-        Renderers/WeatherSeqRenderer.cpp
-)
-
 set(REQUIRED_PACKAGES
         game-activity
         glm
@@ -32,14 +13,42 @@ foreach(PACKAGE ${REQUIRED_PACKAGES})
     find_package(${PACKAGE} REQUIRED)
 endforeach()
 
-target_link_libraries(${CMAKE_PROJECT_NAME}
+add_library(BasicLibrary SHARED
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/SingleTexturePlayer.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/ShaderProgram.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/ScreenQuad.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/Texture2D.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/JsonReader.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/EnumReflect.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/TimeUtils.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/AppContext.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/FileUtils.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/ThreadPool.cpp
+)
+
+target_include_directories(BasicLibrary PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary
+)
+
+target_link_libraries(BasicLibrary PUBLIC
         game-activity::game-activity
         EGL
         GLESv3
         jnigraphics
         android
         log
-        hivefxso
         glm::glm
         libwebp::libwebp
-        JsonCpp::JsonCpp)
+        JsonCpp::JsonCpp
+)
+
+add_library(${CMAKE_PROJECT_NAME} SHARED
+        system_test008_buildsimplestapk.cpp
+        Renderer.cpp
+        Renderers/WeatherAPKRenderer.cpp
+        Renderers/BackGroundAPKRenderer.cpp
+        Renderers/WeatherSeqRenderer.cpp
+)
+
+target_link_libraries(${CMAKE_PROJECT_NAME}
+        BasicLibrary)

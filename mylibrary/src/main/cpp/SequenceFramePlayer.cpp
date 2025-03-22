@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "SequenceFramePlayer.h"
 #include <random>
 #include <webp/decode.h>
