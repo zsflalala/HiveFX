@@ -113,15 +113,15 @@ void CRenderer::renderScene()
 
 //    if (m_pBackgroundRenderer == nullptr)
 //        m_pBackgroundRenderer = new CBackgroundAPKRenderer();
-//    m_pBackgroundRenderer->renderScene(m_WindowWidth, m_WindowHeight);
+//    m_pBackgroundRenderer->renderScene();
 
     if (m_pWeatherRenderer == nullptr)
     {
         m_pWeatherRenderer = new CWeatherAPKRenderer();
         m_pWeatherRenderer->initTextureAndShaderProgram();
     }
-    m_pWeatherRenderer->renderScene();
 
+    m_pWeatherRenderer->renderScene();
 //    if (m_pWeatherSeqRenderer == nullptr)
 //    {
 //        m_pWeatherSeqRenderer = new CWeatherSeqRenderer();

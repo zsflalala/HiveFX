@@ -26,6 +26,7 @@ namespace hiveVG
         unsigned char* _Data = nullptr;
         std::atomic<bool> _IsLoaded { false };
     };
+
     class CAsyncSequenceFramePlayer
     {
     public:
