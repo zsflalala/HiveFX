@@ -11,13 +11,13 @@ namespace hiveVG
         static void* openFile(const char* vPath);
         static size_t getFileBytes(void* vFile);
         template <typename T>
-        static size_t readFile(void* vFile, T* vBuffer, size_t vElementCount);
+        static int readFile(void* vFile, T* vBuffer, size_t vElementCount);
         static void closeFile(void* vFile);
         static std::unique_ptr<unsigned char[]>  readFromFile(const char* vPath, size_t& voAssetSize);
     };
 
     template <typename T>
-    size_t CFileUtils::readFile(void* vFile, T* vBuffer, size_t vElementCount)
+    int CFileUtils::readFile(void* vFile, T* vBuffer, size_t vElementCount)
     {
         if (!vFile || !vBuffer)
         {
@@ -26,8 +26,8 @@ namespace hiveVG
         }
         #ifdef HIVE_ANDROID
 
-            size_t Flag = AAsset_read(static_cast<AAsset*>(vFile), vBuffer, vElementCount * sizeof(T));
-            if (Flag < 0)
+            int Flag = AAsset_read(static_cast<AAsset*>(vFile), vBuffer, vElementCount * sizeof(T));
+            if (static_cast<int>(Flag) < 0)
                 LOG_ERROR(TAG_KEYWORD::FILE_UTILS_TAG, "Error occurred while reading file.");
 
         #elif defined (HIVE_UNIT_TEST)
@@ -37,6 +37,6 @@ namespace hiveVG
                 LOG_ERROR(TAG_KEYWORD::FILE_UTILS_TAG, "Error occurred while reading file.");
 
         #endif
-        return Flag;
+        return static_cast<int>(Flag);
     }
 }

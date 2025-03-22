@@ -19,12 +19,11 @@ CSnowStylizer::CSnowStylizer()
 bool CSnowStylizer::loadImg(const std::string& vImgPath)
 {
     auto pAsset = CFileUtils::openFile(vImgPath.c_str());
-    assert(pAsset);
     if (!pAsset)
         return false;
     size_t FileSize = CFileUtils::getFileBytes(pAsset);
     std::vector<uchar> Buffer(FileSize);
-    size_t Flag = CFileUtils::readFile<uchar>(pAsset, Buffer.data(), FileSize);
+    int Flag = CFileUtils::readFile<uchar>(pAsset, Buffer.data(), FileSize);
     if (Flag < 0)
         return false;
     CFileUtils::closeFile(pAsset);
@@ -51,12 +50,11 @@ bool CSnowStylizer::loadImg(const std::string& vImgPath)
 bool CSnowStylizer::loadImg(const std::string& vImgPath, const cv::Vec3b& BackgroundColor)
 {
     auto pAsset = CFileUtils::openFile(vImgPath.c_str());
-    assert(pAsset);
     if (!pAsset)
         return false;
     size_t FileSize = CFileUtils::getFileBytes(pAsset);
     std::vector<uchar> Buffer(FileSize);
-    size_t Flag = CFileUtils::readFile<uchar>(pAsset, Buffer.data(), FileSize);
+    int Flag = CFileUtils::readFile<uchar>(pAsset, Buffer.data(), FileSize);
     if (Flag < 0)
         return false;
     CFileUtils::closeFile(pAsset);

@@ -12,7 +12,7 @@ using namespace hiveVG;
 
     void *CFileUtils::openFile(const char *vPath)
     {
-        AAssetManager* pAssetManager = static_cast<AAssetManager*>(getAssetManager());
+        auto* pAssetManager = static_cast<AAssetManager*>(getAssetManager());
         if (!pAssetManager)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "AssetManager is null.");
@@ -41,7 +41,7 @@ using namespace hiveVG;
 
     std::unique_ptr<unsigned char[]> CFileUtils::readFromFile(const char* vPath, size_t& voAssetSize)
     {
-        AAssetManager* pAssetManager = static_cast<AAssetManager*>(getAssetManager());
+        auto* pAssetManager = static_cast<AAssetManager*>(getAssetManager());
         if (!pAssetManager)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "AssetManager is null.");
@@ -71,7 +71,8 @@ using namespace hiveVG;
     {
         FILE* pFile = nullptr;
         errno_t Flag = fopen_s(&pFile, vPath, "rb");
-        if (Flag != 0) {
+        if (Flag != 0)
+        {
             LOG_ERROR(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open file: %s", vPath);
             return nullptr;
         }
@@ -92,7 +93,8 @@ using namespace hiveVG;
 
     void CFileUtils::closeFile(void* vFile)
     {
-        if (vFile) {
+        if (vFile)
+        {
             fclose(static_cast<FILE*>(vFile));
         }
     }

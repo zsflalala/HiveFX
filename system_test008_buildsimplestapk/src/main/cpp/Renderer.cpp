@@ -3,13 +3,14 @@
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
-#include "Renderers/TestSequencePlayerRenderer.h"
+#include "Renderers/GenerateAPKRenderer.h"
 #include "Common.h"
 
 using namespace hiveVG;
 
 CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 {
+    setAssetManager(vApp->activity->assetManager);
     __initRenderer();
 }
 
@@ -31,7 +32,11 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pTestPlayer)       delete m_pTestPlayer;
+    if (m_pBigSnowRenderer != nullptr)
+    {
+        delete m_pBigSnowRenderer;
+        m_pBigSnowRenderer = nullptr;
+    }
 }
 
 void CRenderer::__initRenderer()
@@ -94,8 +99,9 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    if (m_pTestPlayer == nullptr) m_pTestPlayer = new CTestSequencePlayerRenderer(m_pApp);
-    m_pTestPlayer->renderScene(m_WindowWidth, m_WindowHeight);
+    if (m_pBigSnowRenderer == nullptr)
+        m_pBigSnowRenderer = new CGenerateAPKRenderer(m_pApp);
+    m_pBigSnowRenderer->renderScene(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

@@ -14,6 +14,7 @@ using namespace hiveVG;
 
 CTestSequencePlayerRenderer::CTestSequencePlayerRenderer(android_app *vApp) : m_pApp(vApp)
 {
+    setAssetManager(vApp->activity->assetManager);
     __initAlgorithm();
 }
 
