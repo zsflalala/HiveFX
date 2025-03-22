@@ -14,7 +14,6 @@ using namespace hiveVG;
 CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
 {
     auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
-    assert(pAsset);
     if (!pAsset)
         return nullptr;
     size_t AssetSize = CFileUtils::getFileBytes(pAsset);
@@ -75,7 +74,6 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
 CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType)
 {
     auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
-    assert(pAsset);
     if (!pAsset)
         return nullptr;
     size_t AssetSize = CFileUtils::getFileBytes(pAsset);
@@ -163,7 +161,6 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
 void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D*>& vTexture2DVec)
 {
     auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
-    assert(pAsset);
     if (!pAsset)
         return;
     size_t AssetSize = CFileUtils::getFileBytes(pAsset);
