@@ -4,6 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
+#include "Renderers/RendererWithExternalStorage.h"
 
 using namespace hiveVG;
 
@@ -32,6 +33,8 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
+
+    if(m_pRenderer) delete m_pRenderer;
 }
 
 void CRenderer::__initRenderer()
@@ -98,6 +101,10 @@ void CRenderer::render()
     __updateRenderArea();
     glClearColor(0.1f,0.2f,0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    if (m_pRenderer == nullptr)
+        m_pRenderer = new CRendererWithExternalStorage(m_pApp);
+    m_pRenderer->renderScene(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

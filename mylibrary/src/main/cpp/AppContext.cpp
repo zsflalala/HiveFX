@@ -24,7 +24,11 @@ namespace hiveVG
 
     void CAppContext::setStoragePath(const std::string &vPath)
     {
-        m_StoragePath = vPath;
+        std::string StoragePath = vPath;
+        if (StoragePath.back() != '/') {
+            StoragePath += '/';
+        }
+        m_StoragePath = StoragePath;
     }
 
     std::string CAppContext::getStoragePath()

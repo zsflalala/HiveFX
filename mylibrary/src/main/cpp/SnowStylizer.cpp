@@ -18,15 +18,15 @@ CSnowStylizer::CSnowStylizer()
 
 bool CSnowStylizer::loadImg(const std::string& vImgPath)
 {
-    auto pAsset = CFileUtils::openFile(vImgPath.c_str());
+    auto pAsset = CFileUtils::openFileByAssetManager(vImgPath.c_str());
     if (!pAsset)
         return false;
-    size_t FileSize = CFileUtils::getFileBytes(pAsset);
+    size_t FileSize = CFileUtils::getFileBytesByAsset(pAsset);
     std::vector<uchar> Buffer(FileSize);
     int Flag = CFileUtils::readFile<uchar>(pAsset, Buffer.data(), FileSize);
     if (Flag < 0)
         return false;
-    CFileUtils::closeFile(pAsset);
+    CFileUtils::closeAsset(pAsset);
 
     m_OriginImage = cv::imdecode(Buffer, cv::IMREAD_UNCHANGED);
     if (m_OriginImage.empty())
@@ -49,15 +49,15 @@ bool CSnowStylizer::loadImg(const std::string& vImgPath)
 
 bool CSnowStylizer::loadImg(const std::string& vImgPath, const cv::Vec3b& BackgroundColor)
 {
-    auto pAsset = CFileUtils::openFile(vImgPath.c_str());
+    auto pAsset = CFileUtils::openFileByAssetManager(vImgPath.c_str());
     if (!pAsset)
         return false;
-    size_t FileSize = CFileUtils::getFileBytes(pAsset);
+    size_t FileSize = CFileUtils::getFileBytesByAsset(pAsset);
     std::vector<uchar> Buffer(FileSize);
     int Flag = CFileUtils::readFile<uchar>(pAsset, Buffer.data(), FileSize);
     if (Flag < 0)
         return false;
-    CFileUtils::closeFile(pAsset);
+    CFileUtils::closeAsset(pAsset);
 
     m_OriginImage = cv::imdecode(Buffer, cv::IMREAD_UNCHANGED);
     if (m_OriginImage.empty())

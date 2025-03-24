@@ -57,17 +57,17 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
         if (!m_UseCompressedPNG)
         {
             CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
+//            if (!pSequenceTexture)
+//            {
+//                pSequenceTexture = CTexture2D::loadTextureFromMobile(TexturePath);
             if (!pSequenceTexture)
             {
-                pSequenceTexture = CTexture2D::loadTextureFromMobile(TexturePath);
-                if (!pSequenceTexture)
-                {
-                    LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
-                    return false;
-                }
-                else
-                    LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Load texture from mobile path [%s] successfully.", TexturePath.c_str());
+                LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+                return false;
             }
+            else
+                LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Load texture from mobile path [%s] successfully.", TexturePath.c_str());
+//            }
             m_SeqTextures.push_back(pSequenceTexture);
         }
         else

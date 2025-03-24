@@ -153,16 +153,16 @@ void CAsyncSequenceFramePlayer::__loadTextureDataAsync(int vFrameIndex,
                                                        std::mutex &vTextureMutex,
                                                        std::set<int> &vFramesToUploadGPU)
 {
-    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
+    auto pAsset = CFileUtils::openFileByAssetManager(vTexturePath.c_str());
     assert(pAsset);
     if (!pAsset)
         return;
-    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
+    size_t AssetSize = CFileUtils::getFileBytesByAsset(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
     int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
     if(Flag < 0)
         return;
-    CFileUtils::closeFile(pAsset);
+    CFileUtils::closeAsset(pAsset);
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Width, Height, Channels;

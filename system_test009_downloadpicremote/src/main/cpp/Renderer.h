@@ -6,6 +6,8 @@ struct android_app;
 
 namespace hiveVG
 {
+    class CRendererWithExternalStorage;
+
     class CRenderer
     {
     public:
@@ -26,9 +28,8 @@ namespace hiveVG
         EGLDisplay   m_Display       = EGL_NO_DISPLAY;
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
-        bool         m_IsRainRendering  = false;
-        bool         m_IsCloudRendering = false;
 
+        CRendererWithExternalStorage* m_pRenderer = nullptr;
     };
 }
 

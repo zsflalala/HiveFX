@@ -13,19 +13,25 @@ using namespace hiveVG;
 
 CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
 {
-    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
-    if (!pAsset)
-        return nullptr;
-    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
-    std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
-    if(Flag < 0)
-        return nullptr;
-    CFileUtils::closeFile(pAsset);
-
     double StartTime = CTimeUtils::getCurrentTime();
     int Width, Height, Channels;
-    unsigned char* pImageData = stbi_load_from_memory(pBuffer.get(), static_cast<int>(AssetSize), &Width, &Height, &Channels, 0);
+    unsigned char* pImageData = nullptr;
+
+    auto pAsset = CFileUtils::openFileByAssetManager(vTexturePath.c_str());
+    if (pAsset)
+    {
+        size_t AssetSize = CFileUtils::getFileBytesByAsset(pAsset);
+        std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
+        int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
+        if(Flag < 0)
+            return nullptr;
+        CFileUtils::closeAsset(pAsset);
+        pImageData = stbi_load_from_memory(pBuffer.get(), static_cast<int>(AssetSize), &Width, &Height, &Channels, 0);
+    }
+    else
+    {
+        pImageData = stbi_load(vTexturePath.c_str(), &Width, &Height, &Channels, 0);
+    }
     if (!pImageData)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load image from memory: %s", vTexturePath.c_str());
@@ -73,15 +79,30 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
 
 CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType)
 {
-    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
-    if (!pAsset)
-        return nullptr;
-    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
-    std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
-    if(Flag < 0)
-        return nullptr;
-    CFileUtils::closeFile(pAsset);
+    std::unique_ptr<unsigned char[]> pBuffer;
+    size_t AssetSize;
+    auto pAsset = CFileUtils::openFileByAssetManager(vTexturePath.c_str());
+    if (pAsset)
+    {
+        AssetSize = CFileUtils::getFileBytesByAsset(pAsset);
+        pBuffer = std::make_unique<unsigned char[]>(AssetSize);
+        int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
+        CFileUtils::closeAsset(pAsset);
+        if(Flag < 0)
+            return nullptr;
+    }
+    else
+    {
+        auto pFile = CFileUtils::openFile(vTexturePath.c_str());
+        if(!pFile)
+            return nullptr;
+        AssetSize = CFileUtils::getFileBytes(pFile);
+        pBuffer = std::make_unique<unsigned char[]>(AssetSize);
+        int Flag =  CFileUtils::readFile<unsigned char>(pFile, pBuffer.get(), AssetSize, false);
+        CFileUtils::closeFile(pFile);
+        if(Flag < 0)
+            return nullptr;
+    }
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;
@@ -160,15 +181,15 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
 
 void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D*>& vTexture2DVec)
 {
-    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
+    auto pAsset = CFileUtils::openFileByAssetManager(vTexturePath.c_str());
     if (!pAsset)
         return;
-    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
+    size_t AssetSize = CFileUtils::getFileBytesByAsset(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
     int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
     if(Flag < 0)
         return;
-    CFileUtils::closeFile(pAsset);
+    CFileUtils::closeAsset(pAsset);
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;
