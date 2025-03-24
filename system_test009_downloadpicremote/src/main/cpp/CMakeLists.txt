@@ -17,10 +17,25 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
 
 find_package(game-activity REQUIRED CONFIG)
 
+set(REQUIRED_PACKAGES
+        glm
+        WebP
+        jsoncpp
+)
+
+foreach(PACKAGE ${REQUIRED_PACKAGES})
+    find_package(${PACKAGE} REQUIRED)
+endforeach()
+
 target_link_libraries(${CMAKE_PROJECT_NAME}
     game-activity::game-activity
     EGL
     GLESv3
     jnigraphics
     android
-    log)
+    log
+    hivefxso   # 链接第三方库
+    glm::glm
+    libwebp::libwebp
+    JsonCpp::JsonCpp
+)

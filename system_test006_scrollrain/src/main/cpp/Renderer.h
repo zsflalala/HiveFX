@@ -7,7 +7,7 @@ struct android_app;
 
 namespace hiveVG
 {
-    //class CScrollRainRenderer;
+    class CScrollRainRenderer;
     class CScrollRainConfigRenderer;
 
     class CRenderer
@@ -29,7 +29,7 @@ namespace hiveVG
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
 
-        //CScrollRainRenderer* m_pTestPlayer = nullptr;
+        CScrollRainRenderer* m_pTestPlayer = nullptr;
         CScrollRainConfigRenderer* m_pRendererWithConfig = nullptr;
     };
 }

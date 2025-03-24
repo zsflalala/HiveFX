@@ -9,7 +9,8 @@ using namespace hiveVG;
 
 CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 {
-    setAssetManager(vApp->activity->assetManager);
+    CAppContext::setAssetManager(vApp->activity->assetManager);
+    CAppContext::setStoragePath(vApp->activity->externalDataPath);
     __initRenderer();
 }
 
