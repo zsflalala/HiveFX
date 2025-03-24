@@ -31,7 +31,7 @@ bool CSingleTexturePlayer::initTextureAndShaderProgram()
                   "Error loading texture from path [%s].", m_TexturePath.c_str());
         return false;
     }
-    m_pSingleShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert, SingleTexPlayFrag);
+    m_pSingleShaderProgram = CShaderProgram::createProgram("shaders/weatherSeq.vert", "shaders/weatherSeq.frag");
     assert(m_pSingleShaderProgram != nullptr);
     LOG_INFO(hiveVG::TAG_KEYWORD::SINGLE_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TexturePath.c_str());
     return true;

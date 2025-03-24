@@ -22,7 +22,7 @@ namespace hiveVG
         int                   m_TextureCount            = 0;
         int                   m_CurrentTexture          = 0;
         int                   m_PreloadTexture          = 5;
-        float                 m_FramePerSecond          = 60.0f;
+        float                 m_FramePerSecond          = 24.0f;
         double                m_LastFrameTime           = 0.0f;
         double                m_CurrentTime             = 0.0f;
         double                m_AccumFrameTime          = 0.0f;

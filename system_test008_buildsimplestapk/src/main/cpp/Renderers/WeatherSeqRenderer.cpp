@@ -39,7 +39,7 @@ bool CWeatherSeqRenderer::initTextureAndShaderProgram()
 
     std::string VertexShader   = WeatherConfig["vertex_shader"].asString();
     std::string FragShader     = WeatherConfig["fragment_shader"].asString();
-    m_TexPath        = WeatherConfig["texture_path"].asString();
+    m_TexPath      = WeatherConfig["texture_path"].asString();
     m_TextureCount = WeatherConfig["texture_count"].asInt();
 
     if (!m_TexPath.empty() && m_TexPath.back() != '/')
@@ -98,5 +98,3 @@ void CWeatherSeqRenderer::renderScene()
     m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);
     m_pScreenQuad->bindAndDraw();
 }
-
-

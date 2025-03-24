@@ -66,6 +66,7 @@ namespace hiveVG
         std::vector<double>                  m_CPUCostTime;
         std::vector<double>                  m_GPUCostTime;
         std::string                          m_TextureRootPath;
+        std::mutex                           m_StbMutex;
         std::mutex                           m_LoadTextureToCPUMutex;
         std::vector<STextureData>            m_LoadedTextures;
         std::vector<std::atomic<bool>>       m_FrameLoadedGPU;
@@ -73,6 +74,6 @@ namespace hiveVG
         unsigned int*	                     m_pTextureHandles      = nullptr;
         CShaderProgram*                      m_pAsyncShaderProgram  = nullptr;
         std::vector<std::future<void>>       m_TextureLoadFutures;
-        CThreadPool                           m_ThreadPool;
+        CThreadPool                          m_ThreadPool;
     };
 }

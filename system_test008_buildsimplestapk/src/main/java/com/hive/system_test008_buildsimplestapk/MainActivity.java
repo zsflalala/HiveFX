@@ -1,7 +1,6 @@
 package com.hive.system_test008_buildsimplestapk;
 
 import android.view.View;
-
 import com.google.androidgamesdk.GameActivity;
 
 public class MainActivity extends GameActivity

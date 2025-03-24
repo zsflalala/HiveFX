@@ -48,6 +48,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         Renderers/WeatherAPKRenderer.cpp
         Renderers/BackGroundAPKRenderer.cpp
         Renderers/WeatherSeqRenderer.cpp
+        Renderers/WeatherAsyncRenderer.cpp
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}

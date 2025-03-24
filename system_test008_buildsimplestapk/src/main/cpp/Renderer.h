@@ -10,6 +10,7 @@ namespace hiveVG
     class CWeatherAPKRenderer;
     class CBackgroundAPKRenderer;
     class CWeatherSeqRenderer;
+    class CWeatherAsyncRenderer;
 
     class CRenderer
     {
@@ -32,5 +33,6 @@ namespace hiveVG
         CWeatherAPKRenderer*    m_pWeatherRenderer    = nullptr;
         CBackgroundAPKRenderer* m_pBackgroundRenderer = nullptr;
         CWeatherSeqRenderer*    m_pWeatherSeqRenderer = nullptr;
+        CWeatherAsyncRenderer*  m_pWeatherAsyncRenderer = nullptr;
     };
 }

@@ -12,7 +12,8 @@ CThreadPool::CThreadPool(size_t vThreadCount): m_Stop(false)
                {
                    std::unique_lock<std::mutex> Lock(m_QueueMutex);
                    m_Condition.wait(Lock, [this]() { return m_Stop || !m_Tasks.empty(); });
-                   if (m_Stop && m_Tasks.empty()) return;
+                   if (m_Stop && m_Tasks.empty())
+                       return;
                    Task = std::move(m_Tasks.front());
                    m_Tasks.pop();
                }
@@ -29,6 +30,7 @@ CThreadPool::~CThreadPool()
     m_Condition.notify_all();
     for (std::thread &Worker : m_Workers)
     {
-        Worker.join();
+        if (Worker.joinable())
+            Worker.join();
     }
 }

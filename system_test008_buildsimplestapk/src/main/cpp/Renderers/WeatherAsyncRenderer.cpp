@@ -1,4 +1,4 @@
-#include "AsyncSequenceFramePlayer.h"
+#include "WeatherAsyncRenderer.h"
 #include <thread>
 #include <numeric>
 #include <webp/decode.h>
@@ -8,21 +8,21 @@
 #include "TimeUtils.h"
 #include "stb_image.h"
 #include "FileUtils.h"
+#include "JsonReader.h"
 
 using namespace hiveVG;
 
-CAsyncSequenceFramePlayer::CAsyncSequenceFramePlayer(const std::string &vTextureRootPath,
-                                                     int vTextureCount, EPictureType::EPictureType vPictureType) : m_TextureRootPath(vTextureRootPath), m_ValidFrames(vTextureCount), m_TextureCount(vTextureCount), m_TextureType(vPictureType),
-                                                                                                                   m_ThreadPool(std::thread::hardware_concurrency())
+CWeatherAsyncRenderer::CWeatherAsyncRenderer() : m_ThreadPool(std::thread::hardware_concurrency())
 {
-    m_LoadedTextures = std::vector<STextureData>(vTextureCount);
-    m_FrameLoadedGPU = std::vector<std::atomic<bool>>(vTextureCount);
-    m_pTextureHandles = new unsigned int[vTextureCount];
-    glGenTextures(m_TextureCount, m_pTextureHandles);
 }
 
-CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
+CWeatherAsyncRenderer::~CWeatherAsyncRenderer()
 {
+    if (m_pScreenQuad != nullptr)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
     if (m_pAsyncShaderProgram)
     {
         delete m_pAsyncShaderProgram;
@@ -35,40 +35,58 @@ CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
     }
 }
 
-bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram()
+bool CWeatherAsyncRenderer::initTextureAndShaderProgram()
 {
+    std::string FileName   = "configs/WeatherAsyncConfig.json";
+    CJsonReader JsonReader = CJsonReader(FileName);
+    Json::Value WeatherConfig  = JsonReader.getObject("Weather");
+
+    std::string VertexShader   = WeatherConfig["vertex_shader"].asString();
+    std::string FragShader     = WeatherConfig["fragment_shader"].asString();
+    std::string PicType        = WeatherConfig["texture_type"].asString();
+    m_TextureRootPath          = WeatherConfig["texture_path"].asString();
+    m_TextureCount             = WeatherConfig["texture_count"].asInt();
+
     if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
         m_TextureRootPath += '/';
+    m_TextureType = EPictureType::FromString(PicType);
     m_CPULoadedTime = CTimeUtils::getCurrentTime();
     std::string PictureSuffix;
     if (m_TextureType == EPictureType::PNG)
         PictureSuffix = ".png";
-    else if (m_TextureType == EPictureType::JPG)
-        PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP)
         PictureSuffix = ".webp";
+
+    m_pAsyncShaderProgram = CShaderProgram::createProgram(VertexShader,FragShader);
+    assert(m_pAsyncShaderProgram != nullptr);
+
+    m_pScreenQuad = CScreenQuad::getOrCreate();
+    m_LoadedTextures = std::vector<STextureData>(m_TextureCount);
+    m_FrameLoadedGPU = std::vector<std::atomic<bool>>(m_TextureCount);
+    m_pTextureHandles = new unsigned int[m_TextureCount];
+    glGenTextures(m_TextureCount, m_pTextureHandles);
 
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
         m_ThreadPool.enqueueTask([this, i, TexturePath]()
-                                 { this->__loadTextureDataAsync(i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex, m_FramesToUploadGPU); });
+                                 { this->__loadTextureDataAsync(i, TexturePath); });
     }
-
-    m_pAsyncShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert,SingleTexPlayFrag);
-    assert(m_pAsyncShaderProgram != nullptr);
 
     m_GPULoadedTime = CTimeUtils::getCurrentTime();
     return true;
 }
 
-void CAsyncSequenceFramePlayer::updateFrames()
+void CWeatherAsyncRenderer::renderScene()
 {
+    glClearColor(0.345f,0.345f,0.345f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_DEPTH_TEST);
+
     if (!m_FramesToUploadGPU.empty())
     {
-        /*int FrameToUpload = *m_FramesToUploadGPU.begin();
-        m_FramesToUploadGPU.erase(m_FramesToUploadGPU.begin());
-        __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureHandles, m_FrameLoadedGPU);*/
         std::vector<int> FramesToUpload;  // 用于存储待上传的帧
         {
             std::lock_guard<std::mutex> lock(m_LoadTextureToCPUMutex);  // 加锁访问
@@ -78,22 +96,10 @@ void CAsyncSequenceFramePlayer::updateFrames()
 
         for (int FrameToUpload : FramesToUpload)
         {
-            __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureHandles, m_FrameLoadedGPU);
+            __uploadTexturesToGPU(FrameToUpload);
         }
     }
     double CurrentTime = CTimeUtils::getCurrentTime();
-    if (m_CPUCostTime.size() == m_TextureCount)
-    {
-        double CPUAverageTime = __getCostTime(m_CPUCostTime);
-        LOG_INFO(TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Loading all textures in CPU costs average time : %f, costs sum time : %f, actually costs time : %f", CPUAverageTime, CPUAverageTime * m_TextureCount, CurrentTime - m_CPULoadedTime);
-        m_CPUCostTime.clear();
-    }
-    if (m_GPUCostTime.size() == m_TextureCount)
-    {
-        double GPUAverageTime = __getCostTime(m_GPUCostTime);
-        LOG_INFO(TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Loading all textures in GPU costs average time : %f and costs sum time : %f, actually costs time : %f", GPUAverageTime, GPUAverageTime * m_TextureCount, CurrentTime - m_GPULoadedTime);
-        m_GPUCostTime.clear();
-    }
 
     if (m_FrameLoadedGPU[m_Frame].load())
     {
@@ -101,11 +107,6 @@ void CAsyncSequenceFramePlayer::updateFrames()
         double FrameTime = 1.0 / m_FrameRate;
         if (CurrentTime - m_LastFrameTime >= FrameTime)
         {
-            if (!m_IsLoop && m_Frame == m_ValidFrames - 1)
-            {
-                m_IsFinished = true;
-                return;
-            }
             m_Frame = (m_Frame + 1) % m_TextureCount;
             m_LastFrameTime = CurrentTime;
         }
@@ -119,20 +120,10 @@ void CAsyncSequenceFramePlayer::updateFrames()
             double FrameTime = 1.0 / m_FrameRate;
             if (TimeElapsed >= FrameTime)
             {
-                if (!m_IsLoop && m_Frame == m_ValidFrames - 1)
-                {
-                    m_IsFinished = true;
-                    return;
-                }
                 m_Frame = (m_Frame + 1) % m_TextureCount;
                 m_LastFrameTime = CurrentTime;
                 LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d is not loaded for too long, skipping to next frame.", m_Frame);
             }
-        }
-        else if (m_LastLoadedFrame != -1)
-        {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Frame %d is not loaded, showing last loaded frame: %d.", m_Frame, m_LastLoadedFrame);
-            return;
         }
         else
         {
@@ -142,21 +133,16 @@ void CAsyncSequenceFramePlayer::updateFrames()
     }
 
     m_pAsyncShaderProgram->useProgram();
-    m_pAsyncShaderProgram->setUniform("quadTexture", 0);
+    m_pAsyncShaderProgram->setUniform("sequenceTexture", 0);
     glBindTexture(GL_TEXTURE_2D, m_pTextureHandles[m_LastLoadedFrame]);
     glActiveTexture(GL_TEXTURE0);
+    m_pScreenQuad->bindAndDraw();
 }
 
-void CAsyncSequenceFramePlayer::__loadTextureDataAsync(int vFrameIndex,
-                                                       const std::string &vTexturePath,
-                                                       std::vector<STextureData> &vLoadedTextures,
-                                                       std::mutex &vTextureMutex,
-                                                       std::set<int> &vFramesToUploadGPU)
+void CWeatherAsyncRenderer::__loadTextureDataAsync(int vFrameIndex, const std::string &vTexturePath)
 {
     auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
     assert(pAsset);
-    if (!pAsset)
-        return;
     size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
     int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
@@ -170,7 +156,7 @@ void CAsyncSequenceFramePlayer::__loadTextureDataAsync(int vFrameIndex,
 
     if (m_TextureType == EPictureType::PNG)
     {
-        std::lock_guard<std::mutex> Lock(m_StbMutex);
+        std::lock_guard<std::mutex> lock(m_StbMutex);
         pTexData = stbi_load_from_memory(pBuffer.get(), AssetSize, &Width, &Height, &Channels, 0);
     }
     else if (m_TextureType == EPictureType::WEBP)
@@ -198,18 +184,19 @@ void CAsyncSequenceFramePlayer::__loadTextureDataAsync(int vFrameIndex,
 
     if (pTexData)
     {
-        std::lock_guard<std::mutex> Lock(vTextureMutex);
-        auto &Texture = vLoadedTextures[vFrameIndex];
+        std::lock_guard<std::mutex> Lock(m_LoadTextureToCPUMutex);
+        auto &Texture = m_LoadedTextures[vFrameIndex];
         Texture._ImageData.assign(pTexData, pTexData + (Width * Height * Channels));
         Texture._Width = Width;
         Texture._Height = Height;
         Texture._Channels = Channels;
         Texture._IsLoaded.store(true);
-        vFramesToUploadGPU.insert(vFrameIndex);
+        m_FramesToUploadGPU.insert(vFrameIndex);
+
         double EndTime = CTimeUtils::getCurrentTime();
         double Duration = EndTime - StartTime;
-        m_CPUCostTime.push_back(Duration);
         LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "CPU load frame %d costs time: %f", vFrameIndex, Duration);
+
         if (m_TextureType == EPictureType::WEBP)
             WebPFree(pTexData);
         else if (m_TextureType == EPictureType::PNG)
@@ -223,19 +210,13 @@ void CAsyncSequenceFramePlayer::__loadTextureDataAsync(int vFrameIndex,
     }
 }
 
-void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
-                                                      std::vector<STextureData> &vLoadedTextures,
-                                                      unsigned int *vTextureHandles,
-                                                      std::vector<std::atomic<bool>> &vFrameLoadedGPU)
+void CWeatherAsyncRenderer::__uploadTexturesToGPU(int vTextureIndex)
 {
-    auto &Texture = vLoadedTextures[vTextureIndex];
+    auto &Texture = m_LoadedTextures[vTextureIndex];
     if (Texture._IsLoaded.load())
     {
-        double StartTime = CTimeUtils::getCurrentTime();
-        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glBindTexture(GL_TEXTURE_2D, vTextureHandles[vTextureIndex]);
+        std::lock_guard<std::mutex> Lock(m_LoadTextureToCPUMutex);
+        glBindTexture(GL_TEXTURE_2D, m_pTextureHandles[vTextureIndex]);
         GLenum Format = (Texture._Channels == 4) ? GL_RGBA : GL_RGB;
         glTexImage2D(GL_TEXTURE_2D, 0, Format, Texture._Width, Texture._Height, 0, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
 
@@ -244,24 +225,10 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glGenerateMipmap(GL_TEXTURE_2D);
-
-        vFrameLoadedGPU[vTextureIndex].store(true);
-        double EndTime = CTimeUtils::getCurrentTime();
-        double Duration = EndTime - StartTime;
-        m_GPUCostTime.push_back(Duration);
-        LOG_INFO(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "GPU load frame %d costs time: %f", vTextureIndex, Duration);
+        m_FrameLoadedGPU[vTextureIndex].store(true);
     }
     else
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "%d hasn't loaded yet.", vTextureIndex);
     }
-}
-
-double CAsyncSequenceFramePlayer::__getCostTime(std::vector<double> &vCostTime)
-{
-    if (vCostTime.empty())
-        return 0.0;
-    double Sum = std::accumulate(vCostTime.begin(), vCostTime.end(), 0.0); // 计算总和
-    double Average = Sum / vCostTime.size();                               // 计算平均值
-    return Average;
 }
