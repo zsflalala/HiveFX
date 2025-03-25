@@ -27,7 +27,7 @@ namespace hiveVG
         void setValidFrames(int vValidFrames)   { m_ValidFrames = vValidFrames; }
         void setRotationAngle(float vAngle)     { m_RotationAngle = vAngle; }
         void setIsMoving(bool vIsMoving)        { m_IsMoving = vIsMoving; }
-        void setRandomPlay(bool vIsRandomPlay)  { m_IsRandomPlay = vIsRandomPlay; __initSequenceParams(); }
+        void setLifeCycle(bool vUseLifeCycle)  { m_UseLifeCycle = vUseLifeCycle; __initSequenceParams(); }
         void setScreenUVMovingSpeed(const glm::vec2& vMovingSpeed) { m_MovingSpeed = vMovingSpeed; }
 
         [[nodiscard]] int  getSingleTextureWidth()  const { return m_SeqSingleTexWidth; }
@@ -54,7 +54,7 @@ namespace hiveVG
         bool              m_IsFinished       = false;
         float             m_RotationAngle    = 0.0f;
         bool              m_IsMoving         = false;
-        bool              m_IsRandomPlay     = false;
+        bool              m_UseLifeCycle     = false;
         bool              m_UseCompressedPNG = false;
         int               m_CurrentFrame     = 0;
         double            m_AccumFrameTime   = 0.0f;

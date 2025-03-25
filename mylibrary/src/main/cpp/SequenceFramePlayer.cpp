@@ -107,7 +107,7 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight,
     m_WindowSize = glm::vec2(vWindowWidth, vWindowHeight);
     if (m_IsMoving)
     {
-        if (m_IsRandomPlay)
+        if (m_UseLifeCycle)
         {
             // TODO : update logic
             if (!m_SequenceState._IsAlive)
@@ -124,29 +124,20 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight,
                 m_SequenceState._AlreadyLivingTime += float(vDeltaTime);
                 if (m_SequenceState._AlreadyLivingTime > m_SequenceState._PlannedLivingTime)
                     m_SequenceState._IsAlive = false;
-                m_ScreenUVOffset += m_MovingSpeed * float(vDeltaTime);
-                float ScreenMaxUV = 1.0f;
-                if (m_ScreenUVOffset.x > ScreenMaxUV + m_ScreenUVScale.x || m_ScreenUVOffset.x < -ScreenMaxUV - m_ScreenUVScale.x)
-                    m_ScreenUVOffset.x = -ScreenMaxUV - m_ScreenUVScale.x;
-                if (m_ScreenUVOffset.y > ScreenMaxUV + m_ScreenUVScale.y || m_ScreenUVOffset.y < -ScreenMaxUV - m_ScreenUVScale.y)
-                    m_ScreenUVOffset.y = -ScreenMaxUV - m_ScreenUVScale.y;
             }
         }
-        else
-        {
-            m_ScreenUVOffset += m_MovingSpeed * float(vDeltaTime);
-            float ScreenMaxUV = 1.0f;
-            if (m_ScreenUVOffset.x > ScreenMaxUV + m_ScreenUVScale.x || m_ScreenUVOffset.x < -ScreenMaxUV - m_ScreenUVScale.x)
-                m_ScreenUVOffset.x = -ScreenMaxUV - m_ScreenUVScale.x;
-            if (m_ScreenUVOffset.y > ScreenMaxUV + m_ScreenUVScale.y || m_ScreenUVOffset.y < -ScreenMaxUV - m_ScreenUVScale.y)
-                m_ScreenUVOffset.y = -ScreenMaxUV - m_ScreenUVScale.y;
-        }
+        m_ScreenUVOffset += m_MovingSpeed * float(vDeltaTime);
+        float ScreenMaxUV = 1.0f;
+        if (m_ScreenUVOffset.x > ScreenMaxUV + m_ScreenUVScale.x || m_ScreenUVOffset.x < -ScreenMaxUV - m_ScreenUVScale.x)
+            m_ScreenUVOffset.x = -ScreenMaxUV - m_ScreenUVScale.x;
+        if (m_ScreenUVOffset.y > ScreenMaxUV + m_ScreenUVScale.y || m_ScreenUVOffset.y < -ScreenMaxUV - m_ScreenUVScale.y)
+            m_ScreenUVOffset.y = -ScreenMaxUV - m_ScreenUVScale.y;
     }
 }
 
 void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
 {
-    if (m_IsRandomPlay && !m_SequenceState._IsAlive)
+    if (m_UseLifeCycle && !m_SequenceState._IsAlive)
         return ;
 
     if (!m_IsLoop && m_IsFinished)

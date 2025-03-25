@@ -31,6 +31,6 @@ namespace hiveVG
         float                      m_PlayScale            = 1.0f;
         android_app*               m_pApp                 = nullptr;
         CScreenQuad*               m_pScreenQuad          = nullptr;
-        CSequenceFramePlayer*      m_pSmallSnowForePlayer = nullptr;
+        CSequenceFramePlayer*      m_pTestPlayer          = nullptr;
     };
 }
