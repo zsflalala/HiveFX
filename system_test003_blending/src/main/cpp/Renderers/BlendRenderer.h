@@ -40,7 +40,6 @@ namespace hiveVG
 
         CScreenQuad*          m_pScreenQuad = nullptr;
         CTextureBlender*      m_pTexBlender = nullptr;
-        CTexture2D*           m_pBackground = nullptr;
         CSingleTexturePlayer* m_pMediumShot = nullptr;
         CSequenceFramePlayer* m_pForeSequFraPlayer = nullptr;
         CSequenceFramePlayer* m_pBackSequFraPlayer = nullptr;

@@ -46,14 +46,14 @@ void hiveVG::CRendererWithExternalStorage::__initAlgorithm()
 
     auto StoragePath = CAppContext::getStoragePath();
 
-//    m_pBackground = new CSingleTexturePlayer(StoragePath + "textures/Background.png");
-//    if(!m_pBackground->initTextureAndShaderProgram())
-//    {
-//        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Background initialization falied.");
-//        return ;
-//    }
+    m_pBackground = new CSingleTexturePlayer(StoragePath + "textures/Background.png");
+    if(!m_pBackground->initTextureAndShaderProgram())
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Background initialization falied.");
+        return ;
+    }
 
-    m_pSmallRain = new CSequenceFramePlayer(StoragePath + "textures/SmallRain_fore", 1, 1, 64, EPictureType::EPictureType::PNG);
+    m_pSmallRain = new CSequenceFramePlayer(StoragePath + "textures/BigRainWebp", 1, 1, 64, EPictureType::EPictureType::WEBP);
     if(!m_pSmallRain->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
