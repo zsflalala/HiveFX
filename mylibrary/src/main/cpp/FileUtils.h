@@ -8,13 +8,9 @@ namespace hiveVG
     class CFileUtils
     {
     public:
-        static void*  openFileByAssetManager(const char* vPath);
-        static size_t getFileBytesByAsset(void* vFile);
-        static void   closeAsset(void* vFile);
-
-        static void*  openFile(const char* vPath);
-        static size_t getFileBytes(void* vFile);
-        static void   closeFile(void* vFile);
+        static void*  openFile(const char* vPath, bool vIsLoadFromAsset = true);
+        static size_t getFileBytes(void* vFile, bool vIsLoadFromAsset = true);
+        static void   closeFile(void* vFile, bool vIsLoadFromAsset = true);
 
         template <typename T>
         static int readFile(void* vFile, T* vBuffer, size_t vElementCount, bool vIsReadFromAsset = true);
@@ -29,19 +25,27 @@ namespace hiveVG
             return -1;
         }
         size_t Flag;
-        if(!vIsReadFromAsset)
-        {
-            Flag = fread(vBuffer, sizeof(T), vElementCount, static_cast<FILE*>(vFile));
-            if (Flag != vElementCount)
-                LOG_ERROR(TAG_KEYWORD::FILE_UTILS_TAG, "Error occurred while reading file.");
-        }
+
         #ifdef HIVE_ANDROID
-        else
+        if (vIsReadFromAsset)
         {
             Flag = AAsset_read(static_cast<AAsset*>(vFile), vBuffer, vElementCount * sizeof(T));
             if (static_cast<int>(Flag) < 0)
                 LOG_ERROR(TAG_KEYWORD::FILE_UTILS_TAG, "Error occurred while reading file.");
         }
+        else
+        {
+            Flag = fread(vBuffer, sizeof(T), vElementCount, static_cast<FILE*>(vFile));
+            if (Flag != vElementCount)
+                LOG_ERROR(TAG_KEYWORD::FILE_UTILS_TAG, "Error occurred while reading file.");
+        }
+
+        #elif defined (HIVE_UNIT_TEST)
+
+        Flag = fread(vBuffer, sizeof(T), vElementCount, static_cast<FILE*>(vFile));
+        if (Flag != vElementCount)
+            LOG_ERROR(TAG_KEYWORD::FILE_UTILS_TAG, "Error occurred while reading file.");
+
         #endif
 
         return static_cast<int>(Flag);

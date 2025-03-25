@@ -11,62 +11,77 @@ using namespace hiveVG;
     #include <android/asset_manager.h>
     #include "AppContext.h"
 
-    void *CFileUtils::openFileByAssetManager(const char *vPath)
+    void *CFileUtils::openFile(const char *vPath, bool vIsLoadFromAsset)
     {
-        auto* pAssetManager = static_cast<AAssetManager*>(CAppContext::getAssetManager());
-        if (!pAssetManager)
+        if(vIsLoadFromAsset)
         {
-            LOG_WARN(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "AssetManager is null.");
-            return nullptr;
+            auto* pAssetManager = static_cast<AAssetManager*>(CAppContext::getAssetManager());
+            if (!pAssetManager)
+            {
+                LOG_WARN(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "AssetManager is null.");
+                return nullptr;
+            }
+            AAsset* pAsset = AAssetManager_open(pAssetManager, vPath, AASSET_MODE_BUFFER);
+            if (!pAsset)
+            {
+                LOG_WARN(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open asset: %s", vPath);
+                return nullptr;
+            }
+            return pAsset;
         }
-        AAsset* pAsset = AAssetManager_open(pAssetManager, vPath, AASSET_MODE_BUFFER);
-        if (!pAsset)
+        else
         {
-            LOG_WARN(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open asset: %s", vPath);
-            return nullptr;
+            FILE* pFile = fopen(vPath, "rb");
+            if (!pFile)
+            {
+                LOG_WARN(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open file: %s", vPath);
+                return nullptr;
+            }
+            return pFile;
         }
-        return pAsset;
     }
 
-    size_t CFileUtils::getFileBytesByAsset(void* vFile)
+    size_t CFileUtils::getFileBytes(void* vFile, bool vIsLoadFromAsset)
     {
         if(!vFile)
             return 0;
-        return AAsset_getLength(static_cast<AAsset*>(vFile));
+        if(vIsLoadFromAsset)
+            return AAsset_getLength(static_cast<AAsset*>(vFile));
+        else
+        {
+            FILE* pFile = static_cast<FILE*>(vFile);
+
+            fseek(pFile, 0, SEEK_END);
+            long Size = ftell(pFile);
+            fseek(pFile, 0, SEEK_SET);
+            return static_cast<size_t>(Size);
+        }
     }
 
-    void CFileUtils::closeAsset(void* vFile)
+    void CFileUtils::closeFile(void* vFile, bool vIsLoadFromAsset)
     {
-        AAsset_close(static_cast<AAsset*>(vFile));
+        if(!vFile)
+            return;
+        if(vIsLoadFromAsset)
+            AAsset_close(static_cast<AAsset*>(vFile));
+        else
+            fclose(static_cast<FILE*>(vFile));
+
     }
 #elif defined(HIVE_UNIT_TEST)
-    void *CFileUtils::openFileByAssetManager(const char *vPath)
+    void *CFileUtils::openFile(const char *vPath, bool vIsLoadFromAsset)
     {
-        return nullptr;
-    }
-
-    size_t CFileUtils::getFileBytesByAsset(void* vFile)
-    {
-        return 0;
-    }
-
-    void CFileUtils::closeAsset(void* vFile)
-    {
-
-    }
-#endif
-
-    void *CFileUtils::openFile(const char *vPath)
-    {
-        FILE* pFile = fopen(vPath, "rb");
-        if (!pFile) {
+        FILE* pFile;
+        errno_t Error = fopen_s(&pFile, vPath, "rb");
+        if (Error != 0)
+        {
             LOG_WARN(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open file: %s", vPath);
             return nullptr;
         }
         return pFile;
     }
 
-    size_t CFileUtils::getFileBytes(void* vFile)
+    size_t CFileUtils::getFileBytes(void* vFile, bool vIsLoadFromAsset)
     {
         if (!vFile)
             return 0;
@@ -78,10 +93,11 @@ using namespace hiveVG;
         return static_cast<size_t>(Size);
     }
 
-    void CFileUtils::closeFile(void* vFile)
+    void CFileUtils::closeFile(void* vFile, bool vIsLoadFromAsset)
     {
         if (vFile)
         {
             fclose(static_cast<FILE*>(vFile));
         }
     }
+#endif

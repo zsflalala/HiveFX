@@ -23,28 +23,20 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
 {
     std::unique_ptr<unsigned char[]> pBuffer;
     size_t AssetSize;
-    auto pAsset = CFileUtils::openFileByAssetManager(vTexturePath.c_str());
-    if (pAsset)
+    bool IsReadFromAssetManager = true;
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str(),IsReadFromAssetManager);
+    if(!pAsset)
     {
-        AssetSize = CFileUtils::getFileBytesByAsset(pAsset);
-        pBuffer = std::make_unique<unsigned char[]>(AssetSize);
-        int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
-        CFileUtils::closeAsset(pAsset);
-        if(Flag < 0)
-            return nullptr;
+        IsReadFromAssetManager = false;
+        pAsset = CFileUtils::openFile(vTexturePath.c_str(), IsReadFromAssetManager);
     }
-    else
-    {
-        auto pFile = CFileUtils::openFile(vTexturePath.c_str());
-        if(!pFile)
-            return nullptr;
-        AssetSize = CFileUtils::getFileBytes(pFile);
-        pBuffer = std::make_unique<unsigned char[]>(AssetSize);
-        int Flag =  CFileUtils::readFile<unsigned char>(pFile, pBuffer.get(), AssetSize, false);
-        CFileUtils::closeFile(pFile);
-        if(Flag < 0)
-            return nullptr;
-    }
+
+    AssetSize = CFileUtils::getFileBytes(pAsset, IsReadFromAssetManager);
+    pBuffer = std::make_unique<unsigned char[]>(AssetSize);
+    int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize, IsReadFromAssetManager);
+    CFileUtils::closeFile(pAsset, IsReadFromAssetManager);
+    if(Flag < 0)
+        return nullptr;
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;
@@ -123,15 +115,15 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
 
 void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D*>& vTexture2DVec)
 {
-    auto pAsset = CFileUtils::openFileByAssetManager(vTexturePath.c_str());
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
     if (!pAsset)
         return;
-    size_t AssetSize = CFileUtils::getFileBytesByAsset(pAsset);
+    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
     int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
     if(Flag < 0)
         return;
-    CFileUtils::closeAsset(pAsset);
+    CFileUtils::closeFile(pAsset);
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;

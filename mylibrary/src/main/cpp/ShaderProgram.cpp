@@ -79,16 +79,16 @@ void CShaderProgram::setUniform(const std::string& vName, const glm::mat4& vMat)
 
 bool CShaderProgram::__dumpShaderCodeFromFile(const std::string& vShaderPath, std::string& voShaderCode)
 {
-    auto pAsset = CFileUtils::openFileByAssetManager(vShaderPath.c_str());
+    auto pAsset = CFileUtils::openFile(vShaderPath.c_str());
     assert(pAsset);
     if (!pAsset)
         return false;
-    size_t AssetSize = CFileUtils::getFileBytesByAsset(pAsset);
+    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<char[]> pBuffer(new char[AssetSize + 1]);
     int Flag = CFileUtils::readFile<char>(pAsset, pBuffer.get(), AssetSize);
     if(Flag < 0)
         return false;
-    CFileUtils::closeAsset(pAsset);
+    CFileUtils::closeFile(pAsset);
 
     pBuffer[AssetSize] = '\0';
     voShaderCode = std::string(pBuffer.get());

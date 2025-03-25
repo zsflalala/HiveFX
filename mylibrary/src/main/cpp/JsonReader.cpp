@@ -9,14 +9,14 @@ using namespace hiveVG;
 
 CJsonReader::CJsonReader(const std::string& vFilePath)
 {
-    auto pAsset = CFileUtils::openFileByAssetManager(vFilePath.c_str());
+    auto pAsset = CFileUtils::openFile(vFilePath.c_str());
     assert(pAsset);
     if (!pAsset)
         return;
-    size_t Size = CFileUtils::getFileBytesByAsset(pAsset);
+    size_t Size = CFileUtils::getFileBytes(pAsset);
     char* pData = new char[Size];
     CFileUtils::readFile<char>(pAsset, pData, Size);
-    CFileUtils::closeAsset(pAsset);
+    CFileUtils::closeFile(pAsset);
 
     std::string JsonContent(pData, Size);
 
