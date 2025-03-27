@@ -45,14 +45,14 @@ bool CWeatherAPKRenderer::initTextureAndShaderProgram()
     std::string VertexShader   = WeatherConfig["vertex_shader"].asString();
     std::string FragShader     = WeatherConfig["fragment_shader"].asString();
     std::string BackgroundPath = WeatherConfig["background_img"].asString();
-    std::string BackPath       = WeatherConfig["back_path"].asString();
-    std::string ForePath       = WeatherConfig["fore_path"].asString();
-    int         TextureCount   = WeatherConfig["texture_count"].asInt();
+    m_BackTexPath  = WeatherConfig["back_path"].asString();
+    m_ForeTexPath  = WeatherConfig["fore_path"].asString();
+    m_TextureCount = WeatherConfig["texture_count"].asInt();
 
-    if (!ForePath.empty() && ForePath.back() != '/')
-        ForePath += '/';
-    if (!BackPath.empty() && BackPath.back() != '/')
-        BackPath += '/';
+    if (!m_ForeTexPath.empty() && m_ForeTexPath.back() != '/')
+        m_ForeTexPath += '/';
+    if (!m_BackTexPath.empty() && m_BackTexPath.back() != '/')
+        m_BackTexPath += '/';
 
     m_pBackgroundTex = CTexture2D::loadTexture(BackgroundPath);
     if (!m_pBackgroundTex)
@@ -61,10 +61,10 @@ bool CWeatherAPKRenderer::initTextureAndShaderProgram()
         return false;
     }
 
-    for (int i = 0; i < TextureCount; i++)
+    for (int i = 0; i < m_PreloadTexture; i++)
     {
-        std::string ForeTexPath = ForePath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
-        std::string BackTexPath = BackPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
+        std::string ForeTexPath = m_ForeTexPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
+        std::string BackTexPath = m_BackTexPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
 
         CTexture2D* pBackSeqTex = CTexture2D::loadTexture(BackTexPath);
         m_SeqTextures.push_back(pBackSeqTex);
@@ -100,11 +100,26 @@ void CWeatherAPKRenderer::renderScene()
     {
         m_AccumFrameTime -= FrameTime;
         m_CurrentTexture += 2;
+
         if (m_SeqTextures.size() == m_CurrentTexture)
             m_CurrentTexture = 0;
     }
 
-    assert(m_pSequenceShaderProgram != nullptr);
+    if(m_PreloadTexture < m_TextureCount)
+    {
+        m_PreloadTexture++;
+        std::string ForeTexPath = m_ForeTexPath + "frame_" +
+                                  std::string(3 - std::to_string(m_PreloadTexture).length(),
+                                              '0') + std::to_string(m_PreloadTexture) + ".png";
+        std::string BackTexPath = m_BackTexPath + "frame_" +
+                                  std::string(3 - std::to_string(m_PreloadTexture).length(),
+                                              '0') + std::to_string(m_PreloadTexture) + ".png";
+        CTexture2D* pBackSeqTex = CTexture2D::loadTexture(BackTexPath);
+        m_SeqTextures.push_back(pBackSeqTex);
+        CTexture2D* pForeSeqTex = CTexture2D::loadTexture(ForeTexPath);
+        m_SeqTextures.push_back(pForeSeqTex);
+    }
+
     m_pSequenceShaderProgram->useProgram();
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();

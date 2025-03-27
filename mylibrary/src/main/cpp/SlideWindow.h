@@ -14,21 +14,21 @@ namespace hiveVG
     class CSlideWindow
     {
     public:
-        CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection, EPictureType::EPictureType vPictureType = EPictureType::PNG);
+        CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection, EPictureType::EPictureType vPictureType = EPictureType::PNG, bool vUseCompressed = false);
         virtual ~CSlideWindow();
 
-        void createProgram();
-        void loadTextures();
+        bool initTextureAndShaderProgram();
         void updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad);
 
     private:
-        int          m_TextureWidth;
-        int          m_TextureHeight;
+        bool            m_UseCompressed = false;
+        int             m_TextureWidth;
+        int             m_TextureHeight;
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
-        float        m_CoordBias = 0.0f;
-        float        m_SlideSpeed;
-        std::string  m_TexturePath;
-        std::string  m_SlideDirection;
+        float           m_CoordBias = 0.0f;
+        float           m_SlideSpeed;
+        std::string     m_TexturePath;
+        std::string     m_SlideDirection;
         CShaderProgram* m_pShaderProgram = nullptr;
         CTexture2D*     m_pTexture       = nullptr;
     };

@@ -6,6 +6,7 @@
 #include "Renderers/WeatherAPKRenderer.h"
 #include "Renderers/BackGroundAPKRenderer.h"
 #include "Renderers/WeatherSeqRenderer.h"
+#include "Renderers/WeatherAsyncRenderer.h"
 #include "Common.h"
 
 using namespace hiveVG;
@@ -113,14 +114,14 @@ void CRenderer::renderScene()
 
 //    if (m_pBackgroundRenderer == nullptr)
 //        m_pBackgroundRenderer = new CBackgroundAPKRenderer();
-//    m_pBackgroundRenderer->renderScene(m_WindowWidth, m_WindowHeight);
+//    m_pBackgroundRenderer->renderScene();
 
-    if (m_pWeatherRenderer == nullptr)
-    {
-        m_pWeatherRenderer = new CWeatherAPKRenderer();
-        m_pWeatherRenderer->initTextureAndShaderProgram();
-    }
-    m_pWeatherRenderer->renderScene();
+//    if (m_pWeatherRenderer == nullptr)
+//    {
+//        m_pWeatherRenderer = new CWeatherAPKRenderer();
+//        m_pWeatherRenderer->initTextureAndShaderProgram();
+//    }
+//    m_pWeatherRenderer->renderScene();
 
 //    if (m_pWeatherSeqRenderer == nullptr)
 //    {
@@ -129,11 +130,17 @@ void CRenderer::renderScene()
 //    }
 //    m_pWeatherSeqRenderer->renderScene();
 
+    if (m_pWeatherAsyncRenderer == nullptr)
+    {
+        m_pWeatherAsyncRenderer = new CWeatherAsyncRenderer();
+        m_pWeatherAsyncRenderer->initTextureAndShaderProgram();
+    }
+    m_pWeatherAsyncRenderer->renderScene();
+
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
-
-void CRenderer::__updateRenderArea()
+  void CRenderer::__updateRenderArea()
 {
     EGLint Width, Height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);

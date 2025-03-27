@@ -6,8 +6,8 @@
 
 using namespace hiveVG;
 
-CSlideWindow::CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection, EPictureType::EPictureType vPictureType)
-                        : m_TexturePath(vTexturePath), m_SlideSpeed(vSpeed), m_SlideDirection(vDirection), m_TextureType(vPictureType){}
+CSlideWindow::CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection, EPictureType::EPictureType vPictureType, bool vUseCompressed)
+                        : m_TexturePath(vTexturePath), m_SlideSpeed(vSpeed), m_SlideDirection(vDirection), m_TextureType(vPictureType), m_UseCompressed(vUseCompressed){}
 
 CSlideWindow::~CSlideWindow()
 {
@@ -54,13 +54,20 @@ void CSlideWindow::updateFrameAndDraw(int vWindowWidth, int vWindowHeight, doubl
     vQuad->bindAndDraw();
 }
 
-void CSlideWindow::createProgram()
+bool CSlideWindow::initTextureAndShaderProgram()
 {
-    if (m_SlideDirection == "horizontal") m_pShaderProgram = CShaderProgram::createProgram(SlideWindowVert, SlideWindowHFrag);
-    if (m_SlideDirection == "vertical")   m_pShaderProgram = CShaderProgram::createProgram(SlideWindowVert, SlideWindowVFrag);
-}
+    m_pTexture = CTexture2D::loadTexture(m_TexturePath, m_TextureWidth, m_TextureHeight, m_TextureType,m_UseCompressed);
 
-void CSlideWindow::loadTextures()
-{
-    m_pTexture = CTexture2D::loadTexture(m_TexturePath, m_TextureWidth, m_TextureHeight, m_TextureType);
+    if (m_SlideDirection == "horizontal")
+        m_pShaderProgram = CShaderProgram::createProgram(SlideWindowVert, SlideWindowHFrag);
+    if (m_SlideDirection == "vertical")
+        m_pShaderProgram = CShaderProgram::createProgram(SlideWindowVert, SlideWindowVFrag);
+    if (!m_pShaderProgram)
+    {
+        LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "SlideWindow ShaderProgram init Failed.");
+        return false;
+    }
+    assert(m_pShaderProgram != nullptr);
+    LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TexturePath.c_str());
+    return true;
 }

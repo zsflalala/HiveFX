@@ -170,6 +170,7 @@ void CAsyncSequenceFramePlayer::__loadTextureDataAsync(int vFrameIndex,
 
     if (m_TextureType == EPictureType::PNG)
     {
+        std::lock_guard<std::mutex> Lock(m_StbMutex);
         pTexData = stbi_load_from_memory(pBuffer.get(), AssetSize, &Width, &Height, &Channels, 0);
     }
     else if (m_TextureType == EPictureType::WEBP)

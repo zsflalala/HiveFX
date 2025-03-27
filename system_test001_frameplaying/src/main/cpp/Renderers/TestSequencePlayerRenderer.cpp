@@ -18,7 +18,7 @@ CTestSequencePlayerRenderer::CTestSequencePlayerRenderer(android_app *vApp) : m_
 CTestSequencePlayerRenderer::~CTestSequencePlayerRenderer()
 {
     if (m_pScreenQuad)              delete m_pScreenQuad;
-    if (m_pSmallSnowForePlayer)     delete m_pSmallSnowForePlayer;
+    if (m_pTestPlayer)     delete m_pTestPlayer;
 }
 
 void CTestSequencePlayerRenderer::__initAlgorithm()
@@ -43,20 +43,21 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     m_PictureType = EPictureType::FromString(FrameType);
     m_PlayMode    = EPlayType::FromString(PlayMode);
 
-    m_pSmallSnowForePlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, m_PictureType);
-    if(!m_pSmallSnowForePlayer->initTextureAndShaderProgram())
+    m_pTestPlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, m_PictureType);
+    if(!m_pTestPlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
     }
-    m_pSmallSnowForePlayer->setFrameRate(PlayFPS);
-    m_pSmallSnowForePlayer->setLoopPlayback(IsLoop);
+    m_pTestPlayer->setFrameRate(PlayFPS);
+    m_pTestPlayer->setLoopPlayback(IsLoop);
     if (m_PlayMode == EPlayType::PARTIAL)
     {
-        m_pSmallSnowForePlayer->setIsMoving(true);
-        m_pSmallSnowForePlayer->setScreenUVOffset(m_UVOffset);
-        m_pSmallSnowForePlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
-        m_pSmallSnowForePlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
+        m_pTestPlayer->setLifeCycle(true);
+        m_pTestPlayer->setIsMoving(true);
+//        m_pTestPlayer->setScreenUVOffset(m_UVOffset);
+//        m_pTestPlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
+//        m_pTestPlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
     }
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_LastFrameTime = CTimeUtils::getCurrentTime();
@@ -73,6 +74,6 @@ void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeigh
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pSmallSnowForePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
-    m_pSmallSnowForePlayer->draw(m_pScreenQuad);
+    m_pTestPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pTestPlayer->draw(m_pScreenQuad);
 }

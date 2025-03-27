@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Texture2D.h"
 #include <webp/decode.h>
 #define STB_IMAGE_IMPLEMENTATION
@@ -19,7 +18,7 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
     return pTexture;
 }
 
-CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType)
+CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType, bool vIsCompressed)
 {
     std::unique_ptr<unsigned char[]> pBuffer;
     size_t AssetSize;
@@ -85,20 +84,53 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
     else if (Channels == 1) Format = GL_RED;
 
     StartTime = CTimeUtils::getCurrentTime();
-    GLuint TextureHandle;
-    glGenTextures(1, &TextureHandle);
-    glBindTexture(GL_TEXTURE_2D, TextureHandle);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GLuint TextureHandle = 0;
+    if (!vIsCompressed)
+    {
+        TextureHandle = __createHandle(Format, voWidth, voHeight, pImageData);
+    }
+    else
+    {
+        const uint32_t compHeight = voHeight;
+        const uint32_t origHeight = compHeight * 2;
+        voHeight *= 2;
 
-    glTexImage2D(GL_TEXTURE_2D, 0, Format, voWidth, voHeight, 0, Format, GL_UNSIGNED_BYTE, pImageData);
-    glGenerateMipmap(GL_TEXTURE_2D);
+        std::vector<uint8_t> OrigPixels;
+        OrigPixels.resize(voWidth * origHeight * 4);
 
-    bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
-    if (!IsValid)
+        for (uint32_t y = 0; y < compHeight; ++y)
+        {
+            for (uint32_t x = 0; x < voWidth; ++x)
+            {
+                const uint8_t* src = pImageData + (y * voWidth + x) * 4;
+
+                // 上半部分（R和Alpha通道）
+                uint8_t upperR = src[0];
+                uint8_t upperA = src[1];
+
+                // 下半部分（B和Alpha通道）
+                uint8_t lowerR = src[2];
+                uint8_t lowerA = src[3];
+
+                // 填充目标像素
+                uint8_t* upperDst = OrigPixels.data() + ((y * voWidth) + x) * 4;
+                upperDst[0] = upperR; // R
+                upperDst[1] = upperR; // G
+                upperDst[2] = upperR; // B
+                upperDst[3] = upperA; // A
+
+                uint8_t* lowerDst = OrigPixels.data() + (((y + compHeight) * voWidth) + x) * 4;
+                lowerDst[0] = lowerR; // R
+                lowerDst[1] = lowerR; // G
+                lowerDst[2] = lowerR; // B
+                lowerDst[3] = lowerA; // A
+            }
+        }
+        TextureHandle = __createHandle(Format, voWidth, voHeight, OrigPixels.data());
+    }
+
+    if (TextureHandle == 0)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: %s", vTexturePath.c_str());
         return nullptr;
@@ -109,7 +141,6 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
         LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
     }
     stbi_image_free(pImageData);
-
     return new CTexture2D(TextureHandle);
 }
 
@@ -207,18 +238,10 @@ CTexture2D* CTexture2D::createEmptyTexture(int vWidth, int vHeight, int vChannel
     else LOG_WARN(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Channel Count is invalid, set default format [GL_RGB].");
 
     double StartTime = CTimeUtils::getCurrentTime();
-    GLuint TextureHandle;
-    glGenTextures(1, &TextureHandle);
-    glBindTexture(GL_TEXTURE_2D, TextureHandle);
-    glTexImage2D(GL_TEXTURE_2D, 0, Format, vWidth, vHeight, 0, Format, GL_UNSIGNED_BYTE, nullptr);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GLuint TextureHandle = __createHandle(Format, vWidth, vHeight, nullptr);
 
-    bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
-    if (!IsValid)
+    if (TextureHandle == 0)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create empty texture.");
         return nullptr;
@@ -244,3 +267,24 @@ void CTexture2D::bindTexture() const
 }
 
 CTexture2D::CTexture2D(GLuint vTextureHandle) : m_TextureHandle(vTextureHandle) {}
+
+GLuint CTexture2D::__createHandle(GLint vFormat, int vWidth, int vHeight, unsigned char *vImgData)
+{
+    GLuint TextureHandle;
+    glGenTextures(1, &TextureHandle);
+    glBindTexture(GL_TEXTURE_2D, TextureHandle);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, vFormat, vWidth, vHeight, 0, vFormat, GL_UNSIGNED_BYTE, vImgData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
+    if (!IsValid)
+        return 0;
+    else
+        return TextureHandle;
+}

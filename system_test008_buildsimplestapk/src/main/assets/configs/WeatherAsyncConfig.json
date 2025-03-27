@@ -1,0 +1,9 @@
+{
+  "Weather": {
+    "texture_path": "textures/three2one_ilove",
+    "texture_type": "png",
+    "texture_count" : 128,
+    "vertex_shader" : "shaders/weatherSeq.vert",
+    "fragment_shader" : "shaders/weatherSeq.frag"
+  }
+}

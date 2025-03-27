@@ -45,7 +45,7 @@ CBlendManager::~CBlendManager()
 bool CBlendManager::init(const std::string& vFilePath, int vWidth, int vHeight)
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_Width = vWidth;
+    m_Width  = vWidth;
     m_Height = vHeight;
     return __initBlender() && __initPlayer(vFilePath);
 }
@@ -275,9 +275,8 @@ LayerPlayer CBlendManager::__createSlideWindow(const Json::Value &vConfig)
     int  SlideSpeed = vConfig["slide_speed"].asInt();
     bool IsLoop     = vConfig["loop"].asBool();
 
-    CSlideWindow* pSlideWindowPlayer = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection);
-    pSlideWindowPlayer->createProgram();
-    pSlideWindowPlayer->loadTextures();
+    auto* pSlideWindowPlayer = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection);
+    pSlideWindowPlayer->initTextureAndShaderProgram();
     return pSlideWindowPlayer;
 }
 

@@ -39,15 +39,15 @@ bool CWeatherSeqRenderer::initTextureAndShaderProgram()
 
     std::string VertexShader   = WeatherConfig["vertex_shader"].asString();
     std::string FragShader     = WeatherConfig["fragment_shader"].asString();
-    std::string TexPath        = WeatherConfig["texture_path"].asString();
-    int         TextureCount   = WeatherConfig["texture_count"].asInt();
+    m_TexPath      = WeatherConfig["texture_path"].asString();
+    m_TextureCount = WeatherConfig["texture_count"].asInt();
 
-    if (!TexPath.empty() && TexPath.back() != '/')
-        TexPath += '/';
+    if (!m_TexPath.empty() && m_TexPath.back() != '/')
+        m_TexPath += '/';
 
-    for (int i = 0; i < TextureCount; i++)
+    for (int i = 0; i < m_PreloadTexture; i++)
     {
-        std::string TexPngPath = TexPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
+        std::string TexPngPath = m_TexPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
         CTexture2D* pBackSeqTex = CTexture2D::loadTexture(TexPngPath);
         m_SeqTextures.push_back(pBackSeqTex);
     }
@@ -84,12 +84,17 @@ void CWeatherSeqRenderer::renderScene()
             m_CurrentTexture = 0;
     }
 
-    assert(m_pSequenceShaderProgram != nullptr);
+    if(m_PreloadTexture < m_TextureCount)
+    {
+        m_PreloadTexture++;
+        std::string TexPngPath = m_TexPath + "frame_" + std::string(3 - std::to_string(m_PreloadTexture).length(), '0') + std::to_string(m_PreloadTexture) + ".png";
+        CTexture2D* pBackSeqTex = CTexture2D::loadTexture(TexPngPath);
+        m_SeqTextures.push_back(pBackSeqTex);
+    }
+
     m_pSequenceShaderProgram->useProgram();
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);
     m_pScreenQuad->bindAndDraw();
 }
-
-
