@@ -10,6 +10,7 @@ public class MainActivity extends GameActivity
     {
         System.loadLibrary("system_test009_downloadpicremote");
     }
+    private native void startNativeLogic();
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus)
