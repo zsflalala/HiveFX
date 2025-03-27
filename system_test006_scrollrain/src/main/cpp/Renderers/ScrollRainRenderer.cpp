@@ -18,10 +18,26 @@ CScrollRainRenderer::CScrollRainRenderer(android_app *vApp) : m_pApp(vApp)
 
 CScrollRainRenderer::~CScrollRainRenderer()
 {
-    if (m_pScreenQuad)  delete m_pScreenQuad;
-    if (m_pSlideWindow) delete m_pSlideWindow;
-    if (m_pBackground)  delete m_pBackground;
-    if (m_pTexBlender)  delete m_pTexBlender;
+    if (m_pScreenQuad)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
+    if (m_pSlideWindow)
+    {
+        delete m_pSlideWindow;
+        m_pSlideWindow = nullptr;
+    }
+    if (m_pBackground)
+    {
+        delete m_pBackground;
+        m_pBackground = nullptr;
+    }
+    if (m_pTexBlender)
+    {
+        delete m_pTexBlender;
+        m_pTexBlender = nullptr;
+    }
 }
 
 void CScrollRainRenderer::renderScene(int vWindowWidth, int vWindowHeight)
@@ -57,8 +73,7 @@ void CScrollRainRenderer::__initAlgorithm()
     // TODO: 使用 json 文件初始化
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pSlideWindow = new CSlideWindow("Textures/LongTexRain1920_10800.webp", -90, "vertical", EPictureType::WEBP);
-    m_pSlideWindow->createProgram();
-    m_pSlideWindow->loadTextures();
+    m_pSlideWindow->initTextureAndShaderProgram();
 
     m_pBackground = new CSingleTexturePlayer("textures/Background.png");
     m_pBackground->initTextureAndShaderProgram();

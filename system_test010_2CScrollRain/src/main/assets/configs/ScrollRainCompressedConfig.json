@@ -1,0 +1,9 @@
+{
+    "slide_config": {
+        "picture_path": "textures/LongTexRain1920_10800_half.webp",
+        "picture_type": "webp",
+        "is_compressed": true,
+        "slide_speed" : -90.0,
+        "slide_direction" : "vertical"
+    }
+}

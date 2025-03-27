@@ -1,7 +1,7 @@
 #include "ScrollRainConfigRenderer.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include <GLES3/gl3.h>
-#include <assert.h>
+#include <cassert>
 #include "BlendManager.h"
 
 using namespace hiveVG;
@@ -13,7 +13,11 @@ CScrollRainConfigRenderer::CScrollRainConfigRenderer(android_app *vApp) : m_pApp
 
 CScrollRainConfigRenderer::~CScrollRainConfigRenderer()
 {
-    if(m_pManager) delete m_pManager;
+    if(m_pManager)
+    {
+        delete m_pManager;
+        m_pManager = nullptr;
+    }
 }
 
 void CScrollRainConfigRenderer::render()

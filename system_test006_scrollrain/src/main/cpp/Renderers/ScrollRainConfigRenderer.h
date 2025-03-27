@@ -9,7 +9,8 @@ namespace hiveVG
 {
     class CBlendManager;
 
-    class CScrollRainConfigRenderer {
+    class CScrollRainConfigRenderer
+    {
     public:
         CScrollRainConfigRenderer(android_app *vApp);
         ~CScrollRainConfigRenderer();
@@ -19,8 +20,7 @@ namespace hiveVG
     private:
         void __initAlgorithm();
 
-        android_app* m_pApp = nullptr;
+        android_app*   m_pApp     = nullptr;
         CBlendManager* m_pManager = nullptr;
     };
-
 }
