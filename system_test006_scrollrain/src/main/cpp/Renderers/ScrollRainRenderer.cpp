@@ -71,7 +71,7 @@ void CScrollRainRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 void CScrollRainRenderer::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pSlideWindow = new CSlideWindow("Textures/LongTexRain1920_10800.webp", -90, "vertical", EPictureType::WEBP);
+    m_pSlideWindow = new CSlideWindow("textures/LongTexRain1920_10800.webp", -90, "vertical", EPictureType::WEBP);
     m_pSlideWindow->initTextureAndShaderProgram();
 
 //    m_pBackground = new CSingleTexturePlayer("textures/Background.png");
