@@ -12,64 +12,30 @@ using namespace hiveVG;
 
 CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
 {
-    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
-    if (!pAsset)
-        return nullptr;
-    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
-    std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
-    if(Flag < 0)
-        return nullptr;
-    CFileUtils::closeFile(pAsset);
-
-    double StartTime = CTimeUtils::getCurrentTime();
-    int Width, Height, Channels;
-    unsigned char* pImageData = stbi_load_from_memory(pBuffer.get(), static_cast<int>(AssetSize), &Width, &Height, &Channels, 0);
-    if (!pImageData)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load image from memory: %s", vTexturePath.c_str());
-        return nullptr;
-    }
-    else
-    {
-        double EndTime = CTimeUtils::getCurrentTime();
-        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to CPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
-    }
-
-    GLint Format = GL_RGB;
-    if (Channels == 3) Format = GL_RGB;
-    else if (Channels == 4) Format = GL_RGBA;
-    else if (Channels == 1) Format = GL_RED;
-
-    StartTime = CTimeUtils::getCurrentTime();
-    GLuint TextureHandle = __createHandle(Format, Width, Height, pImageData);
-
-    if (TextureHandle == 0)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: %s", vTexturePath.c_str());
-        return nullptr;
-    }
-    else
-    {
-        double EndTime = CTimeUtils::getCurrentTime();
-        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
-    }
-    stbi_image_free(pImageData);
-
-    return new CTexture2D(TextureHandle);
+    int Width, Height;
+    EPictureType::EPictureType Type = EPictureType::EPictureType::PNG;
+    auto pTexture = loadTexture(vTexturePath, Width, Height, Type);
+    return pTexture;
 }
 
 CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType, bool vIsCompressed)
 {
-    auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
-    if (!pAsset)
-        return nullptr;
-    size_t AssetSize = CFileUtils::getFileBytes(pAsset);
-    std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
-    int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
+    std::unique_ptr<unsigned char[]> pBuffer;
+    size_t AssetSize;
+    bool IsReadFromAssetManager = true;
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str(),IsReadFromAssetManager);
+    if(!pAsset)
+    {
+        IsReadFromAssetManager = false;
+        pAsset = CFileUtils::openFile(vTexturePath.c_str(), IsReadFromAssetManager);
+    }
+
+    AssetSize = CFileUtils::getFileBytes(pAsset, IsReadFromAssetManager);
+    pBuffer = std::make_unique<unsigned char[]>(AssetSize);
+    int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize, IsReadFromAssetManager);
+    CFileUtils::closeFile(pAsset, IsReadFromAssetManager);
     if(Flag < 0)
         return nullptr;
-    CFileUtils::closeFile(pAsset);
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;
@@ -261,43 +227,6 @@ void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, i
     stbi_image_free(pImageData);
     delete [] pImage1;
     delete [] pImage2;
-}
-
-CTexture2D *CTexture2D::loadTextureFromMobile(const std::string &vTexturePath)
-{
-    int Width, Height, Channels;
-    unsigned char* pData = stbi_load(vTexturePath.c_str(), &Width, &Height, &Channels, 0);
-    if (pData == nullptr)
-    {
-        LOG_ERROR(TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load texture asset: [%s]", vTexturePath.c_str());
-        return nullptr;
-    }
-
-    GLint Format = GL_RGB;
-    if (Channels == 3) Format = GL_RGB;
-    else if (Channels == 4) Format = GL_RGBA;
-    else if (Channels == 1) Format = GL_RED;
-
-    GLuint TextureHandle;
-    glGenTextures(1, &TextureHandle);
-    glBindTexture(GL_TEXTURE_2D, TextureHandle);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, Format, Width, Height, 0, Format, GL_UNSIGNED_BYTE, pData);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
-    if (!IsValid)
-    {
-        LOG_ERROR(TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: [%s]", vTexturePath.c_str());
-        return nullptr;
-    }
-    stbi_image_free(pData);
-    return new CTexture2D(TextureHandle);
 }
 
 CTexture2D* CTexture2D::createEmptyTexture(int vWidth, int vHeight, int vChannels)

@@ -1,24 +1,40 @@
 #include "AppContext.h"
 #include <android/asset_manager.h>
-#include <mutex>
 #include "Common.h"
 
 namespace hiveVG
 {
-    static std::mutex g_AppMutex;
-    static AAssetManager* g_pAssetManager = nullptr;
+    std::mutex CAppContext::m_AppMutex;
+    AAssetManager* CAppContext::m_pAssetManager = nullptr;
+    std::string CAppContext::m_StoragePath = "";
 
-    void setAssetManager(void *vAssetManager)
+    void CAppContext::setAssetManager(void *vAssetManager)
     {
-        std::lock_guard<std::mutex> Lock(g_AppMutex);
-        g_pAssetManager = static_cast<AAssetManager*>(vAssetManager);
+        std::lock_guard<std::mutex> Lock(m_AppMutex);
+        m_pAssetManager = static_cast<AAssetManager*>(vAssetManager);
     }
 
-    void* getAssetManager()
+    void* CAppContext::getAssetManager()
     {
-        std::lock_guard<std::mutex> Lock(g_AppMutex);
-        if (!g_pAssetManager)
+        std::lock_guard<std::mutex> Lock(m_AppMutex);
+        if (!m_pAssetManager)
             LOG_ERROR(TAG_KEYWORD::APP_CONTEXT_TAG, "Asset manager does not exist.");
-        return g_pAssetManager;
+        return m_pAssetManager;
+    }
+
+    void CAppContext::setStoragePath(const std::string &vPath)
+    {
+        std::string StoragePath = vPath;
+        if (StoragePath.back() != '/') {
+            StoragePath += '/';
+        }
+        m_StoragePath = StoragePath;
+    }
+
+    std::string CAppContext::getStoragePath()
+    {
+        if(m_StoragePath.empty())
+            LOG_ERROR(TAG_KEYWORD::APP_CONTEXT_TAG, "Storage path does not set.");
+        return m_StoragePath;
     }
 }

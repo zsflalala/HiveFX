@@ -21,7 +21,6 @@ CBlendRenderer::~CBlendRenderer()
 {
     if (m_pScreenQuad) delete m_pScreenQuad;
     if (m_pTexBlender) delete m_pTexBlender;
-    if (m_pBackground) delete m_pBackground;
     if (m_pMediumShot) delete m_pMediumShot;
     if (m_pForeSequFraPlayer) delete m_pForeSequFraPlayer;
     if (m_pBackSequFraPlayer) delete m_pBackSequFraPlayer;
@@ -75,13 +74,12 @@ void CBlendRenderer::render(int vWindowWidth, int vWindowHeight)
 void CBlendRenderer::__initAlgorithm()
 {
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pBackground = CTexture2D::loadTexture(m_pApp->activity->assetManager, "textures/park.png");
     m_pMediumShot = new CSingleTexturePlayer("textures/Background.png");
-    m_pMediumShot->initTextureAndShaderProgram(m_pApp->activity->assetManager);
+    m_pMediumShot->initTextureAndShaderProgram();
 
     std::string TexPath = "textures/BigRain_fore";
     m_pForeSequFraPlayer = new CSequenceFramePlayer(TexPath, 1, 1, 64, EPictureType::PNG);
-    if(!m_pForeSequFraPlayer->initTextureAndShaderProgram(m_pApp->activity->assetManager))
+    if(!m_pForeSequFraPlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Foreground sequence player initialization falied.");
         return ;

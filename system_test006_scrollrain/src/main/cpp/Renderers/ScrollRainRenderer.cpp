@@ -49,36 +49,35 @@ void CScrollRainRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     glClearColor(0.35f,0.35f,0.35f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    std::function<DrawCallFunc> BackGroundDrawCallFunc = [this]()
-    {
-        m_pBackground->updateFrame();
-        m_pScreenQuad->bindAndDraw();
-    };
-    m_pTexBlender->drawAndBlend(BackGroundDrawCallFunc);
-
-    std::function<DrawCallFunc> SlideWindowDrawCallFunc = [this, vWindowWidth, vWindowHeight, DeltaTime]()
-    {
-        m_pSlideWindow->updateFrameAndDraw(vWindowWidth, vWindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
-    };
-    m_pTexBlender->drawAndBlend(SlideWindowDrawCallFunc);
-    //m_pSlideWindow->updateFrame(vWindowWidth, vWindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
+//    std::function<DrawCallFunc> BackGroundDrawCallFunc = [this]()
+//    {
+//        m_pBackground->updateFrame();
+//        m_pScreenQuad->bindAndDraw();
+//    };
+//    m_pTexBlender->drawAndBlend(BackGroundDrawCallFunc);
+//
+//    std::function<DrawCallFunc> SlideWindowDrawCallFunc = [this, vWindowWidth, vWindowHeight, DeltaTime]()
+//    {
+//        m_pSlideWindow->updateFrameAndDraw(vWindowWidth, vWindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
+//    };
+//    m_pTexBlender->drawAndBlend(SlideWindowDrawCallFunc);
+    m_pSlideWindow->updateFrameAndDraw(vWindowWidth, vWindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    m_pTexBlender->blit();
+//    m_pTexBlender->blit();
 }
 
 void CScrollRainRenderer::__initAlgorithm()
 {
-    // TODO: 使用 json 文件初始化
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pSlideWindow = new CSlideWindow("Textures/LongTexRain1920_10800.webp", -90, "vertical", EPictureType::WEBP);
+    m_pSlideWindow = new CSlideWindow("textures/LongTexRain1920_10800.webp", -90, "vertical", EPictureType::WEBP);
     m_pSlideWindow->initTextureAndShaderProgram();
 
-    m_pBackground = new CSingleTexturePlayer("textures/Background.png");
-    m_pBackground->initTextureAndShaderProgram();
-    
-    m_pTexBlender = new CTextureBlender();
+//    m_pBackground = new CSingleTexturePlayer("textures/Background.png");
+//    m_pBackground->initTextureAndShaderProgram();
+//
+//    m_pTexBlender = new CTextureBlender();
     int Width = 0, Height = 0;
     assert(m_pApp->window != nullptr);
     if (m_pApp->window != nullptr)
@@ -86,7 +85,7 @@ void CScrollRainRenderer::__initAlgorithm()
         Width = ANativeWindow_getWidth(m_pApp->window);
         Height = ANativeWindow_getHeight(m_pApp->window);
     }
-    m_pTexBlender->init(Width, Height);
+//    m_pTexBlender->init(Width, Height);
 
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
