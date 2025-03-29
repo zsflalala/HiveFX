@@ -55,7 +55,7 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram()
                                  { this->__loadTextureDataAsync(i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex, m_FramesToUploadGPU); });
     }
 
-    m_pAsyncShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert,SingleTexPlayFrag);
+    m_pAsyncShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert,SingleTexPlayFragPNG);
     assert(m_pAsyncShaderProgram != nullptr);
 
     m_GPULoadedTime = CTimeUtils::getCurrentTime();

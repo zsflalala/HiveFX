@@ -74,7 +74,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
     m_pSequenceShaderProgram = CShaderProgram::createProgram(
             SeqTexPlayVert,
-            SeqTexPlayFrag
+            SeqTexPlayFragPNG
     );
     if (!m_pSequenceShaderProgram)
     {
