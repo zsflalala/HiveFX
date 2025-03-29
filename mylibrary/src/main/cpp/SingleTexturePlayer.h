@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Common.h"
 
 namespace hiveVG
 {
@@ -10,7 +11,7 @@ namespace hiveVG
     class CSingleTexturePlayer
     {
     public:
-        CSingleTexturePlayer(const std::string& vTexturePath);
+        CSingleTexturePlayer(const std::string& vTexturePath, EPictureType::EPictureType vPictureType = EPictureType::PNG);
         ~CSingleTexturePlayer();
 
         bool initTextureAndShaderProgram();
@@ -21,5 +22,6 @@ namespace hiveVG
 
         CTexture2D*	      m_pSingleTexture       = nullptr;
         CShaderProgram*   m_pSingleShaderProgram = nullptr;
+        EPictureType::EPictureType m_TextureType = EPictureType::PNG;
     };
 }

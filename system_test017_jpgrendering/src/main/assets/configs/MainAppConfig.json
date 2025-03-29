@@ -1,5 +1,5 @@
 {
-  "SmallSnowBack": {
+  "BigSnowBack": {
     "frames_path": "textures/BigSnow_back_jpg",
     "sequenceRows": 1,
     "sequenceCols": 1,
@@ -8,7 +8,7 @@
     "fps": 60,
     "loop": true
   },
-  "SmallSnowFore": {
+  "BigSnowFore": {
     "frames_path": "textures/BigSnow_fore_jpg",
     "sequenceRows": 1,
     "sequenceCols": 1,

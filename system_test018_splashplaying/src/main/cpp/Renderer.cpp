@@ -4,7 +4,6 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
-#include "Renderers/JPGRenderer.h"
 
 using namespace hiveVG;
 
@@ -31,11 +30,6 @@ CRenderer::~CRenderer()
         }
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
-    }
-    if (m_pJPGRenderer != nullptr)
-    {
-        delete m_pJPGRenderer;
-        m_pJPGRenderer = nullptr;
     }
 }
 
@@ -99,9 +93,8 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    if (m_pJPGRenderer == nullptr)
-        m_pJPGRenderer = new CJPGRenderer();
-    m_pJPGRenderer->renderScene(m_WindowWidth, m_WindowHeight);
+    glClearColor(0.345f, 0.345f, 0.345f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

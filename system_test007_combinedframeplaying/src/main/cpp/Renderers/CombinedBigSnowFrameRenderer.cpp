@@ -15,10 +15,26 @@ CCombinedBigSnowFrameRenderer::CCombinedBigSnowFrameRenderer(android_app *vApp) 
 
 CCombinedBigSnowFrameRenderer::~CCombinedBigSnowFrameRenderer()
 {
-    if (m_pScreenQuad)             delete m_pScreenQuad;
-    if (m_pCombineBackFramePlayer) delete m_pCombineBackFramePlayer;
-    if (m_pCombineForeFramePlayer) delete m_pCombineForeFramePlayer;
-    if (m_pBackFramePlayer)        delete m_pBackFramePlayer;
+    if (m_pScreenQuad)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
+    if (m_pCombineForeFramePlayer)
+    {
+        delete m_pCombineForeFramePlayer;
+        m_pCombineForeFramePlayer = nullptr;
+    }
+    if (m_pCombineBackFramePlayer)
+    {
+        delete m_pCombineBackFramePlayer;
+        m_pCombineBackFramePlayer = nullptr;
+    }
+    if (m_pBackFramePlayer)
+    {
+        delete m_pBackFramePlayer;
+        m_pBackFramePlayer = nullptr;
+    }
 }
 
 void CCombinedBigSnowFrameRenderer::__initAlgorithm()
@@ -81,4 +97,3 @@ void CCombinedBigSnowFrameRenderer::renderScene(int vWindowWidth, int vWindowHei
     m_pCombineForeFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
     m_pCombineForeFramePlayer->draw(m_pScreenQuad);
 }
-

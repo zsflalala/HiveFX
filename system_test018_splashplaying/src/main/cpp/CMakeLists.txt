@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-project("system_test017_jpgrendering")
+project("system_test018_splashplaying")
 
 ########################## 第三方库 相关配置  开始################################
 
@@ -15,8 +15,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         Renderer.cpp
-        Renderers/JPGRenderer.cpp
-        system_test017_jpgrendering.cpp)
+        system_test018_splashplaying.cpp)
 
 set(REQUIRED_PACKAGES
         game-activity

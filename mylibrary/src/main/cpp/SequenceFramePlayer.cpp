@@ -4,7 +4,6 @@
 #include "Texture2D.h"
 #include "ShaderProgram.h"
 #include "ScreenQuad.h"
-#include "Common.h"
 
 #define M_PI 3.14159265358979323846
 
@@ -61,8 +60,6 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
                 LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
                 return false;
             }
-            else
-                LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Load texture from mobile path [%s] successfully.", TexturePath.c_str());
             m_SeqTextures.push_back(pSequenceTexture);
         }
         else
@@ -72,10 +69,11 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     }
     m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
     m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
-    m_pSequenceShaderProgram = CShaderProgram::createProgram(
-            SeqTexPlayVert,
-            SeqTexPlayFragPNG
-    );
+
+    if (m_TextureType == EPictureType::PNG)
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
+    else if (m_TextureType == EPictureType::JPG)
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragJPG);
     if (!m_pSequenceShaderProgram)
     {
         LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "[%s] ShaderProgram init Failed.", m_TextureRootPath.c_str());
