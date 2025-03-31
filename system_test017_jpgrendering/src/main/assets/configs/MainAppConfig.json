@@ -1,6 +1,6 @@
 {
   "BigSnowBack": {
-    "frames_path": "textures/BigSnow_back_jpg",
+    "frames_path": "textures/HeavyRain_back_jpg",
     "sequenceRows": 1,
     "sequenceCols": 1,
     "frames_type" : "jpg",
@@ -9,7 +9,7 @@
     "loop": true
   },
   "BigSnowFore": {
-    "frames_path": "textures/BigSnow_fore_jpg",
+    "frames_path": "textures/HeavyRain_fore_jpg",
     "sequenceRows": 1,
     "sequenceCols": 1,
     "frames_type" : "jpg",
@@ -18,6 +18,7 @@
     "loop": true
   },
   "Background":{
-    "frames_path": "textures/snowScene.jpg"
+    "frames_path": "textures/park.jpg",
+    "frames_type" : "jpg"
   }
 }

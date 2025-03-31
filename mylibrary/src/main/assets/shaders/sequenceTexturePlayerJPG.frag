@@ -10,14 +10,13 @@ uniform sampler2D sequenceTexture;
 void main()
 {
     vec2 TexCoords = (TexCoord * texUVScale) + texUVOffset;
-    vec4 TexColor = texture(sequenceTexture, TexCoords);
+    vec3 TexColor = texture(sequenceTexture, TexCoords).rgb;
 
     float alpha = 1.0;
-    float threshold = 0.5;
-    vec3 keyColor = vec3(0, 0, 0);
-    if (distance(TexColor.rgb, keyColor) < threshold)
+    float threshold = 0.2;
+    if (length(TexColor) < threshold)
     {
-        discard;
+        discard; // 直接丢弃片段
     }
-    FragColor = vec4(TexColor.rgb, alpha);
+    FragColor = vec4(TexColor.rgb + vec3(0.2, 0.2, 0.2), alpha);
 }

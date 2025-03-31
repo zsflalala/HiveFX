@@ -33,7 +33,6 @@ CSequenceFramePlayer::~CSequenceFramePlayer()
             m_SeqTextures.pop_back();
         }
     }
-
     if (m_pSequenceShaderProgram)
     {
         delete m_pSequenceShaderProgram;

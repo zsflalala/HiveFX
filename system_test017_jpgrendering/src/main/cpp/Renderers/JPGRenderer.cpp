@@ -73,6 +73,7 @@ void CJPGRenderer::__initAlgorithm()
     m_pForeJPGPlayer->setFrameRate(SnowPlayFPS);
     m_pForeJPGPlayer->setLoopPlayback(SnowIsLoop);
 
+    m_PictureType  = EPictureType::FromString(BackConfig["frames_type"].asString());
     std::string BackgroundPath = BackConfig["frames_path"].asString();
     m_pBackgroundJPGPlayer   = new CSingleTexturePlayer(BackgroundPath, m_PictureType);
     m_pBackgroundJPGPlayer->initTextureAndShaderProgram();
@@ -88,6 +89,11 @@ void CJPGRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 
     glClearColor(0.345f,0.345f,0.345f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    if (m_PictureType == EPictureType::PNG)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
 
     m_pBackJPGPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
     m_pBackJPGPlayer->draw(m_pScreenQuad);
