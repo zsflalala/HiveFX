@@ -1,25 +1,55 @@
-#include <jni.h
-#include <thread>
-#include "Downloader.h"
+#include "jni_bridge.h"
+#include "Common.h"
 
-JavaVM* globalJvm = nullptr;
+JavaVM* g_MainJvm = nullptr;
+jobject g_AppClassLoader = nullptr;
 
-JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-    globalJvm = vm;
+JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+    g_MainJvm = vm;
+    JNIEnv* pEnv;
+    if (vm->GetEnv((void**)&pEnv, JNI_VERSION_1_6) != JNI_OK)
+    {
+        return JNI_ERR;
+    }
+
+    jclass JavaThreadClass = pEnv->FindClass("java/lang/Thread");
+
+    jmethodID CurrentThreadMethod = pEnv->GetStaticMethodID(JavaThreadClass, "currentThread", "()Ljava/lang/Thread;");
+    jobject CurrentThread = pEnv->CallStaticObjectMethod(JavaThreadClass, CurrentThreadMethod);
+
+    jmethodID GetContextClassLoaderMethod = pEnv->GetMethodID(JavaThreadClass, "getContextClassLoader", "()Ljava/lang/ClassLoader;");
+    jobject ClassLoader = pEnv->CallObjectMethod(CurrentThread, GetContextClassLoaderMethod);
+
+    g_AppClassLoader = pEnv->NewGlobalRef(ClassLoader);
+
+    pEnv->DeleteLocalRef(JavaThreadClass);
+    pEnv->DeleteLocalRef(CurrentThread);
+    pEnv->DeleteLocalRef(ClassLoader);
+
     return JNI_VERSION_1_6;
 }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_hivefx_system_1test009_1downloadpicremote_MainActivity_startNativeLogic(JNIEnv *env,
-                                                                                 jobject thiz) {
-    std::thread([] {
-        // 附加当前线程到 JVM
-        JNIEnv* env;
-        globalJvm->AttachCurrentThread(&env, nullptr);
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
+{
+    JNIEnv *env;
+    vm->GetEnv((void **) &env, JNI_VERSION_1_6);
+    if (g_AppClassLoader)
+    {
+        env->DeleteGlobalRef(g_AppClassLoader);
+        g_AppClassLoader = nullptr;
+    }
+}
 
-        // C++ 主动调用 Java 下载方法
-        hiveVG::CDownloader::triggerDownload(env);
-        globalJvm->DetachCurrentThread();
-    }).detach();
+namespace hiveVG
+{
+    jclass loadAppClass(JNIEnv* vEnv, const char* vClassName) {
+        jclass ClassLoaderClass = vEnv->FindClass("java/lang/ClassLoader");
+        jmethodID LoadClassMethod = vEnv->GetMethodID(ClassLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+        jstring ClassNameStr = vEnv->NewStringUTF(vClassName);
+        jclass TargetClass = (jclass)vEnv->CallObjectMethod(g_AppClassLoader, LoadClassMethod, ClassNameStr);
+        vEnv->DeleteLocalRef(ClassNameStr);
+        vEnv->DeleteLocalRef(ClassLoaderClass);
+        return TargetClass;
+    }
 }

@@ -1,13 +1,26 @@
 #pragma once
 #include <jni.h>
+#include <string>
 
 namespace hiveVG
 {
     class CDownloader
     {
     public:
-        CDownloader() = delete;
-        static void triggerDownload(JNIEnv* env);
+        CDownloader();
+        ~CDownloader();
+
+        bool downloadTexture(const std::string& vUrl, const std::string& vOutputFile);
+
+    private:
+        bool __initJNIEnv();
+        bool __getJavaClass();
+
+        bool      m_IsThreadAttachJVM = false;
+        //TODO: 保存JNIEnv 是线程不安全的
+        JNIEnv*   m_pJNIEnv = nullptr;
+        jclass    m_JavaDownloader;
+        jmethodID m_JavaDownloadMethod;
     };
 }
 

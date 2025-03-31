@@ -16,7 +16,8 @@ namespace hiveVG
         void renderScene(int vWindowWidth, int vWindowHeight);
 
     private:
-        void   __initAlgorithm();
+        void __initAlgorithm();
+        void __downloadTexture();
 
         double                     m_LastFrameTime        = 0.0f;
         double                     m_CurrentTime          = 0.0f;
