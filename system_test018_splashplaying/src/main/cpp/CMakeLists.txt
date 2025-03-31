@@ -15,7 +15,8 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         Renderer.cpp
-        system_test018_splashplaying.cpp)
+        system_test018_splashplaying.cpp
+        Renderers/SplashRenderer.cpp)
 
 set(REQUIRED_PACKAGES
         game-activity

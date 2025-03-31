@@ -23,6 +23,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         SingleTexturePlayer.cpp
         SequenceFramePlayer.cpp
         BillBoardManager.cpp
+        SplashManager.cpp
         AsyncSequenceFramePlayer.cpp
         ShaderProgram.cpp
         ScreenQuad.cpp

@@ -1,0 +1,25 @@
+{
+  "splash": {
+    "frames_path": "textures/Splash-up",
+    "frames_type" : "png",
+    "frames_count": 24,
+    "play_mode": "partial",
+    "fps": 30,
+    "loop": true,
+    "moving_speed": [0.0, 0.0],
+    "scale": 0.1,
+    "blend_mode": "additive"
+  },
+  "rain": {
+    "frames_path": "textures/SmallRain",
+    "frames_type" : "png",
+    "frames_count": 128,
+    "play_mode": "fullscreen",
+    "fps": 60,
+    "loop": true,
+    "blend_mode": "additive"
+  },
+  "background":{
+    "frames_path": "textures/snowScene.png"
+  }
+}
