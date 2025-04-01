@@ -1,12 +1,16 @@
 #include "RendererWithExternalStorage.h"
+#include <iomanip>
+#include <sstream>
 #include "Common.h"
 #include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "SingleTexturePlayer.h"
 #include "SequenceFramePlayer.h"
+#include "../Downloader.h"
 
 hiveVG::CRendererWithExternalStorage::CRendererWithExternalStorage(android_app *vApp) : m_pApp(vApp)
 {
+    __downloadTexture();
     __initAlgorithm();
 }
 
@@ -46,17 +50,54 @@ void hiveVG::CRendererWithExternalStorage::__initAlgorithm()
 
     auto StoragePath = CAppContext::getStoragePath();
 
-    m_pBackground = new CSingleTexturePlayer(StoragePath + "textures/Background.png");
+    m_pBackground = new CSingleTexturePlayer(StoragePath + "textures/snowScene.png");
     if(!m_pBackground->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Background initialization falied.");
         return ;
     }
 
-    m_pSmallRain = new CSequenceFramePlayer(StoragePath + "textures/BigRainWebp", 1, 1, 64, EPictureType::EPictureType::WEBP);
+    m_pSmallRain = new CSequenceFramePlayer(StoragePath + "textures/BigRain_fore", 1, 1, 64, EPictureType::EPictureType::PNG);
     if(!m_pSmallRain->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
+    }
+}
+
+void hiveVG::CRendererWithExternalStorage::__downloadTexture()
+{
+    CDownloader Downloader;
+    std::string Url = "https://gitee.com/sidney-chen/hiveFX-Asset/raw/master/textures/snowScene.png";
+    std::string Output = CAppContext::getStoragePath() + "textures/snowScene.png";
+    bool IsDownloadsucceed = Downloader.downloadTexture(Url,Output);
+    if(!IsDownloadsucceed)
+    {
+        LOG_WARN(TAG_KEYWORD::RENDERER_TAG, "download failed.");
+        assert(0);
+    }
+    else
+    {
+        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "Download %s succeed.", Url.c_str());
+    }
+
+    std::string BaseUrl = "https://gitee.com/sidney-chen/hiveFX-Asset/raw/master/textures/BigRain_fore/frame_";
+    std::string BaseOutputPath = CAppContext::getStoragePath() + "textures/BigRain_fore/frame_";
+    for(int i = 1; i <= 64; i++)
+    {
+        std::stringstream UrlStringstream;
+        UrlStringstream << BaseUrl << std::setw(3) << std::setfill('0') << i << ".png";
+        std::stringstream OutputStringstream;
+        OutputStringstream << BaseOutputPath << std::setw(3) << std::setfill('0') << i << ".png";
+        IsDownloadsucceed = Downloader.downloadTexture(UrlStringstream.str(), OutputStringstream.str());
+        if(!IsDownloadsucceed)
+        {
+            LOG_WARN(TAG_KEYWORD::RENDERER_TAG, "download failed.");
+            assert(0);
+        }
+        else
+        {
+            LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "Download %s succeed.", UrlStringstream.str().c_str());
+        }
     }
 }
