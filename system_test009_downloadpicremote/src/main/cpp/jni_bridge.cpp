@@ -43,7 +43,9 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
 
 namespace hiveVG
 {
-    jclass loadAppClass(JNIEnv* vEnv, const char* vClassName) {
+    jclass loadAppClass(JNIEnv* vEnv, const char* vClassName)
+    {
+//        jclass ClassLoaderClass = vEnv->FindClass("com/hivefx/system_test009_downloadpicremote/Downloader");
         jclass ClassLoaderClass = vEnv->FindClass("java/lang/ClassLoader");
         jmethodID LoadClassMethod = vEnv->GetMethodID(ClassLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
         jstring ClassNameStr = vEnv->NewStringUTF(vClassName);

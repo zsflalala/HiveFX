@@ -1,5 +1,6 @@
 #include "Downloader.h"
 #include <thread>
+#include <sys/stat.h>
 #include "Common.h"
 #include "jni_bridge.h"
 
@@ -65,6 +66,9 @@ bool CDownloader::downloadTexture(const std::string& vUrl, const std::string& vO
     assert(m_pJNIEnv);
     assert(m_JavaDownloader);
 
+    if(__isFileExist(vOutputFile))
+        return true;
+
     jstring Url = m_pJNIEnv->NewStringUTF(vUrl.c_str());
     jstring OutputPath = m_pJNIEnv->NewStringUTF(vOutputFile.c_str());
     jboolean Result = m_pJNIEnv->CallStaticBooleanMethod(m_JavaDownloader, m_JavaDownloadMethod, Url, OutputPath);
@@ -107,4 +111,10 @@ bool CDownloader::__getJavaClass()
         return false;
     }
     return false;
+}
+
+bool CDownloader::__isFileExist(const std::string& vFile)
+{
+    struct stat FileStat;
+    return (stat(vFile.c_str(), &FileStat) == 0);
 }

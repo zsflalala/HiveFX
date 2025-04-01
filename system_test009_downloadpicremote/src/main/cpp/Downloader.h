@@ -15,6 +15,7 @@ namespace hiveVG
     private:
         bool __initJNIEnv();
         bool __getJavaClass();
+        bool __isFileExist(const std::string& vFile);
 
         bool      m_IsThreadAttachJVM = false;
         //TODO: 保存JNIEnv 是线程不安全的
