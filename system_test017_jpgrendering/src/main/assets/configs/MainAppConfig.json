@@ -1,0 +1,24 @@
+{
+  "BigSnowBack": {
+    "frames_path": "textures/HeavyRain_back_jpg",
+    "sequenceRows": 1,
+    "sequenceCols": 1,
+    "frames_type" : "jpg",
+    "frames_count": 128,
+    "fps": 60,
+    "loop": true
+  },
+  "BigSnowFore": {
+    "frames_path": "textures/HeavyRain_fore_jpg",
+    "sequenceRows": 1,
+    "sequenceCols": 1,
+    "frames_type" : "jpg",
+    "frames_count": 128,
+    "fps": 60,
+    "loop": true
+  },
+  "Background":{
+    "frames_path": "textures/park.jpg",
+    "frames_type" : "jpg"
+  }
+}

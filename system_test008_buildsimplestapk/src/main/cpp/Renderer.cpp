@@ -13,7 +13,7 @@ using namespace hiveVG;
 
 CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 {
-    CAppContext::setAssetManager(vApp->activity->assetManager);
+    setAssetManager(vApp->activity->assetManager);
     __initRenderer();
 }
 

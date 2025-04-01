@@ -109,9 +109,9 @@ void CRenderer::renderScene()
         m_pBigSnowRenderer = new CCombinedBigSnowFrameRenderer(m_pApp);
     m_pBigSnowRenderer->renderScene(m_WindowWidth, m_WindowHeight);
 
-    if (m_pCloudRenderer == nullptr)
-        m_pCloudRenderer = new CCloudRendererBillBoard(m_pApp);
-    m_pCloudRenderer->renderScene(m_WindowWidth, m_WindowHeight);
+//    if (m_pCloudRenderer == nullptr)
+//        m_pCloudRenderer = new CCloudRendererBillBoard(m_pApp);
+//    m_pCloudRenderer->renderScene(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

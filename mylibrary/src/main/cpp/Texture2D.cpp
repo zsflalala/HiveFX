@@ -188,31 +188,13 @@ void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, i
     }
 
     StartTime = CTimeUtils::getCurrentTime();
-    GLuint BaseTexHandle;
-    glGenTextures(1, &BaseTexHandle);
-    glBindTexture(GL_TEXTURE_2D, BaseTexHandle);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, voWidth, voHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pImage1);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    GLint Format = GL_RGBA;
+    GLuint BaseTexHandle = __createHandle(Format, voWidth, voHeight, pImage1);
+    GLuint EnhancedTexHandle = __createHandle(Format, voWidth, voHeight, pImage2);
 
-    GLuint EnhancedTexHandle;
-    glGenTextures(1, &EnhancedTexHandle);
-    glBindTexture(GL_TEXTURE_2D, EnhancedTexHandle);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, voWidth, voHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pImage2);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    bool IsValid = (glIsTexture(BaseTexHandle) == GL_TRUE) && (glIsTexture(EnhancedTexHandle) == GL_TRUE);
-    if (!IsValid)
+    if (BaseTexHandle == 0 || EnhancedTexHandle == 0)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: %s", vTexturePath.c_str());
-        stbi_image_free(pImageData);
         return ;
     }
     else
