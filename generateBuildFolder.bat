@@ -2,7 +2,7 @@
 
 cls
 
-for %%f in (app mylibrary system_test001_frameplaying system_test002_slidewindow system_test003_blending system_test004_snowstylization system_test005_2channelstexture system_test006_scrollrain system_test007_combinedframeplaying system_test008_buildsimplestapk) do (
+for %%f in (app mylibrary system_test001_frameplaying system_test002_slidewindow system_test003_blending system_test004_snowstylization system_test005_2channelstexture system_test006_scrollrain system_test007_combinedframeplaying system_test008_buildsimplestapk system_test009_downloadpicremote system_test010_2CScrollRain system_test015_renderatctexture system_test017_jpgrendering system_test018_splashplaying) do (
         if not exist "%%f\src\main\cpp\build" (
 		cd app\src\main\cpp && generateConanPkg.bat && cd ../../../..
 	 ) else (

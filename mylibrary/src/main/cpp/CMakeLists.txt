@@ -43,6 +43,7 @@ set(REQUIRED_PACKAGES
         WebP
         jsoncpp
         OpenCV
+        astc-codec
 )
 
 foreach(PACKAGE ${REQUIRED_PACKAGES})
@@ -60,6 +61,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         libwebp::libwebp
         JsonCpp::JsonCpp
         ${OpenCV_LIBS}
+        astc-codec::astc-codec
 )
 
 # 设置库的输出目录

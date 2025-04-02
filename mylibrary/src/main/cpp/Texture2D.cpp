@@ -8,6 +8,7 @@
 #include "TimeUtils.h"
 #include <omp.h>
 
+
 using namespace hiveVG;
 
 CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
@@ -18,7 +19,7 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
     return pTexture;
 }
 
-CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType, bool vIsCompressed)
+CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType, bool vIsCompressed, bool vHasAlpha)
 {
     std::unique_ptr<unsigned char[]> pBuffer;
     size_t AssetSize;
@@ -40,7 +41,8 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;
     unsigned char *pImageData = nullptr;
-    if (vPictureType == EPictureType::PNG || vPictureType == EPictureType::JPG)
+
+   if (vPictureType == EPictureType::PNG || vPictureType == EPictureType::JPG)
     {
         pImageData = stbi_load_from_memory(pBuffer.get(),  static_cast<int>(AssetSize), &voWidth, &voHeight, &Channels, 0);
     }
@@ -65,6 +67,57 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
             Channels = 3;
             pImageData = WebPDecodeRGB(pBuffer.get(), AssetSize, &voWidth, &voHeight);
         }
+    }else if (vPictureType == EPictureType::ASTC) {
+
+       ASTCHeader header;
+       if (AssetSize < sizeof(ASTCHeader)) {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Invalid ASTC file: too small");
+           return nullptr;
+       }
+       memcpy(&header, pBuffer.get(), sizeof(ASTCHeader));
+
+       if (memcmp(header.magic, "\x13\xAB\xA1\x5C", 4) != 0) {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Invalid ASTC file: bad magic number");
+           return nullptr;
+       }
+
+       astc_codec::FootprintType footprint = __getFootprintType(header.block_x, header.block_y);
+
+       // 从头部获取纹理尺寸（3字节小端序）
+       voWidth = header.dim_x[0] | (header.dim_x[1] << 8) | (header.dim_x[2] << 16);
+       voHeight = header.dim_y[0] | (header.dim_y[1] << 8) | (header.dim_y[2] << 16);
+
+       LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Loading ASTC %dx%d texture with block size %dx%d",
+                voWidth, voHeight, header.block_x, header.block_y);
+
+       // 计算输出缓冲区大小（RGBA格式）
+       size_t out_buffer_size = voWidth * voHeight * 4;
+       std::vector<uint8_t> decoded_data(out_buffer_size);
+
+       // 解压ASTC数据（跳过16字节头）
+       bool success = astc_codec::ASTCDecompressToRGBA(
+               pBuffer.get() + sizeof(ASTCHeader),
+               AssetSize - sizeof(ASTCHeader),
+               voWidth, voHeight,
+               footprint,
+               decoded_data.data(),
+               out_buffer_size,
+               voWidth * 4);
+       if (!success)
+       {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to decompress ASTC data: %s", vTexturePath.c_str());
+           return nullptr;
+       }
+       double EndTime = CTimeUtils::getCurrentTime();
+       LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to CPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
+       StartTime = CTimeUtils::getCurrentTime();
+       GLint Format = GL_RGBA;
+       GLuint tex = __createHandle(Format, voWidth, voHeight, decoded_data.data());
+       double EndTime2 = CTimeUtils::getCurrentTime();
+
+       LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime2 - StartTime);
+       stbi_image_free(pImageData);
+       return new CTexture2D(tex);
     }
 
     if (!pImageData)
@@ -287,4 +340,25 @@ GLuint CTexture2D::__createHandle(GLint vFormat, int vWidth, int vHeight, unsign
         return 0;
     else
         return TextureHandle;
+}
+bool CTexture2D::isASTCSupported() {
+    const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+    return strstr(extensions, "GL_KHR_texture_compression_astc_ldr") != nullptr;
+}
+astc_codec::FootprintType  CTexture2D::__getFootprintType(uint8_t block_x, uint8_t block_y) {
+    if (block_x == 4 && block_y == 4) return astc_codec::FootprintType::k4x4;
+    if (block_x == 5 && block_y == 4) return astc_codec::FootprintType::k5x4;
+    if (block_x == 5 && block_y == 5) return astc_codec::FootprintType::k5x5;
+    if (block_x == 6 && block_y == 5) return astc_codec::FootprintType::k6x5;
+    if (block_x == 6 && block_y == 6) return astc_codec::FootprintType::k6x6;
+    if (block_x == 8 && block_y == 5) return astc_codec::FootprintType::k8x5;
+    if (block_x == 8 && block_y == 6) return astc_codec::FootprintType::k8x6;
+    if (block_x == 10 && block_y == 5) return astc_codec::FootprintType::k10x5;
+    if (block_x == 10 && block_y == 6) return astc_codec::FootprintType::k10x6;
+    if (block_x == 8 && block_y == 8) return astc_codec::FootprintType::k8x8;
+    if (block_x == 10 && block_y == 8) return astc_codec::FootprintType::k10x8;
+    if (block_x == 10 && block_y == 10) return astc_codec::FootprintType::k10x10;
+    if (block_x == 12 && block_y == 10) return astc_codec::FootprintType::k12x10;
+    if (block_x == 12 && block_y == 12) return astc_codec::FootprintType::k12x12;
+    return astc_codec::FootprintType::k4x4; // 默认值
 }

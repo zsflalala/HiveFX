@@ -1,6 +1,6 @@
 {
   "sequence_config": {
-    "frames_path": "textures/BigRainPNG",
+    "frames_path": "textures/SmallRain_fore",
     "frames_type" : "png",
     "frames_count": 64,
     "play_mode": "partial",
