@@ -30,7 +30,8 @@ CWeatherAsyncRenderer::~CWeatherAsyncRenderer()
     }
     if (m_pTextureHandles)
     {
-        delete m_pTextureHandles;
+        glDeleteTextures(m_TextureCount, m_pTextureHandles);
+        delete[] m_pTextureHandles;
         m_pTextureHandles = nullptr;
     }
 }
@@ -226,6 +227,8 @@ void CWeatherAsyncRenderer::__uploadTexturesToGPU(int vTextureIndex)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glGenerateMipmap(GL_TEXTURE_2D);
         m_FrameLoadedGPU[vTextureIndex].store(true);
+        Texture._ImageData.clear();
+        Texture._ImageData.shrink_to_fit();
     }
     else
     {

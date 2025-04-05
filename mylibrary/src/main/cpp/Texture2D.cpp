@@ -1,12 +1,13 @@
 #include "Texture2D.h"
+#include <omp.h>
 #include <webp/decode.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "lodepng.h"
 #include "Common.h"
 #include "Logging.h"
 #include "FileUtils.h"
 #include "TimeUtils.h"
-#include <omp.h>
 
 using namespace hiveVG;
 
@@ -141,6 +142,69 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
         LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
     }
     stbi_image_free(pImageData);
+    return new CTexture2D(TextureHandle);
+}
+
+CTexture2D* CTexture2D::loadTextureFromPNG8(const std::string &vTexturePath)
+{
+    std::unique_ptr<unsigned char[]> pBuffer;
+    size_t AssetSize;
+    bool IsReadFromAssetManager = true;
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str(),IsReadFromAssetManager);
+    if(!pAsset)
+    {
+        IsReadFromAssetManager = false;
+        pAsset = CFileUtils::openFile(vTexturePath.c_str(), IsReadFromAssetManager);
+    }
+
+    AssetSize = CFileUtils::getFileBytes(pAsset, IsReadFromAssetManager);
+    pBuffer = std::make_unique<unsigned char[]>(AssetSize);
+    int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize, IsReadFromAssetManager);
+    CFileUtils::closeFile(pAsset, IsReadFromAssetManager);
+    if(Flag < 0)
+        return nullptr;
+
+    double StartTime = CTimeUtils::getCurrentTime();
+    unsigned char *pImageData = nullptr;
+
+    std::vector<unsigned char> Image;
+    unsigned Width, Height;
+    LodePNGState State;
+    lodepng_state_init(&State);
+    State.info_raw.colortype = LCT_RGBA;
+    State.info_raw.bitdepth = 8;
+
+    unsigned Error = lodepng_decode(&pImageData, &Width, &Height, &State, pBuffer.get(), AssetSize);
+    if (Error)
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create png8 texture: %s", vTexturePath.c_str());
+        return nullptr;
+    }
+    if (!pImageData)
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to load image from memory: %s", vTexturePath.c_str());
+        return nullptr;
+    }
+    else
+    {
+        double EndTime = CTimeUtils::getCurrentTime();
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to CPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
+    }
+
+    GLint Format = GL_RGBA;
+    StartTime = CTimeUtils::getCurrentTime();
+    GLuint TextureHandle = 0;
+    TextureHandle = __createHandle(Format, Width, Height, pImageData);
+    if (TextureHandle == 0)
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: %s", vTexturePath.c_str());
+        return nullptr;
+    }
+    else
+    {
+        double EndTime = CTimeUtils::getCurrentTime();
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
+    }
     return new CTexture2D(TextureHandle);
 }
 

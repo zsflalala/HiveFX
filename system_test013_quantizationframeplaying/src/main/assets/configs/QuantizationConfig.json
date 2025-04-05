@@ -1,0 +1,11 @@
+{
+    "Quantization": {
+        "palette_path": "textures/rainPalette.png",
+        "back_path": "textures/HeavyRain_fore_png8_mergedpng",
+        "fore_path": "textures/HeavyRain_back_png8_mergedpng",
+        "background_img": "textures/snowScene.png",
+        "texture_count" : 32,
+        "vertex_shader" : "shaders/quantizationSeq.vert",
+        "fragment_shader" : "shaders/quantizationSeqPng8.frag"
+    }
+}

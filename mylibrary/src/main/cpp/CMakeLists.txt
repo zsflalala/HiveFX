@@ -19,6 +19,7 @@ set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/opencv-mobile/sdk/native/jni")
 ########################## 第三方库 相关配置  结束 ################################
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
+        lodepng.cpp
         SlideWindow.cpp
         SingleTexturePlayer.cpp
         SequenceFramePlayer.cpp

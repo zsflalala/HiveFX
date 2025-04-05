@@ -1,7 +1,4 @@
 #include "JPGRenderer.h"
-
-using namespace hiveVG;
-
 #include "Common.h"
 #include "ScreenQuad.h"
 #include "JsonReader.h"
@@ -23,21 +20,9 @@ CJPGRenderer::~CJPGRenderer()
         CScreenQuad::destroy();
         m_pScreenQuad = nullptr;
     }
-    if (m_pForeJPGPlayer)
-    {
-        delete m_pForeJPGPlayer;
-        m_pForeJPGPlayer = nullptr;
-    }
-    if (m_pBackJPGPlayer)
-    {
-        delete m_pBackJPGPlayer;
-        m_pBackJPGPlayer = nullptr;
-    }
-    if (m_pBackgroundJPGPlayer)
-    {
-        delete m_pBackgroundJPGPlayer;
-        m_pBackgroundJPGPlayer = nullptr;
-    }
+    __deleteSafely(m_pForeJPGPlayer);
+    __deleteSafely(m_pBackJPGPlayer);
+    __deleteSafely(m_pBackgroundJPGPlayer);
 }
 
 void CJPGRenderer::__initAlgorithm()

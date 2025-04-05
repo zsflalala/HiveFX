@@ -24,6 +24,11 @@ namespace hiveVG
     private:
         void __initAlgorithm();
 
+        template<typename T>
+        void __deleteSafely(T*& vPointer);
+
+        int                         m_TextureCount         = 64;
+        EPictureType::EPictureType  m_PictureType          = EPictureType::PNG;
         bool                        m_PreviousPointerState = false;
         bool                        m_EnableBigRainFore    = false;
         bool                        m_EnableBigRainBack    = false;
@@ -37,4 +42,14 @@ namespace hiveVG
         CAsyncSequenceFramePlayer*  m_pBigRainBackPlayer   = nullptr;
         CSingleTexturePlayer*       m_pSingleFramePlayer   = nullptr;
     };
+
+    template<typename T>
+    void CRainRendererAsync::__deleteSafely(T*& vPointer)
+    {
+        if (vPointer != nullptr)
+        {
+            delete vPointer;
+            vPointer = nullptr;
+        }
+    }
 }
