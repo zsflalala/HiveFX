@@ -3,6 +3,8 @@
 #include <string>
 #include <__stddef_size_t.h>
 #include "astc-codec/astc-codec.h"
+#include <map>  // 使用 std::map 替代 unordered_map
+#include <utility>  // 用于 std::pair
 #include "Common.h"
 
 namespace hiveVG
@@ -24,16 +26,21 @@ namespace hiveVG
         static CTexture2D* loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType, bool vIsCompressed = false, bool vHasAlpha=true);
         static void        loadTextureFromCompressedPNG(const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D*>& vTexture2DVec);
         static CTexture2D* createEmptyTexture(int vWidth, int vHeight, int vChannels);
-        static bool isASTCSupported();
         ~CTexture2D();
-
+        void setNormalMat(float* matrix) {
+            memset(matrix, 0, 16 * sizeof(float));
+            matrix[0] = matrix[5] = matrix[10] = matrix[15] = 1.0f;
+        }
         [[nodiscard]] constexpr GLuint getTextureHandle() const { return m_TextureHandle; }
 
         void bindTexture() const;
     private:
         inline explicit CTexture2D(GLuint vTextureHandle);
         static GLuint __createHandle(GLint vFormat, int vWidth, int vHeight, unsigned char* vImgData);
-        static astc_codec::FootprintType __getFootprintType(uint8_t block_x, uint8_t block_y);
+        static GLenum __getASTCInternalFormat(uint8_t block_x, uint8_t block_y);
         GLuint m_TextureHandle;
+        float mModelMatrix[16];
+        float mViewMatrix[16];
+        float mProjectionMatrix[16];
     };
 }

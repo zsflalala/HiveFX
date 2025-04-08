@@ -1,8 +1,8 @@
 {
   "sequence_config": {
-    "frames_path": "textures/SmallRain_fore",
-    "frames_type" : "png",
-    "frames_count": 64,
+    "frames_path": "textures/SmallSnow_foreASTC12x12",
+    "frames_type" : "astc",
+    "frames_count": 1,
     "play_mode": "partial",
     "position": {
       "x": -1.0,

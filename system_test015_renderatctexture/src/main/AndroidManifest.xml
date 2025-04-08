@@ -21,4 +21,6 @@
                 android:value="system_test015_renderATCtexture" />
         </activity>
     </application>
+    <uses-feature android:glEsVersion="0x00030002" android:required="true" />
+    <meta-data android:name="android.hardware.opengles.aep" android:value="true"/>
 </manifest>

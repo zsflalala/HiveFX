@@ -38,7 +38,7 @@ namespace hiveVG
         bool initTextureAndShaderProgram();
         void updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
         void draw(CScreenQuad* vQuad);
-
+        void drawASTC(CScreenQuad *vQuad);
     private:
         void __initSequenceParams();
 
@@ -70,5 +70,7 @@ namespace hiveVG
 
         std::vector<CTexture2D*> m_SeqTextures;
         CShaderProgram*          m_pSequenceShaderProgram = nullptr;
+
+
     };
 }

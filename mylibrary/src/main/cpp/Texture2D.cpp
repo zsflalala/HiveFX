@@ -67,11 +67,16 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
             Channels = 3;
             pImageData = WebPDecodeRGB(pBuffer.get(), AssetSize, &voWidth, &voHeight);
         }
-    }else if (vPictureType == EPictureType::ASTC) {
-
+    }else if (vPictureType == EPictureType::ASTC)
+    {
+        const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+        if (!strstr(extensions, "GL_KHR_texture_compression_astc_ldr")) {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Device does NOT support ASTC compression!");
+        }else
+            LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Supported GL extensions: %s", extensions);
        ASTCHeader header;
        if (AssetSize < sizeof(ASTCHeader)) {
-           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Invalid ASTC file: too small");
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Invalid ASTC file: too small");
            return nullptr;
        }
        memcpy(&header, pBuffer.get(), sizeof(ASTCHeader));
@@ -81,44 +86,134 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
            return nullptr;
        }
 
-       astc_codec::FootprintType footprint = __getFootprintType(header.block_x, header.block_y);
-
-       // 从头部获取纹理尺寸（3字节小端序）
        voWidth = header.dim_x[0] | (header.dim_x[1] << 8) | (header.dim_x[2] << 16);
        voHeight = header.dim_y[0] | (header.dim_y[1] << 8) | (header.dim_y[2] << 16);
+       uint32_t blockdim_x = header.block_x;
+       uint32_t blockdim_y = header.block_y;
+       uint32_t blockdim_z = header.block_z;
+       uint32_t xblocks = (voWidth + blockdim_x - 1) / blockdim_x;
+       uint32_t yblocks = (voHeight + blockdim_y - 1) / blockdim_y;
+       uint32_t zblocks = (1 + blockdim_z - 1) / blockdim_z;
+       size_t len = xblocks * yblocks * zblocks * 16;
+       if (len != AssetSize - sizeof(ASTCHeader)) {
+           LOG_WARN(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Warning: Computed ASTC data size (%zu) doesn't match actual (%zu)", len, AssetSize - sizeof(ASTCHeader));
+       }
 
-       LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Loading ASTC %dx%d texture with block size %dx%d",
-                voWidth, voHeight, header.block_x, header.block_y);
-
-       // 计算输出缓冲区大小（RGBA格式）
-       size_t out_buffer_size = voWidth * voHeight * 4;
-       std::vector<uint8_t> decoded_data(out_buffer_size);
-
-       // 解压ASTC数据（跳过16字节头）
-       bool success = astc_codec::ASTCDecompressToRGBA(
-               pBuffer.get() + sizeof(ASTCHeader),
-               AssetSize - sizeof(ASTCHeader),
-               voWidth, voHeight,
-               footprint,
-               decoded_data.data(),
-               out_buffer_size,
-               voWidth * 4);
-       if (!success)
-       {
-           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to decompress ASTC data: %s", vTexturePath.c_str());
+       GLenum internalFormat = __getASTCInternalFormat(header.block_x, header.block_y);
+       if (internalFormat == 0) {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Unsupported ASTC block size: %dx%d", header.block_x, header.block_y);
            return nullptr;
        }
-       double EndTime = CTimeUtils::getCurrentTime();
-       LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to CPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
        StartTime = CTimeUtils::getCurrentTime();
-       GLint Format = GL_RGBA;
-       GLuint tex = __createHandle(Format, voWidth, voHeight, decoded_data.data());
-       double EndTime2 = CTimeUtils::getCurrentTime();
+       GLuint textureHandle;
+       glGenTextures(1, &textureHandle);
+       glBindTexture(GL_TEXTURE_2D, textureHandle);
 
-       LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime2 - StartTime);
-       stbi_image_free(pImageData);
-       return new CTexture2D(tex);
-    }
+       // 6. 设置纹理参数
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_ASTC_DECODE_PRECISION_EXT, GL_RGBA8);
+       // 7. 直接上传压缩数据（跳过16字节头）
+       glCompressedTexImage2D(
+               GL_TEXTURE_2D,
+               0,
+               internalFormat,
+               voWidth,
+               voHeight,
+               0,
+               len,
+               pBuffer.get() + sizeof(ASTCHeader)
+       );
+        //glGenerateMipmap(GL_TEXTURE_2D);
+
+
+        int texWidth = 0, texHeight = 0, texCompressed = 0;
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texWidth);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texHeight);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &texCompressed);
+
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Texture Width: %d, Height: %d, Compressed: %d", texWidth, texHeight, texCompressed);
+
+        if (texWidth == 0 || texHeight == 0) {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Texture upload failed! Width or height is 0.");
+        }
+        if (!texCompressed) {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Texture is not compressed as expected.");
+        }
+
+        double EndTime = CTimeUtils::getCurrentTime();
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
+       // 9. 检查错误
+       GLenum err = glGetError();
+       if (err != GL_NO_ERROR) {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Failed to upload ASTC texture (GL error: 0x%x)", err);
+           glDeleteTextures(1, &textureHandle);
+           return nullptr;
+       }
+       return new CTexture2D(textureHandle);
+    }else if (vPictureType == EPictureType::ETC1)
+   {
+       const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+       if (!strstr(extensions, "GL_OES_compressed_ETC1_RGB8_texture")) {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Device does NOT support ETC1 compression!");
+           return nullptr;
+       } else {
+           LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Supported GL extensions: %s", extensions);
+       }
+
+       if (AssetSize < 16) {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Invalid ETC1 file: too small");
+           return nullptr;
+       }
+
+       // PKM header validation
+       const uint8_t* header = pBuffer.get();
+       if (memcmp(header, "PKM ", 4) != 0 && memcmp(header, "PKM 10", 6) != 0) {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Invalid ETC1 file: bad magic number");
+           return nullptr;
+       }
+
+       voWidth = (header[12] << 8) | header[13];
+       voHeight = (header[14] << 8) | header[15];
+
+       GLuint textureHandle;
+       glGenTextures(1, &textureHandle);
+       glBindTexture(GL_TEXTURE_2D, textureHandle);
+
+       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+       // Upload ETC1 compressed texture (format from extension)
+       glCompressedTexImage2D(
+               GL_TEXTURE_2D,
+               0,
+               GL_ETC1_RGB8_OES,
+               voWidth,
+               voHeight,
+               0,
+               AssetSize - 16,
+               pBuffer.get() + 16
+       );
+
+       int texCompressed = 0;
+       glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &texCompressed);
+       if (!texCompressed) {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Texture is not compressed as expected.");
+       }
+
+       GLenum err = glGetError();
+       if (err != GL_NO_ERROR) {
+           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to upload ETC1 texture (GL error: 0x%x)", err);
+           glDeleteTextures(1, &textureHandle);
+           return nullptr;
+       }
+
+       return new CTexture2D(textureHandle);
+   }
 
     if (!pImageData)
     {
@@ -316,6 +411,7 @@ CTexture2D::~CTexture2D()
 
 void CTexture2D::bindTexture() const
 {
+    LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Binding texture ID: %d", m_TextureHandle);
     glBindTexture(GL_TEXTURE_2D, m_TextureHandle);
 }
 
@@ -334,31 +430,33 @@ GLuint CTexture2D::__createHandle(GLint vFormat, int vWidth, int vHeight, unsign
 
     glTexImage2D(GL_TEXTURE_2D, 0, vFormat, vWidth, vHeight, 0, vFormat, GL_UNSIGNED_BYTE, vImgData);
     glGenerateMipmap(GL_TEXTURE_2D);
-
     bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
     if (!IsValid)
         return 0;
     else
         return TextureHandle;
 }
-bool CTexture2D::isASTCSupported() {
-    const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-    return strstr(extensions, "GL_KHR_texture_compression_astc_ldr") != nullptr;
-}
-astc_codec::FootprintType  CTexture2D::__getFootprintType(uint8_t block_x, uint8_t block_y) {
-    if (block_x == 4 && block_y == 4) return astc_codec::FootprintType::k4x4;
-    if (block_x == 5 && block_y == 4) return astc_codec::FootprintType::k5x4;
-    if (block_x == 5 && block_y == 5) return astc_codec::FootprintType::k5x5;
-    if (block_x == 6 && block_y == 5) return astc_codec::FootprintType::k6x5;
-    if (block_x == 6 && block_y == 6) return astc_codec::FootprintType::k6x6;
-    if (block_x == 8 && block_y == 5) return astc_codec::FootprintType::k8x5;
-    if (block_x == 8 && block_y == 6) return astc_codec::FootprintType::k8x6;
-    if (block_x == 10 && block_y == 5) return astc_codec::FootprintType::k10x5;
-    if (block_x == 10 && block_y == 6) return astc_codec::FootprintType::k10x6;
-    if (block_x == 8 && block_y == 8) return astc_codec::FootprintType::k8x8;
-    if (block_x == 10 && block_y == 8) return astc_codec::FootprintType::k10x8;
-    if (block_x == 10 && block_y == 10) return astc_codec::FootprintType::k10x10;
-    if (block_x == 12 && block_y == 10) return astc_codec::FootprintType::k12x10;
-    if (block_x == 12 && block_y == 12) return astc_codec::FootprintType::k12x12;
-    return astc_codec::FootprintType::k4x4; // 默认值
+
+
+GLenum CTexture2D::__getASTCInternalFormat(uint8_t block_x, uint8_t block_y) {
+    static const std::map<std::pair<uint8_t, uint8_t>, GLenum> formatMap = {
+            {{4, 4},   GL_COMPRESSED_RGBA_ASTC_4x4_KHR},
+            {{5, 4},   GL_COMPRESSED_RGBA_ASTC_5x4_KHR},
+            {{5, 5},   GL_COMPRESSED_RGBA_ASTC_5x5_KHR},
+            {{6, 5},   GL_COMPRESSED_RGBA_ASTC_6x5_KHR},
+            {{6, 6},   GL_COMPRESSED_RGBA_ASTC_6x6_KHR},
+            {{8, 5},   GL_COMPRESSED_RGBA_ASTC_8x5_KHR},
+            {{8, 6},   GL_COMPRESSED_RGBA_ASTC_8x6_KHR},
+            {{10, 5},  GL_COMPRESSED_RGBA_ASTC_10x5_KHR},
+            {{10, 6},  GL_COMPRESSED_RGBA_ASTC_10x6_KHR},
+            {{8, 8},   GL_COMPRESSED_RGBA_ASTC_8x8_KHR},
+            {{10, 8},  GL_COMPRESSED_RGBA_ASTC_10x8_KHR},
+            {{10, 10}, GL_COMPRESSED_RGBA_ASTC_10x10_KHR},
+            {{12, 10}, GL_COMPRESSED_RGBA_ASTC_12x10_KHR},
+            {{12, 12}, GL_COMPRESSED_RGBA_ASTC_12x12_KHR}
+    };
+
+    // 查找对应的格式
+    auto it = formatMap.find({block_x, block_y});
+    return (it != formatMap.end()) ? it->second : 0;  // 找到返回 GLenum，否则返回 0
 }
