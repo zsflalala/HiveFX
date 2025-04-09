@@ -5,6 +5,8 @@
 #include "Renderer.h"
 #include "Common.h"
 
+hiveVG::CRenderer* pSeqFrameRenderer;
+
 extern "C"
 {
     void handleCmd(android_app* vApp, int32_t vCmd)
@@ -71,8 +73,8 @@ extern "C"
 
             if (vApp->userData)
             {
-                auto *pSeqFrameRenderer = reinterpret_cast<hiveVG::CRenderer*>(vApp->userData);
-                pSeqFrameRenderer->handleInput();
+                pSeqFrameRenderer = reinterpret_cast<hiveVG::CRenderer*>(vApp->userData);
+                //pSeqFrameRenderer->handleInput();
                 pSeqFrameRenderer->renderScene();
             }
         } while (!vApp->destroyRequested);

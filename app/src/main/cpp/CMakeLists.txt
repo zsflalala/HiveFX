@@ -16,6 +16,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 add_library(hivefx SHARED
         main.cpp
         Renderer.cpp
+        SetRenderTypeWithButton.cpp
         Renderers/SnowRenderer.cpp
         Renderers/CloudRendererBillBoard.cpp
         Renderers/RainRendererAsync.cpp

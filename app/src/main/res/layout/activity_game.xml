@@ -30,16 +30,17 @@
             android:gravity="center">
 
             <Button
-                android:id="@+id/btn_top_center"
+                android:id="@+id/btn_Snow"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="200dp"
                 android:layout_height="100dp"
+                android:background="@drawable/button_border"
+                android:clickable="true"
+                android:enabled="true"
+                android:focusable="auto"
                 android:text="@string/Top"
                 android:textColor="#ffffff"
-                tools:ignore="DuplicateSpeakableTextCheck"
-                android:clickable="false"
-                android:focusable="false"
-                android:enabled="false"/>
+                tools:ignore="DuplicateSpeakableTextCheck" />
         </LinearLayout>
 
         <!-- 下方的三个按钮 -->
@@ -64,32 +65,32 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn_bottom_left_2_leftup"
+                        android:id="@+id/btn_SmallSnowFore"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/button_border"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:focusable="false"
                         android:text="@string/SmallSnowFore"
                         android:textColor="#ffffff"
-                        tools:ignore="VisualLintButtonSize"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:enabled="false"/>
+                        tools:ignore="VisualLintButtonSize" />
 
                     <Button
-                        android:id="@+id/btn_bottom_left_2_rightup"
+                        android:id="@+id/btn_SmallSnowBack"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/button_border"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:focusable="false"
                         android:text="@string/SmallSnowBack"
                         android:textColor="#ffffff"
-                        tools:ignore="VisualLintButtonSize"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:enabled="false"/>
+                        tools:ignore="VisualLintButtonSize" />
 
                 </LinearLayout>
 
@@ -100,32 +101,32 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn_bottom_left_2_leftdown"
+                        android:id="@+id/btn_BigSnowFore"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/button_border"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:focusable="false"
                         android:text="@string/BigSnowFore"
                         android:textColor="#ffffff"
-                        tools:ignore="VisualLintButtonSize"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:enabled="false"/>
+                        tools:ignore="VisualLintButtonSize" />
 
                     <Button
-                        android:id="@+id/btn_bottom_left_2_rightdown"
+                        android:id="@+id/btn_BigSnowBack"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/button_border"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:focusable="false"
                         android:text="@string/BigSnowBack"
                         android:textColor="#ffffff"
-                        tools:ignore="VisualLintButtonSize"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:enabled="false"/>
+                        tools:ignore="VisualLintButtonSize" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -143,32 +144,32 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn_bottom_center_2_leftup"
+                        android:id="@+id/btn_SmallRainFore"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/button_border"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:focusable="false"
                         android:text="@string/SmallRainFore"
                         android:textColor="#ffffff"
-                        tools:ignore="NestedWeights,VisualLintButtonSize"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:enabled="false"/>
+                        tools:ignore="NestedWeights,VisualLintButtonSize" />
 
                     <Button
-                        android:id="@+id/btn_bottom_center_2_rightup"
+                        android:id="@+id/btn_SmallRainBack"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/button_border"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:focusable="false"
                         android:text="@string/SmallRainBack"
                         android:textColor="#ffffff"
-                        tools:ignore="VisualLintButtonSize"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:enabled="false"/>
+                        tools:ignore="VisualLintButtonSize" />
 
                 </LinearLayout>
 
@@ -179,32 +180,32 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn_bottom_center_2_leftdown"
+                        android:id="@+id/btn_BigRainFore"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/button_border"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:focusable="false"
                         android:text="@string/BigRainFore"
                         android:textColor="#ffffff"
-                        tools:ignore="NestedWeights,VisualLintButtonSize"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:enabled="false"/>
+                        tools:ignore="NestedWeights,VisualLintButtonSize" />
 
                     <Button
-                        android:id="@+id/btn_bottom_center_2_rightdown"
+                        android:id="@+id/btn_BigRainBack"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/button_border"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:focusable="false"
                         android:text="@string/BigRainBack"
                         android:textColor="#ffffff"
-                        tools:ignore="VisualLintButtonSize"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:enabled="false"/>
+                        tools:ignore="VisualLintButtonSize" />
 
                 </LinearLayout>
 

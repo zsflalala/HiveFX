@@ -290,3 +290,10 @@ void CRenderer::handleInput()
     }
     android_app_clear_motion_events(pInputBuffer);
 }
+
+void CRenderer::setRenderTypeWithButton(ERenderType renderType, ERenderType enableRenderType)
+{
+    m_IsPointerDown = true;
+    m_RenderType = renderType;
+    m_EnableRenderType = enableRenderType;
+}
