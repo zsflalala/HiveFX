@@ -74,11 +74,8 @@ void CJPGRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 
     glClearColor(0.345f,0.345f,0.345f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    if (m_PictureType == EPictureType::PNG)
-    {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_pBackJPGPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
     m_pBackJPGPlayer->draw(m_pScreenQuad);

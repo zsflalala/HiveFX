@@ -1,9 +1,7 @@
 package com.hive.system_test013_quantizationframeplaying;
 
-import android.util.Log;
 import android.view.View;
 import com.google.androidgamesdk.GameActivity;
-import android.opengl.GLES30;
 
 public class MainActivity extends GameActivity
 {
@@ -15,16 +13,6 @@ public class MainActivity extends GameActivity
     @Override
     public void onWindowFocusChanged(boolean hasFocus)
     {
-        int[] results = new int[1];
-        GLES30.glGetIntegerv(GLES30.GL_MAJOR_VERSION, results, 0);
-        int majorVersion = results[0];
-
-        if (majorVersion >= 3) {
-            Log.d("OpenGLInfo", "✅ 设备支持 OpenGL ES 3.0 或更高版本");
-        } else {
-            Log.d("OpenGLInfo", "❌ 设备仅支持 OpenGL ES 2.x 或更低版本");
-        }
-
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus)
         {

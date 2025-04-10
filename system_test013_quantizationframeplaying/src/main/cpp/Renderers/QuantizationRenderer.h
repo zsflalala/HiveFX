@@ -8,6 +8,7 @@ namespace hiveVG
     class CTexture2D;
     class CShaderProgram;
     class CScreenQuad;
+    class CSingleTexturePlayer;
 
     class CQuantizationRenderer
     {
@@ -19,6 +20,10 @@ namespace hiveVG
         bool initTextureAndShaderProgram();
 
     private:
+        template<typename T>
+        void __deleteSafely(T*& vPointer);
+
+        int                   m_OneTextureFrames        = 1;
         int                   m_CurrentChannel          = 0;
         int                   m_TextureCount            = 0;
         int                   m_PreloadTexture          = 5;
@@ -30,7 +35,17 @@ namespace hiveVG
         std::string           m_TexPath;
         CScreenQuad*          m_pScreenQuad             = nullptr;
         CShaderProgram*       m_pSequenceShaderProgram  = nullptr;
-        CTexture2D*           m_pPaletteTexture         = nullptr;
+        CSingleTexturePlayer* m_pBackgroundPlayer       = nullptr;
         std::vector<CTexture2D*> m_SeqTextures;
     };
+
+    template<typename T>
+    void CQuantizationRenderer::__deleteSafely(T*& vPointer)
+    {
+        if (vPointer != nullptr)
+        {
+            delete vPointer;
+            vPointer = nullptr;
+        }
+    }
 }
