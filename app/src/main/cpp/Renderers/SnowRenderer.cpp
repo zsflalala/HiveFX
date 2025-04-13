@@ -126,23 +126,22 @@ void CSnowRenderer::handleInput(ERenderType vInputType, bool vIsPointerDown)
 {
     if (vInputType == ERenderType::SMALL_SNOW_FORE)
     {
-        if (vIsPointerDown && !m_PreviousPointerState)
+        if (vIsPointerDown)
             m_EnableSmallSnowFore = !m_EnableSmallSnowFore;
     }
     else if (vInputType == ERenderType::SMALL_SNOW_BACK)
     {
-        if (vIsPointerDown && !m_PreviousPointerState)
+        if (vIsPointerDown)
             m_EnableSmallSnowBack = !m_EnableSmallSnowBack;
     }
     else if (vInputType == ERenderType::BIG_SNOW_FORE)
     {
-        if (vIsPointerDown && !m_PreviousPointerState)
+        if (vIsPointerDown)
             m_EnableBigSnowFore = !m_EnableBigSnowFore;
     }
     else if (vInputType == ERenderType::BIG_SNOW_BACK)
     {
-        if (vIsPointerDown && !m_PreviousPointerState)
+        if (vIsPointerDown)
             m_EnableBigSnowBack = !m_EnableBigSnowBack;
     }
-    m_PreviousPointerState = vIsPointerDown;
 }

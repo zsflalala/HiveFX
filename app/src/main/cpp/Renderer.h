@@ -23,7 +23,8 @@ namespace hiveVG
 
         void renderScene();
         void handleInput();
-        void setRenderTypeWithButton(ERenderType renderType, ERenderType enableRenderType);
+        void setRenderTypeWithButton(ERenderType renderType, ERenderType enableRenderType, bool state);
+        void setRenderTypeWithButton(ERenderType renderType, bool state);
 
     private:
         void __initRenderer();

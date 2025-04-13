@@ -23,7 +23,6 @@ namespace hiveVG
     private:
         void   __initAlgorithm();
 
-        bool         m_PreviousPointerState = false;
         bool         m_EnableBigSnowFore    = false;
         bool         m_EnableBigSnowBack    = false;
         bool         m_EnableSmallSnowFore  = false;

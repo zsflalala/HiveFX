@@ -103,20 +103,18 @@ void CRainRendererAsync::handleInput(ERenderType vInputType, bool vIsPointerDown
 {
     if (vInputType == ERenderType::SMALL_RAIN_FORE)
     {
-        // 在持续摁下时只改变一次 m_EnableSmallRainFore 的变量值
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableSmallRainFore = !m_EnableSmallRainFore;
+        if (vIsPointerDown) m_EnableSmallRainFore = !m_EnableSmallRainFore;
     }
     else if (vInputType == ERenderType::SMALL_RAIN_BACK)
     {
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableSmallRainBack = !m_EnableSmallRainBack;
+        if (vIsPointerDown) m_EnableSmallRainBack = !m_EnableSmallRainBack;
     }
     else if (vInputType == ERenderType::BIG_RAIN_FORE)
     {
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableBigRainFore   = !m_EnableBigRainFore;
+        if (vIsPointerDown) m_EnableBigRainFore   = !m_EnableBigRainFore;
     }
     else if (vInputType == ERenderType::BIG_RAIN_BACK)
     {
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableBigRainBack   = !m_EnableBigRainBack;
+        if (vIsPointerDown) m_EnableBigRainBack   = !m_EnableBigRainBack;
     }
-    m_PreviousPointerState = vIsPointerDown;
 }

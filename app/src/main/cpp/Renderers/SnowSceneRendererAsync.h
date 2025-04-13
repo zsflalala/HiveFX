@@ -23,7 +23,6 @@ namespace hiveVG
     private:
         void __initAlgorithm();
 
-        bool                        m_PreviousPointerState = false;
         bool                        m_EnableSnowScene   = false;
         android_app*                m_pApp                 = nullptr;
         CScreenQuad*                m_pScreenQuad          = nullptr;

@@ -102,20 +102,18 @@ void CSnowRendererAsync::handleInput(ERenderType vInputType, bool vIsPointerDown
 {
     if (vInputType == ERenderType::SMALL_SNOW_FORE)
     {
-        // 在持续摁下时只改变一次 m_EnableSmallSnowFore 的变量值
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableSmallSnowFore = !m_EnableSmallSnowFore;
+        if (vIsPointerDown) m_EnableSmallSnowFore = !m_EnableSmallSnowFore;
     }
     else if (vInputType == ERenderType::SMALL_SNOW_BACK)
     {
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableSmallSnowBack = !m_EnableSmallSnowBack;
+        if (vIsPointerDown) m_EnableSmallSnowBack = !m_EnableSmallSnowBack;
     }
     else if (vInputType == ERenderType::BIG_SNOW_FORE)
     {
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableBigSnowFore   = !m_EnableBigSnowFore;
+        if (vIsPointerDown) m_EnableBigSnowFore   = !m_EnableBigSnowFore;
     }
     else if (vInputType == ERenderType::BIG_SNOW_BACK)
     {
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableBigSnowBack   = !m_EnableBigSnowBack;
+        if (vIsPointerDown) m_EnableBigSnowBack   = !m_EnableBigSnowBack;
     }
-    m_PreviousPointerState = vIsPointerDown;
 }

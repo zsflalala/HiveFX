@@ -45,8 +45,6 @@ void CSnowSceneRendererAsync::handleInput(ERenderType vInputType, bool vIsPointe
 {
     if (vInputType == ERenderType::SNOW_SCENE)
     {
-        // 在持续摁下时只改变一次 m_EnableSmallSnowFore 的变量值
-        if (vIsPointerDown && !m_PreviousPointerState) m_EnableSnowScene = !m_EnableSnowScene;
+        if (vIsPointerDown) m_EnableSnowScene = !m_EnableSnowScene;
     }
-    m_PreviousPointerState = vIsPointerDown;
 }

@@ -26,7 +26,6 @@ namespace hiveVG
 
         double                m_LastFrameTime        = 0.0f;
         double                m_CurrentTime          = 0.0f;
-        bool                  m_PreviousPointerState = false;
         bool                  m_EnableBigRainFore    = false;
         bool                  m_EnableBigRainBack    = false;
         bool                  m_EnableSmallRainFore  = false;

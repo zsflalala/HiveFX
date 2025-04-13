@@ -29,7 +29,6 @@ namespace hiveVG
 
         int                         m_TextureCount         = 64;
         EPictureType::EPictureType  m_PictureType          = EPictureType::PNG;
-        bool                        m_PreviousPointerState = false;
         bool                        m_EnableBigRainFore    = false;
         bool                        m_EnableBigRainBack    = false;
         bool                        m_EnableSmallRainFore  = false;
