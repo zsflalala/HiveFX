@@ -1,5 +1,4 @@
 #include "TestSequencePlayerRenderer.h"
-#include <game-activity/native_app_glue/android_native_app_glue.h>
 #include "Common.h"
 #include "TimeUtils.h"
 #include "ScreenQuad.h"
@@ -17,8 +16,12 @@ CTestSequencePlayerRenderer::CTestSequencePlayerRenderer(android_app *vApp) : m_
 
 CTestSequencePlayerRenderer::~CTestSequencePlayerRenderer()
 {
-    if (m_pScreenQuad)              delete m_pScreenQuad;
-    if (m_pTestPlayer)     delete m_pTestPlayer;
+    if (m_pScreenQuad)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
+    __deleteSafely(m_pTestPlayer);
 }
 
 void CTestSequencePlayerRenderer::__initAlgorithm()

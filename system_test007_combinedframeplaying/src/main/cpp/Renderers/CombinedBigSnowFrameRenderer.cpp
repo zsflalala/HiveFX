@@ -20,21 +20,9 @@ CCombinedBigSnowFrameRenderer::~CCombinedBigSnowFrameRenderer()
         CScreenQuad::destroy();
         m_pScreenQuad = nullptr;
     }
-    if (m_pCombineForeFramePlayer)
-    {
-        delete m_pCombineForeFramePlayer;
-        m_pCombineForeFramePlayer = nullptr;
-    }
-    if (m_pCombineBackFramePlayer)
-    {
-        delete m_pCombineBackFramePlayer;
-        m_pCombineBackFramePlayer = nullptr;
-    }
-    if (m_pBackFramePlayer)
-    {
-        delete m_pBackFramePlayer;
-        m_pBackFramePlayer = nullptr;
-    }
+    __deleteSafely(m_pCombineForeFramePlayer);
+    __deleteSafely(m_pCombineBackFramePlayer);
+    __deleteSafely(m_pBackFramePlayer);
 }
 
 void CCombinedBigSnowFrameRenderer::__initAlgorithm()

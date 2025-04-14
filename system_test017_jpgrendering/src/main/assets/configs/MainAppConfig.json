@@ -9,7 +9,7 @@
     "loop": true
   },
   "BigSnowFore": {
-    "frames_path": "textures/HeavyRain_back_jpg",
+    "frames_path": "textures/HeavyRain_fore_jpg",
     "sequenceRows": 1,
     "sequenceCols": 1,
     "frames_type" : "jpg",

@@ -7,6 +7,7 @@ struct android_app;
 
 namespace hiveVG
 {
+    class CQuantizationSeqPlayer;
 
     class CRenderer
     {
@@ -26,5 +27,6 @@ namespace hiveVG
         EGLDisplay    m_Display             = EGL_NO_DISPLAY;
         EGLSurface    m_Surface             = EGL_NO_SURFACE;
         EGLContext    m_Context             = EGL_NO_CONTEXT;
+        CQuantizationSeqPlayer* m_pQuantizationSeqPlayer = nullptr;
     };
 }

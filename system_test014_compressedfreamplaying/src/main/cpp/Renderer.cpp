@@ -4,6 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
+#include "Renderers/QuantizationSeqPlayer.h"
 
 using namespace hiveVG;
 
@@ -30,6 +31,11 @@ CRenderer::~CRenderer()
         }
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
+    }
+    if (m_pQuantizationSeqPlayer != nullptr)
+    {
+        delete m_pQuantizationSeqPlayer;
+        m_pQuantizationSeqPlayer = nullptr;
     }
 }
 
@@ -92,14 +98,15 @@ void CRenderer::__initRenderer()
 void CRenderer::renderScene()
 {
     __updateRenderArea();
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.345,0.345,0.345,1.0);
+    if (m_pQuantizationSeqPlayer == nullptr)
+        m_pQuantizationSeqPlayer = new CQuantizationSeqPlayer();
+    m_pQuantizationSeqPlayer->renderScene(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
 
-  void CRenderer::__updateRenderArea()
+void CRenderer::__updateRenderArea()
 {
     EGLint Width, Height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);
