@@ -1,4 +1,4 @@
-#version 320 es
+#version 300 es
 precision lowp float;
 out vec4 FragColor;
 in vec2 vTexCoord;

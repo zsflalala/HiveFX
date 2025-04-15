@@ -39,7 +39,7 @@ CRenderer::~CRenderer()
 void CRenderer::__initRenderer()
 {
     constexpr EGLint Attributes[] = {
-            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,  // 必须包含 GLES 3.2
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
             EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
             EGL_BLUE_SIZE,      8,
             EGL_GREEN_SIZE,     8,
@@ -50,20 +50,17 @@ void CRenderer::__initRenderer()
             EGL_NONE
     };
 
-    // 2. 初始化 EGL Display
     m_Display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     if (m_Display == EGL_NO_DISPLAY) {
         LOG_ERROR(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Failed to get EGL display");
         return;
     }
 
-    // 3. 初始化 EGL
     if (!eglInitialize(m_Display, nullptr, nullptr)) {
         LOG_ERROR(hiveVG::TAG_KEYWORD::RENDERER_TAG, "EGL initialization failed");
         return;
     }
 
-    // 4. 选择 EGL 配置（强制 RGBA8888 + Depth24）
     EGLint NumConfigs = 0;
     eglChooseConfig(m_Display, Attributes, nullptr, 0, &NumConfigs);
     std::unique_ptr<EGLConfig[]> pSupportedConfigs(new EGLConfig[NumConfigs]);
@@ -86,20 +83,18 @@ void CRenderer::__initRenderer()
                 return false;
             });
 
-    // 5. 创建 Window Surface
     EGLint Format;
     eglGetConfigAttrib(m_Display, pConfig, EGL_NATIVE_VISUAL_ID, &Format);
-    ANativeWindow_setBuffersGeometry(m_pApp->window, 0, 0, Format);  // 关键适配
+    ANativeWindow_setBuffersGeometry(m_pApp->window, 0, 0, Format);
     m_Surface = eglCreateWindowSurface(m_Display, pConfig, m_pApp->window, nullptr);
     if (m_Surface == EGL_NO_SURFACE) {
         LOG_ERROR(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Failed to create EGL surface");
         return;
     }
 
-    // 6. 创建 GLES 3.2 上下文（严格模式，不兼容低版本）
     const EGLint ContextAttribs[] = {
             EGL_CONTEXT_MAJOR_VERSION, 3,
-            EGL_CONTEXT_MINOR_VERSION, 2,  // 强制要求 GLES 3.2
+            EGL_CONTEXT_MINOR_VERSION, 2,
             EGL_NONE
     };
 
@@ -110,13 +105,11 @@ void CRenderer::__initRenderer()
         return;
     }
 
-    // 7. 绑定上下文
     if (!eglMakeCurrent(m_Display, m_Surface, m_Surface, m_Context)) {
         LOG_ERROR(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Failed to make context current");
         return;
     }
 
-    // 8. 验证版本
     const char* glVersion = reinterpret_cast<const char*>(glGetString(GL_VERSION));
     LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG,
              "Successfully initialized OpenGL ES %s", glVersion);

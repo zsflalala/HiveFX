@@ -1,8 +1,6 @@
 #pragma once
 
 #include <string>
-#include <__stddef_size_t.h>
-#include "astc-codec/astc-codec.h"
 #include "Common.h"
 
 namespace hiveVG
