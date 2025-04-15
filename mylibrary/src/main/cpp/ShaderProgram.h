@@ -21,7 +21,7 @@ namespace hiveVG
         void setUniform(const std::string& vName, const glm::vec4& vValue);
         void setUniform(const std::string& vName, const glm::mat3& vMat);
         void setUniform(const std::string& vName, const glm::mat4& vMat);
-        GLuint getProgramID(){return m_ProgramHandle;}
+
     private:
         static bool __dumpShaderCodeFromFile(const std::string& vShaderPath, std::string& voShaderCode);
         static bool __compileShader(GLenum vType, const std::string& vShaderPath, const std::string& vShaderCode, GLuint& voShaderHandle);

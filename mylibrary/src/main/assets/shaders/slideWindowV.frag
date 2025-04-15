@@ -23,3 +23,4 @@ void main()
     vec4 Color = vec4(texture(Texture, biasTexCoord).rgba);
     FragColor = Color;
 }
+

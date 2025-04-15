@@ -40,7 +40,7 @@ CSequenceFramePlayer::~CSequenceFramePlayer()
     }
 }
 
-bool CSequenceFramePlayer::initTextureAndShaderProgram()
+bool CSequenceFramePlayer::initTextureAndShaderProgram(bool vIsCompressed,bool vFlipYAxis)
 {
     if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
         m_TextureRootPath += '/';
@@ -48,14 +48,12 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
     else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
-    else if (m_TextureType == EPictureType::PKM) PictureSuffix = ".pkm";
-    else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
         if (!m_UseCompressedPNG)
         {
-            CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
+            CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType,vIsCompressed,vFlipYAxis);
             if (!pSequenceTexture)
             {
                 LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
@@ -75,11 +73,6 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
         m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
     else if (m_TextureType == EPictureType::JPG)
         m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragJPG);
-    else if (m_TextureType == EPictureType::PKM)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
-    else if (m_TextureType == EPictureType::KTX2)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
-
     if (!m_pSequenceShaderProgram)
     {
         LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "[%s] ShaderProgram init Failed.", m_TextureRootPath.c_str());
@@ -135,6 +128,7 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight,
     }
 }
 
+
 void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
 {
     if (m_UseLifeCycle && !m_SequenceState._IsAlive)
@@ -163,6 +157,41 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("texUVOffset", TextureUVOffset);
     m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
     m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);
+    glActiveTexture(GL_TEXTURE0);
+    m_SeqTextures[m_CurrentTexture]->bindTexture();
+    vQuad->bindAndDraw();
+}
+
+
+void CSequenceFramePlayer::draw2(CScreenQuad *vQuad)
+{
+    if (m_UseLifeCycle && !m_SequenceState._IsAlive)
+        return ;
+
+    if (!m_IsLoop && m_IsFinished)
+    {
+        m_CurrentFrame   = m_ValidFrames - 1;
+        m_CurrentTexture = m_TextureCount - 1;
+    }
+    float RotationAngle   = m_RotationAngle * M_PI / 180.0f;
+    int   CurrentFrameRow = m_CurrentFrame / m_SequenceCols;
+    int   CurrentFrameCol = m_CurrentFrame % m_SequenceCols;
+    float CurrentFrameU0 = CurrentFrameCol / static_cast<float>(m_SequenceCols);
+    float CurrentFrameV0 = CurrentFrameRow / static_cast<float>(m_SequenceRows);
+    float CurrentFrameU1 = (CurrentFrameCol + 1) / static_cast<float>(m_SequenceCols);
+    float CurrentFrameV1 = (CurrentFrameRow + 1) / static_cast<float>(m_SequenceRows);
+    glm::vec2 TextureUVOffset = glm::vec2(CurrentFrameU0, CurrentFrameV0);
+    glm::vec2 TextureUVScale  = glm::vec2(CurrentFrameU1 - CurrentFrameU0, CurrentFrameV1 - CurrentFrameV0);
+
+    assert(m_pSequenceShaderProgram != nullptr);
+    m_pSequenceShaderProgram->useProgram();
+    m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
+    m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
+    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
+    m_pSequenceShaderProgram->setUniform("texUVOffset", TextureUVOffset);
+    m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
+    m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);
+
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     vQuad->bindAndDraw();

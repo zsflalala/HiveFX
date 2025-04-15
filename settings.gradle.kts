@@ -37,3 +37,5 @@ include(":system_test018_splashplaying")
 include(":system_test013_quantizationframeplaying")
 include(":system_test014_compressedfreamplaying")
 include(":system_test015_renderatctexture")
+include(":system_test019_6waylightingflipbook")
+

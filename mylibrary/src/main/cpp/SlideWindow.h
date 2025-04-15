@@ -21,13 +21,9 @@ namespace hiveVG
         void updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad);
 
     private:
-        template<typename T>
-        void __deleteSafely(T*& vPointer);
-
         bool            m_UseCompressed = false;
-        int             m_Channel = 0;
-        int             m_TextureWidth  = 0;
-        int             m_TextureHeight = 0;
+        int             m_TextureWidth;
+        int             m_TextureHeight;
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
         float           m_CoordBias = 0.0f;
         float           m_SlideSpeed;
@@ -36,14 +32,4 @@ namespace hiveVG
         CShaderProgram* m_pShaderProgram = nullptr;
         CTexture2D*     m_pTexture       = nullptr;
     };
-
-    template<typename T>
-    void CSlideWindow::__deleteSafely(T*& vPointer)
-    {
-        if (vPointer != nullptr)
-        {
-            delete vPointer;
-            vPointer = nullptr;
-        }
-    }
 }

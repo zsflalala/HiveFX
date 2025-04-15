@@ -17,7 +17,7 @@ namespace hiveVG
     public:
         CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
         CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG = false);
-        ~CSequenceFramePlayer();
+        virtual ~CSequenceFramePlayer();
 
         void setLoopPlayback(bool vLoopTag) { m_IsLoop = vLoopTag; }
         void setScreenUVScale(float vScreenScale) { m_ScreenUVScale = glm::vec2(vScreenScale, vScreenScale); }
@@ -35,12 +35,13 @@ namespace hiveVG
         [[nodiscard]] bool getLoopState()   const { return m_IsLoop; }
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
 
-        bool initTextureAndShaderProgram();
-        void updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
-        void draw(CScreenQuad* vQuad);
+        virtual bool initTextureAndShaderProgram(bool vIsCompressed = false,bool vFlipYAxis = false);
+        virtual void updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
+        virtual void draw(CScreenQuad* vQuad);
+        void draw2(CScreenQuad* vQuad);
 
-    private:
-        void __initSequenceParams();
+    protected:
+        virtual void __initSequenceParams();
 
         int               m_SequenceRows;
         int               m_SequenceCols;
@@ -57,9 +58,13 @@ namespace hiveVG
         bool              m_UseLifeCycle     = false;
         bool              m_UseCompressedPNG = false;
         int               m_CurrentFrame     = 0;
+        float             m_CurrentFrameIndex  = 0.0f;
         double            m_AccumFrameTime   = 0.0f;
         std::string       m_TextureRootPath;
         int               m_CurrentTexture   = 0;
+
+
+
         int               m_TextureCount;
         SSequenceState    m_SequenceState;
         glm::vec2         m_ScreenUVScale        = glm::vec2(1.0f, 1.0f);
@@ -70,7 +75,5 @@ namespace hiveVG
 
         std::vector<CTexture2D*> m_SeqTextures;
         CShaderProgram*          m_pSequenceShaderProgram = nullptr;
-
-
     };
 }

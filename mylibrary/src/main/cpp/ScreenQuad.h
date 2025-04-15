@@ -11,12 +11,11 @@ namespace hiveVG
 
         static void destroy();
 
-        ~CScreenQuad();
+        virtual ~CScreenQuad();
 
-        void bindAndDraw() const;
+        virtual void bindAndDraw() const;
 
     private:
-        CScreenQuad();
 
         static CScreenQuad* m_pQuad;
         static std::mutex m_Mutex;
@@ -24,5 +23,7 @@ namespace hiveVG
         GLuint m_VAOHandle;
         GLuint m_VertexBufferHandle;
         GLuint m_IndexBufferHandle;
+    protected:
+        CScreenQuad();
     };
 }

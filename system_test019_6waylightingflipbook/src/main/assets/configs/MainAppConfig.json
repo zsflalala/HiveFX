@@ -1,0 +1,60 @@
+{
+  "SmallSnowBack": {
+    "frames_path": "textures/SmallSnow_Back",
+    "sequenceRows": 8,
+    "sequenceCols": 16,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "SmallSnowFore": {
+    "frames_path": "textures/SmallSnow_Fore",
+    "sequenceRows": 8,
+    "sequenceCols": 16,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": true
+  },
+  "Cloud2Scene": {
+    "frames_path": "textures/Cloud2Scene",
+    "sequenceRows": 12,
+    "sequenceCols": 15,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": false
+  },
+  "Cloud4Scene": {
+    "frames_path": "textures/Cloud4Scene",
+    "sequenceRows": 11,
+    "sequenceCols": 16,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": false
+  },
+  "Cloud5Scene": {
+    "frames_path": "textures/Cloud5Scene",
+    "sequenceRows": 18,
+    "sequenceCols": 12,
+    "frames_type" : "png",
+    "frames_count": 1,
+    "fps": 60,
+    "loop": false
+  },
+  "Background":{
+    "frames_path": "textures/snowScene.png"
+  },
+
+  "SixWayLightCloud1": {
+    "frames_path":"textures/SixWayLightCloud1",
+    "sequenceRows":22,
+    "sequenceCols": 16,
+    "frames_type": "png",
+    "frames_count": 1,
+    "fps":12,
+    "loop":false
+  }
+}

@@ -26,7 +26,9 @@ namespace hiveVG
         void  updateSequenceState(float vDeltaTime);
         void  setBlendStatus(bool vStatus);
         void  blit(bool vIsBlitToScreen = true);
-
+        void  setSequenceState(int vIndex,bool vState){
+              m_SequenceState.at(vIndex)._IsAlive = vState;
+        }
         void  setLoop(bool vLoop);
         void  setFrameRate(int vFrameRate);
         void  setRotationAngle(float vRotationAngle);
