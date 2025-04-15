@@ -6,7 +6,6 @@
 
 using namespace hiveVG;
 
-
 CDownloader::CDownloader()
 {
     __initJNIEnv();

@@ -105,7 +105,8 @@ void CRenderer::renderScene()
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
-  void CRenderer::__updateRenderArea()
+
+void CRenderer::__updateRenderArea()
 {
     EGLint Width, Height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);
