@@ -27,7 +27,7 @@ endif()
 
 include_directories(${KTX_INCLUDE_PATH})
 
-# 导入 KTX 动态库
+# KTX
 add_library(ktx SHARED IMPORTED)
 set_target_properties(ktx PROPERTIES IMPORTED_LOCATION ${KTX_LIB_PATH}/libktx.so)
 
@@ -59,7 +59,6 @@ set(REQUIRED_PACKAGES
         WebP
         jsoncpp
         OpenCV
-        astc-codec
 )
 
 foreach(PACKAGE ${REQUIRED_PACKAGES})
@@ -77,7 +76,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         libwebp::libwebp
         JsonCpp::JsonCpp
         ${OpenCV_LIBS}
-        astc-codec::astc-codec
         ktx
 )
 

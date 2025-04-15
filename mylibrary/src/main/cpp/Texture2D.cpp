@@ -100,7 +100,7 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
         GLenum Target = 0;
         GLenum GlError = GL_NO_ERROR;
 
-        KTX_error_code glUploadResult = ktxTexture_GLUpload(
+        KTX_error_code GlUploadResult = ktxTexture_GLUpload(
             reinterpret_cast<ktxTexture *>(pTexture),
             &TextureHandle,
             &Target,
@@ -112,11 +112,11 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        if (glUploadResult != KTX_SUCCESS || GlError != GL_NO_ERROR)
+        if (GlUploadResult != KTX_SUCCESS || GlError != GL_NO_ERROR)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
                       "ktxTexture_GLUpload failed. Error: %d, GL Error: 0x%x",
-                      glUploadResult, GlError);
+                      GlUploadResult, GlError);
             ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(pTexture));
             return nullptr;
         }
@@ -444,7 +444,6 @@ CTexture2D::~CTexture2D()
 
 void CTexture2D::bindTexture() const
 {
-    LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Binding texture ID: %d", m_TextureHandle);
     glBindTexture(GL_TEXTURE_2D, m_TextureHandle);
 }
 
