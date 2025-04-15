@@ -1,0 +1,17 @@
+{
+  "SmallSnowFore": {
+    "frames_path": "textures/HeavyRain_forepre_png8_mergedpngASTC4x4",
+    "sequenceRows": 8,
+    "sequenceCols": 4,
+    "frames_type" : "ktx2",
+    "frames_count": 1,
+    "one_texture_frames": 4,
+    "fps": 60,
+    "play_mode": "channel",
+    "vertex_shader" : "shaders/quantizationSeq.vert",
+    "fragment_shader" : "shaders/quantizationSeq8bitRain.frag"
+  },
+  "Background":{
+    "frames_path": "textures/park.png"
+  }
+}

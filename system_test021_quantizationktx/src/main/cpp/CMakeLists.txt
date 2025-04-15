@@ -15,7 +15,10 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         Renderer.cpp
-        system_test021_quantizationktx.cpp)
+        system_test021_quantizationktx.cpp
+        Renderers/KtxSequencePlayerRenderer.cpp
+        Renderers/QuantizationSeqPlayer.cpp
+)
 
 
 set(REQUIRED_PACKAGES

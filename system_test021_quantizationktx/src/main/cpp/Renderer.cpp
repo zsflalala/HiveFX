@@ -1,8 +1,11 @@
 #include "Renderer.h"
 #include <game-activity/native_app_glue/android_native_app_glue.h>
-#include <GLES3/gl3.h>
+#include <EGL/egl.h>
+#include <GLES3/gl32.h>
 #include <cassert>
 #include <algorithm>
+#include "Renderers/KtxSequencePlayerRenderer.h"
+#include "Renderers/QuantizationSeqPlayer.h"
 #include "Common.h"
 
 using namespace hiveVG;
@@ -31,75 +34,105 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
+    if (m_pTestPlayer)       delete m_pTestPlayer;
+    if (m_pQuantizationSeqPlayer)       delete m_pQuantizationSeqPlayer;
 }
 
 void CRenderer::__initRenderer()
 {
     constexpr EGLint Attributes[] = {
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-            EGL_BLUE_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_RED_SIZE, 8,
-            EGL_DEPTH_SIZE, 24,
+            EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
+            EGL_BLUE_SIZE,      8,
+            EGL_GREEN_SIZE,     8,
+            EGL_RED_SIZE,       8,
+            EGL_ALPHA_SIZE,     8,
+            EGL_DEPTH_SIZE,     24,
+            EGL_STENCIL_SIZE,   8,
             EGL_NONE
     };
 
-    auto Display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    eglInitialize(Display, nullptr, nullptr);
+    m_Display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if (m_Display == EGL_NO_DISPLAY) {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Failed to get EGL display");
+        return;
+    }
 
-    EGLint NumConfigs;
-    eglChooseConfig(Display, Attributes, nullptr, 0, &NumConfigs);
+    if (!eglInitialize(m_Display, nullptr, nullptr)) {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::RENDERER_TAG, "EGL initialization failed");
+        return;
+    }
 
+    EGLint NumConfigs = 0;
+    eglChooseConfig(m_Display, Attributes, nullptr, 0, &NumConfigs);
     std::unique_ptr<EGLConfig[]> pSupportedConfigs(new EGLConfig[NumConfigs]);
-    eglChooseConfig(Display, Attributes, pSupportedConfigs.get(), NumConfigs, &NumConfigs);
+    eglChooseConfig(m_Display, Attributes, pSupportedConfigs.get(), NumConfigs, &NumConfigs);
 
     auto pConfig = *std::find_if(
             pSupportedConfigs.get(),
             pSupportedConfigs.get() + NumConfigs,
-            [&Display](const EGLConfig &Config)
-            {
+            [this](const EGLConfig &Config) {
                 EGLint Red, Green, Blue, Depth;
-                if (eglGetConfigAttrib(Display, Config, EGL_RED_SIZE, &Red)
-                    && eglGetConfigAttrib(Display, Config, EGL_GREEN_SIZE, &Green)
-                    && eglGetConfigAttrib(Display, Config, EGL_BLUE_SIZE, &Blue)
-                    && eglGetConfigAttrib(Display, Config, EGL_DEPTH_SIZE, &Depth))
+                if (eglGetConfigAttrib(m_Display, Config, EGL_RED_SIZE, &Red) &&
+                    eglGetConfigAttrib(m_Display, Config, EGL_GREEN_SIZE, &Green) &&
+                    eglGetConfigAttrib(m_Display, Config, EGL_BLUE_SIZE, &Blue) &&
+                    eglGetConfigAttrib(m_Display, Config, EGL_DEPTH_SIZE, &Depth))
                 {
-
-                    LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Found pConfig with Red: %d, Green: %d, Blue: %d, Depth: %d", Red, Green, Blue, Depth);
+                    LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG,
+                             "Config: R%d G%d B%d D%d", Red, Green, Blue, Depth);
                     return Red == 8 && Green == 8 && Blue == 8 && Depth == 24;
                 }
                 return false;
             });
 
-    LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Found %d configs", NumConfigs);
-
     EGLint Format;
-    eglGetConfigAttrib(Display, pConfig, EGL_NATIVE_VISUAL_ID, &Format);
-    EGLSurface Surface = eglCreateWindowSurface(Display, pConfig, m_pApp->window, nullptr);
+    eglGetConfigAttrib(m_Display, pConfig, EGL_NATIVE_VISUAL_ID, &Format);
+    ANativeWindow_setBuffersGeometry(m_pApp->window, 0, 0, Format);
+    m_Surface = eglCreateWindowSurface(m_Display, pConfig, m_pApp->window, nullptr);
+    if (m_Surface == EGL_NO_SURFACE) {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Failed to create EGL surface");
+        return;
+    }
 
-    EGLint ContextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
-    EGLContext Context = eglCreateContext(Display, pConfig, nullptr, ContextAttribs);
+    const EGLint ContextAttribs[] = {
+            EGL_CONTEXT_MAJOR_VERSION, 3,
+            EGL_CONTEXT_MINOR_VERSION, 2,
+            EGL_NONE
+    };
 
-    auto MadeCurrent = eglMakeCurrent(Display, Surface, Surface, Context);
-    assert(MadeCurrent);
+    m_Context = eglCreateContext(m_Display, pConfig, nullptr, ContextAttribs);
+    if (m_Context == EGL_NO_CONTEXT) {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::RENDERER_TAG,
+                  "OpenGL ES 3.2 is NOT supported on this device");
+        return;
+    }
 
-    m_Display = Display;
-    m_Surface = Surface;
-    m_Context = Context;
+    if (!eglMakeCurrent(m_Display, m_Surface, m_Surface, m_Context)) {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Failed to make context current");
+        return;
+    }
+
+    const char* glVersion = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG,
+             "Successfully initialized OpenGL ES %s", glVersion);
 }
 
 void CRenderer::renderScene()
 {
     __updateRenderArea();
+/*
+    if (m_pTestPlayer == nullptr) m_pTestPlayer = new CASTCSequencePlayerRenderer(m_pApp);
+    m_pTestPlayer->renderScene(m_WindowWidth, m_WindowHeight);*/
 
-    glClearColor(0.345f, 0.345f, 0.345f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    if (m_pQuantizationSeqPlayer == nullptr)
+        m_pQuantizationSeqPlayer = new CQuantizationSeqPlayer();
+    m_pQuantizationSeqPlayer->renderScene(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
-  void CRenderer::__updateRenderArea()
+
+void CRenderer::__updateRenderArea()
 {
     EGLint Width, Height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);
