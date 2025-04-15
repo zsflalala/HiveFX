@@ -8,10 +8,12 @@
 #include "Logging.h"
 #include "FileUtils.h"
 #include "TimeUtils.h"
+#include <omp.h>
+#include "ktx.h"
 
 using namespace hiveVG;
 
-CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
+CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath)
 {
     int Width, Height;
     EPictureType::EPictureType Type = EPictureType::EPictureType::PNG;
@@ -19,13 +21,13 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath)
     return pTexture;
 }
 
-CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType, bool vIsCompressed)
+CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType &vPictureType, bool vIsCompressed, bool vHasAlpha)
 {
     std::unique_ptr<unsigned char[]> pBuffer;
     size_t AssetSize;
     bool IsReadFromAssetManager = true;
-    auto pAsset = CFileUtils::openFile(vTexturePath.c_str(),IsReadFromAssetManager);
-    if(!pAsset)
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str(), IsReadFromAssetManager);
+    if (!pAsset)
     {
         IsReadFromAssetManager = false;
         pAsset = CFileUtils::openFile(vTexturePath.c_str(), IsReadFromAssetManager);
@@ -35,15 +37,16 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
     pBuffer = std::make_unique<unsigned char[]>(AssetSize);
     int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize, IsReadFromAssetManager);
     CFileUtils::closeFile(pAsset, IsReadFromAssetManager);
-    if(Flag < 0)
+    if (Flag < 0)
         return nullptr;
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;
     unsigned char *pImageData = nullptr;
+
     if (vPictureType == EPictureType::PNG || vPictureType == EPictureType::JPG)
     {
-        pImageData = stbi_load_from_memory(pBuffer.get(),  static_cast<int>(AssetSize), &voWidth, &voHeight, &Channels, 0);
+        pImageData = stbi_load_from_memory(pBuffer.get(), static_cast<int>(AssetSize), &voWidth, &voHeight, &Channels, 0);
     }
     else if (vPictureType == EPictureType::WEBP)
     {
@@ -67,6 +70,135 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
             pImageData = WebPDecodeRGB(pBuffer.get(), AssetSize, &voWidth, &voHeight);
         }
     }
+    else if (vPictureType == EPictureType::KTX2)
+    {
+        ktxTexture2 *texture = nullptr;
+        KTX_error_code result = ktxTexture2_CreateFromMemory(
+            pBuffer.get(),
+            AssetSize,
+            KTX_TEXTURE_CREATE_NO_FLAGS,
+            &texture);
+
+        if (result != KTX_SUCCESS)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
+                      "Failed to load KTX2 texture from memory. Error code: %d", result);
+            return nullptr;
+        }
+        if (ktxTexture_NeedsTranscoding(ktxTexture(texture)))
+        {
+            // 选择目标平台支持的格式，例如 KTX_TTF_ETC2_RGBA
+            result = ktxTexture2_TranscodeBasis(texture, KTX_TTF_ETC2_RGBA, 0);
+            if (result != KTX_SUCCESS)
+            {
+                LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
+                          "Failed to transcode KTX2 texture. Error code: %d", result);
+                ktxTexture_Destroy(ktxTexture(texture));
+                return nullptr;
+            }
+        }
+
+        GLuint textureHandle = 0;
+        GLenum target = 0;
+        GLenum glError = GL_NO_ERROR;
+
+        KTX_error_code glUploadResult = ktxTexture_GLUpload(
+            reinterpret_cast<ktxTexture *>(texture),
+            &textureHandle,
+            &target,
+            &glError);
+        glBindTexture(GL_TEXTURE_2D, textureHandle);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        if (glUploadResult != KTX_SUCCESS || glError != GL_NO_ERROR)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
+                      "ktxTexture_GLUpload failed. Error: %d, GL Error: 0x%x",
+                      glUploadResult, glError);
+            ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(texture));
+            return nullptr;
+        }
+
+        voWidth = texture->baseWidth;
+        voHeight = texture->baseHeight;
+
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
+                 "Successfully loaded KTX texture. Width: %d, Height: %d, Target: 0x%x",
+                 voWidth, voHeight, target);
+
+        ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(texture));
+        return new CTexture2D(textureHandle);
+    }
+    else if (vPictureType == EPictureType::ETC1)
+    {
+        const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
+        if (!strstr(extensions, "GL_OES_compressed_ETC1_RGB8_texture"))
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Device does NOT support ETC1 compression!");
+            return nullptr;
+        }
+        else
+        {
+            LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Supported GL extensions: %s", extensions);
+        }
+
+        if (AssetSize < 16)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Invalid ETC1 file: too small");
+            return nullptr;
+        }
+
+        // PKM header validation
+        const uint8_t *header = pBuffer.get();
+        if (memcmp(header, "PKM ", 4) != 0 && memcmp(header, "PKM 10", 6) != 0)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Invalid ETC1 file: bad magic number");
+            return nullptr;
+        }
+
+        voWidth = (header[12] << 8) | header[13];
+        voHeight = (header[14] << 8) | header[15];
+
+        GLuint textureHandle;
+        glGenTextures(1, &textureHandle);
+        glBindTexture(GL_TEXTURE_2D, textureHandle);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // Upload ETC1 compressed texture (format from extension)
+        glCompressedTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_ETC1_RGB8_OES,
+            voWidth,
+            voHeight,
+            0,
+            AssetSize - 16,
+            pBuffer.get() + 16);
+
+        int texCompressed = 0;
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &texCompressed);
+        if (!texCompressed)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Texture is not compressed as expected.");
+        }
+
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to upload ETC1 texture (GL error: 0x%x)", err);
+            glDeleteTextures(1, &textureHandle);
+            return nullptr;
+        }
+
+        return new CTexture2D(textureHandle);
+    }
 
     if (!pImageData)
     {
@@ -80,9 +212,12 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
     }
 
     GLint Format = GL_RGB;
-    if (Channels == 3) Format = GL_RGB;
-    else if (Channels == 4) Format = GL_RGBA;
-    else if (Channels == 1) Format = GL_RED;
+    if (Channels == 3)
+        Format = GL_RGB;
+    else if (Channels == 4)
+        Format = GL_RGBA;
+    else if (Channels == 1)
+        Format = GL_RED;
 
     StartTime = CTimeUtils::getCurrentTime();
 
@@ -104,7 +239,7 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
         {
             for (uint32_t x = 0; x < voWidth; ++x)
             {
-                const uint8_t* src = pImageData + (y * voWidth + x) * 4;
+                const uint8_t *src = pImageData + (y * voWidth + x) * 4;
 
                 // 上半部分（R和Alpha通道）
                 uint8_t upperR = src[0];
@@ -115,13 +250,13 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
                 uint8_t lowerA = src[3];
 
                 // 填充目标像素
-                uint8_t* upperDst = OrigPixels.data() + ((y * voWidth) + x) * 4;
+                uint8_t *upperDst = OrigPixels.data() + ((y * voWidth) + x) * 4;
                 upperDst[0] = upperR; // R
                 upperDst[1] = upperR; // G
                 upperDst[2] = upperR; // B
                 upperDst[3] = upperA; // A
 
-                uint8_t* lowerDst = OrigPixels.data() + (((y + compHeight) * voWidth) + x) * 4;
+                uint8_t *lowerDst = OrigPixels.data() + (((y + compHeight) * voWidth) + x) * 4;
                 lowerDst[0] = lowerR; // R
                 lowerDst[1] = lowerR; // G
                 lowerDst[2] = lowerR; // B
@@ -145,13 +280,13 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
     return new CTexture2D(TextureHandle);
 }
 
-CTexture2D* CTexture2D::loadTextureFromPNG8(const std::string &vTexturePath)
+CTexture2D *CTexture2D::loadTextureFromPNG8(const std::string &vTexturePath)
 {
     std::unique_ptr<unsigned char[]> pBuffer;
     size_t AssetSize;
     bool IsReadFromAssetManager = true;
-    auto pAsset = CFileUtils::openFile(vTexturePath.c_str(),IsReadFromAssetManager);
-    if(!pAsset)
+    auto pAsset = CFileUtils::openFile(vTexturePath.c_str(), IsReadFromAssetManager);
+    if (!pAsset)
     {
         IsReadFromAssetManager = false;
         pAsset = CFileUtils::openFile(vTexturePath.c_str(), IsReadFromAssetManager);
@@ -161,7 +296,7 @@ CTexture2D* CTexture2D::loadTextureFromPNG8(const std::string &vTexturePath)
     pBuffer = std::make_unique<unsigned char[]>(AssetSize);
     int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize, IsReadFromAssetManager);
     CFileUtils::closeFile(pAsset, IsReadFromAssetManager);
-    if(Flag < 0)
+    if (Flag < 0)
         return nullptr;
 
     double StartTime = CTimeUtils::getCurrentTime();
@@ -208,7 +343,7 @@ CTexture2D* CTexture2D::loadTextureFromPNG8(const std::string &vTexturePath)
     return new CTexture2D(TextureHandle);
 }
 
-void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D*>& vTexture2DVec)
+void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D *> &vTexture2DVec)
 {
     auto pAsset = CFileUtils::openFile(vTexturePath.c_str());
     if (!pAsset)
@@ -216,13 +351,13 @@ void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, i
     size_t AssetSize = CFileUtils::getFileBytes(pAsset);
     std::unique_ptr<unsigned char[]> pBuffer(new unsigned char[AssetSize]);
     int Flag = CFileUtils::readFile<unsigned char>(pAsset, pBuffer.get(), AssetSize);
-    if(Flag < 0)
+    if (Flag < 0)
         return;
     CFileUtils::closeFile(pAsset);
 
     double StartTime = CTimeUtils::getCurrentTime();
     int Channels;
-    unsigned char *pImageData = stbi_load_from_memory(pBuffer.get(),  static_cast<int>(AssetSize), &voWidth, &voHeight, &Channels, 0);
+    unsigned char *pImageData = stbi_load_from_memory(pBuffer.get(), static_cast<int>(AssetSize), &voWidth, &voHeight, &Channels, 0);
 
     if (!pImageData)
     {
@@ -259,7 +394,7 @@ void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, i
     if (BaseTexHandle == 0 || EnhancedTexHandle == 0)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to create texture: %s", vTexturePath.c_str());
-        return ;
+        return;
     }
     else
     {
@@ -271,17 +406,20 @@ void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, i
     vTexture2DVec.push_back(new CTexture2D(EnhancedTexHandle));
 
     stbi_image_free(pImageData);
-    delete [] pImage1;
-    delete [] pImage2;
+    delete[] pImage1;
+    delete[] pImage2;
 }
-
-CTexture2D* CTexture2D::createEmptyTexture(int vWidth, int vHeight, int vChannels)
+CTexture2D *CTexture2D::createEmptyTexture(int vWidth, int vHeight, int vChannels)
 {
     GLint Format = GL_RGB;
-    if (vChannels == 3) Format = GL_RGB;
-    else if (vChannels == 4) Format = GL_RGBA;
-    else if (vChannels == 1) Format = GL_RED;
-    else LOG_WARN(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Channel Count is invalid, set default format [GL_RGB].");
+    if (vChannels == 3)
+        Format = GL_RGB;
+    else if (vChannels == 4)
+        Format = GL_RGBA;
+    else if (vChannels == 1)
+        Format = GL_RED;
+    else
+        LOG_WARN(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Channel Count is invalid, set default format [GL_RGB].");
 
     double StartTime = CTimeUtils::getCurrentTime();
 
@@ -309,6 +447,7 @@ CTexture2D::~CTexture2D()
 
 void CTexture2D::bindTexture() const
 {
+    LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Binding texture ID: %d", m_TextureHandle);
     glBindTexture(GL_TEXTURE_2D, m_TextureHandle);
 }
 
@@ -327,7 +466,6 @@ GLuint CTexture2D::__createHandle(GLint vFormat, int vWidth, int vHeight, unsign
 
     glTexImage2D(GL_TEXTURE_2D, 0, vFormat, vWidth, vHeight, 0, vFormat, GL_UNSIGNED_BYTE, vImgData);
     glGenerateMipmap(GL_TEXTURE_2D);
-
     bool IsValid = (glIsTexture(TextureHandle) == GL_TRUE);
     if (!IsValid)
         return 0;

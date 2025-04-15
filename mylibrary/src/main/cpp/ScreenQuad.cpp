@@ -64,7 +64,7 @@ CScreenQuad::CScreenQuad()
 
     glGenBuffers(1, &m_VertexBufferHandle);
     glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
     glGenBuffers(1, &m_IndexBufferHandle);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle);
