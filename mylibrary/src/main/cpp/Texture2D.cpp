@@ -8,7 +8,6 @@
 #include "Logging.h"
 #include "FileUtils.h"
 #include "TimeUtils.h"
-#include <omp.h>
 #include "ktx.h"
 
 using namespace hiveVG;
@@ -21,7 +20,7 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath)
     return pTexture;
 }
 
-CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType &vPictureType, bool vIsCompressed, bool vHasAlpha)
+CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType &vPictureType, bool vIsCompressed)
 {
     std::unique_ptr<unsigned char[]> pBuffer;
     size_t AssetSize;
@@ -72,77 +71,77 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
     }
     else if (vPictureType == EPictureType::KTX2)
     {
-        ktxTexture2 *texture = nullptr;
-        KTX_error_code result = ktxTexture2_CreateFromMemory(
+        ktxTexture2 *pTexture = nullptr;
+        KTX_error_code Result = ktxTexture2_CreateFromMemory(
             pBuffer.get(),
             AssetSize,
             KTX_TEXTURE_CREATE_NO_FLAGS,
-            &texture);
+            &pTexture);
 
-        if (result != KTX_SUCCESS)
+        if (Result != KTX_SUCCESS)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
-                      "Failed to load KTX2 texture from memory. Error code: %d", result);
+                      "Failed to load KTX2 pTexture from memory. Error code: %d", Result);
             return nullptr;
         }
-        if (ktxTexture_NeedsTranscoding(ktxTexture(texture)))
+        if (ktxTexture_NeedsTranscoding(ktxTexture(pTexture)))
         {
-            // 选择目标平台支持的格式，例如 KTX_TTF_ETC2_RGBA
-            result = ktxTexture2_TranscodeBasis(texture, KTX_TTF_ETC2_RGBA, 0);
-            if (result != KTX_SUCCESS)
+            Result = ktxTexture2_TranscodeBasis(pTexture, KTX_TTF_ETC2_RGBA, 0);
+            if (Result != KTX_SUCCESS)
             {
                 LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
-                          "Failed to transcode KTX2 texture. Error code: %d", result);
-                ktxTexture_Destroy(ktxTexture(texture));
+                          "Failed to transcode KTX2 pTexture. Error code: %d", Result);
+                ktxTexture_Destroy(ktxTexture(pTexture));
                 return nullptr;
             }
         }
 
-        GLuint textureHandle = 0;
-        GLenum target = 0;
-        GLenum glError = GL_NO_ERROR;
+        GLuint TextureHandle = 0;
+        GLenum Target = 0;
+        GLenum GlError = GL_NO_ERROR;
 
         KTX_error_code glUploadResult = ktxTexture_GLUpload(
-            reinterpret_cast<ktxTexture *>(texture),
-            &textureHandle,
-            &target,
-            &glError);
-        glBindTexture(GL_TEXTURE_2D, textureHandle);
+            reinterpret_cast<ktxTexture *>(pTexture),
+            &TextureHandle,
+            &Target,
+            &GlError);
 
+        glBindTexture(GL_TEXTURE_2D, TextureHandle);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        if (glUploadResult != KTX_SUCCESS || glError != GL_NO_ERROR)
+
+        if (glUploadResult != KTX_SUCCESS || GlError != GL_NO_ERROR)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
                       "ktxTexture_GLUpload failed. Error: %d, GL Error: 0x%x",
-                      glUploadResult, glError);
-            ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(texture));
+                      glUploadResult, GlError);
+            ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(pTexture));
             return nullptr;
         }
 
-        voWidth = texture->baseWidth;
-        voHeight = texture->baseHeight;
+        voWidth = pTexture->baseWidth;
+        voHeight = pTexture->baseHeight;
 
         LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
-                 "Successfully loaded KTX texture. Width: %d, Height: %d, Target: 0x%x",
-                 voWidth, voHeight, target);
+                 "Successfully loaded KTX pTexture. Width: %d, Height: %d, Target: 0x%x",
+                 voWidth, voHeight, Target);
 
-        ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(texture));
-        return new CTexture2D(textureHandle);
+        ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(pTexture));
+        return new CTexture2D(TextureHandle);
     }
     else if (vPictureType == EPictureType::ETC1)
     {
-        const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
-        if (!strstr(extensions, "GL_OES_compressed_ETC1_RGB8_texture"))
+        const char *pExtensions = (const char *)glGetString(GL_EXTENSIONS);
+        if (!strstr(pExtensions, "GL_OES_compressed_ETC1_RGB8_texture"))
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Device does NOT support ETC1 compression!");
             return nullptr;
         }
         else
         {
-            LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Supported GL extensions: %s", extensions);
+            LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Supported GL extensions: %s", pExtensions);
         }
 
         if (AssetSize < 16)
@@ -151,27 +150,25 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
             return nullptr;
         }
 
-        // PKM header validation
-        const uint8_t *header = pBuffer.get();
-        if (memcmp(header, "PKM ", 4) != 0 && memcmp(header, "PKM 10", 6) != 0)
+        const uint8_t *pHeader = pBuffer.get();
+        if (memcmp(pHeader, "PKM ", 4) != 0 && memcmp(pHeader, "PKM 10", 6) != 0)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Invalid ETC1 file: bad magic number");
             return nullptr;
         }
 
-        voWidth = (header[12] << 8) | header[13];
-        voHeight = (header[14] << 8) | header[15];
+        voWidth = (pHeader[12] << 8) | pHeader[13];
+        voHeight = (pHeader[14] << 8) | pHeader[15];
 
-        GLuint textureHandle;
-        glGenTextures(1, &textureHandle);
-        glBindTexture(GL_TEXTURE_2D, textureHandle);
+        GLuint TextureHandle;
+        glGenTextures(1, &TextureHandle);
+        glBindTexture(GL_TEXTURE_2D, TextureHandle);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        // Upload ETC1 compressed texture (format from extension)
         glCompressedTexImage2D(
             GL_TEXTURE_2D,
             0,
@@ -182,22 +179,22 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
             AssetSize - 16,
             pBuffer.get() + 16);
 
-        int texCompressed = 0;
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &texCompressed);
-        if (!texCompressed)
+        int TexCompressed = 0;
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &TexCompressed);
+        if (!TexCompressed)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Texture is not compressed as expected.");
         }
 
-        GLenum err = glGetError();
-        if (err != GL_NO_ERROR)
+        GLenum Error = glGetError();
+        if (Error != GL_NO_ERROR)
         {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to upload ETC1 texture (GL error: 0x%x)", err);
-            glDeleteTextures(1, &textureHandle);
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Failed to upload ETC1 texture (GL error: 0x%x)", Error);
+            glDeleteTextures(1, &TextureHandle);
             return nullptr;
         }
 
-        return new CTexture2D(textureHandle);
+        return new CTexture2D(TextureHandle);
     }
 
     if (!pImageData)
