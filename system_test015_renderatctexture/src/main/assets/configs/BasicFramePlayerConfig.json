@@ -1,8 +1,8 @@
 {
   "sequence_config": {
-    "frames_path": "textures/SmallSnow_foreASTC12x12",
-    "frames_type" : "astc",
-    "frames_count": 1,
+    "frames_path": "textures/BigSnow_foreASTC4x4",
+    "frames_type" : "ktx2",
+    "frames_count": 128,
     "play_mode": "partial",
     "position": {
       "x": -1.0,
@@ -13,5 +13,8 @@
     "moving_speed": [0.2, 0.0],
     "scale": 0.6,
     "blend_mode": "additive"
-  }
+  },
+  "Background":{
+  "frames_path": "textures/park.png"
+}
 }

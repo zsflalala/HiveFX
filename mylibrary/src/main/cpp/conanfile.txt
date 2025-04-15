@@ -2,7 +2,7 @@
 glm/1.0.1
 libwebp/1.5.0
 jsoncpp/1.9.6
-astc-codec/cci.20190617
+astc-codec/cci.2019061
 [generators]
 CMakeDeps
 CMakeToolchain

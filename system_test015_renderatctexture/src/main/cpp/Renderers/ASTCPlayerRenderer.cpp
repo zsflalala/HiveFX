@@ -18,7 +18,8 @@ CASTCPlayerRenderer::CASTCPlayerRenderer(android_app *vApp) : m_pApp(vApp)
 CASTCPlayerRenderer::~CASTCPlayerRenderer()
 {
     if (m_pScreenQuad)              delete m_pScreenQuad;
-    if (m_pTestPlayer)     delete m_pTestPlayer;
+    if (m_pTestPlayer)              delete m_pTestPlayer;
+    if (m_pSingleFramePlayer)       delete m_pSingleFramePlayer;
 }
 
 void CASTCPlayerRenderer::__initAlgorithm()
@@ -49,6 +50,11 @@ void CASTCPlayerRenderer::__initAlgorithm()
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
     }
+    Json::Value BackGroundConfig = JsonReader.getObject("Background");
+    std::string ImgPath = BackGroundConfig["frames_path"].asString();
+    m_pSingleFramePlayer   = new CSingleTexturePlayer(ImgPath,EPictureType::EPictureType::PNG);
+    m_pSingleFramePlayer->initTextureAndShaderProgram();
+
     m_pTestPlayer->setFrameRate(PlayFPS);
     m_pTestPlayer->setLoopPlayback(IsLoop);
     m_pScreenQuad = CScreenQuad::getOrCreate();
@@ -61,11 +67,16 @@ void CASTCPlayerRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
-    glClearColor(0.1f,0.1f,0.1f, 0.0f);
+    glClearColor(0.345f,0.345f,0.345f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    //  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     m_pTestPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
-    m_pTestPlayer->drawASTC(m_pScreenQuad);
+    m_pTestPlayer->draw(m_pScreenQuad);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    m_pSingleFramePlayer->updateFrame();
+    m_pScreenQuad->bindAndDraw();
 }

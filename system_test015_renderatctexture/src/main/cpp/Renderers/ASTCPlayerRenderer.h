@@ -32,5 +32,6 @@ namespace hiveVG
         android_app*               m_pApp                 = nullptr;
         CScreenQuad*               m_pScreenQuad          = nullptr;
         CSequenceFramePlayer*      m_pTestPlayer          = nullptr;
+        CSingleTexturePlayer*      m_pSingleFramePlayer   = nullptr;
     };
 }

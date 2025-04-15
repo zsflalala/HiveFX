@@ -25,6 +25,7 @@ namespace hiveVG
         static CTexture2D* loadTexture(const std::string &vTexturePath);
         static CTexture2D* loadTexture(const std::string &vTexturePath, int &voWidth, int &voHeight, EPictureType::EPictureType& vPictureType, bool vIsCompressed = false, bool vHasAlpha=true);
         static void        loadTextureFromCompressedPNG(const std::string &vTexturePath, int &voWidth, int &voHeight, std::vector<CTexture2D*>& vTexture2DVec);
+        static CTexture2D* loadKTX2Texture(const std::string &vTexturePath, int &voWidth, int &voHeight,EPictureType::EPictureType& vPictureType);
         static CTexture2D* createEmptyTexture(int vWidth, int vHeight, int vChannels);
         ~CTexture2D();
         void setNormalMat(float* matrix) {

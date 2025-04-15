@@ -7,7 +7,7 @@
 #include "FileUtils.h"
 #include "TimeUtils.h"
 #include <omp.h>
-
+#include "ktx.h"
 
 using namespace hiveVG;
 
@@ -67,92 +67,66 @@ CTexture2D* CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
             Channels = 3;
             pImageData = WebPDecodeRGB(pBuffer.get(), AssetSize, &voWidth, &voHeight);
         }
-    }else if (vPictureType == EPictureType::ASTC)
+    }else if (vPictureType == EPictureType::KTX2)
     {
-        const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-        if (!strstr(extensions, "GL_KHR_texture_compression_astc_ldr")) {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Device does NOT support ASTC compression!");
-        }else
-            LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Supported GL extensions: %s", extensions);
-       ASTCHeader header;
-       if (AssetSize < sizeof(ASTCHeader)) {
-           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Invalid ASTC file: too small");
-           return nullptr;
-       }
-       memcpy(&header, pBuffer.get(), sizeof(ASTCHeader));
+        ktxTexture2* texture = nullptr;
+        KTX_error_code result = ktxTexture2_CreateFromMemory(
+                pBuffer.get(),
+                AssetSize,
+                KTX_TEXTURE_CREATE_NO_FLAGS,
+                &texture
+        );
 
-       if (memcmp(header.magic, "\x13\xAB\xA1\x5C", 4) != 0) {
-           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Invalid ASTC file: bad magic number");
-           return nullptr;
-       }
+        if (result != KTX_SUCCESS) {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
+                      "Failed to load KTX2 texture from memory. Error code: %d", result);
+            return nullptr;
+        }
+        if (ktxTexture_NeedsTranscoding(ktxTexture(texture))) {
+            // 选择目标平台支持的格式，例如 KTX_TTF_ETC2_RGBA
+            result = ktxTexture2_TranscodeBasis(texture, KTX_TTF_ETC2_RGBA, 0);
+            if (result != KTX_SUCCESS) {
+                LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
+                          "Failed to transcode KTX2 texture. Error code: %d", result);
+                ktxTexture_Destroy(ktxTexture(texture));
+                return nullptr;
+            }
+        }
 
-       voWidth = header.dim_x[0] | (header.dim_x[1] << 8) | (header.dim_x[2] << 16);
-       voHeight = header.dim_y[0] | (header.dim_y[1] << 8) | (header.dim_y[2] << 16);
-       uint32_t blockdim_x = header.block_x;
-       uint32_t blockdim_y = header.block_y;
-       uint32_t blockdim_z = header.block_z;
-       uint32_t xblocks = (voWidth + blockdim_x - 1) / blockdim_x;
-       uint32_t yblocks = (voHeight + blockdim_y - 1) / blockdim_y;
-       uint32_t zblocks = (1 + blockdim_z - 1) / blockdim_z;
-       size_t len = xblocks * yblocks * zblocks * 16;
-       if (len != AssetSize - sizeof(ASTCHeader)) {
-           LOG_WARN(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Warning: Computed ASTC data size (%zu) doesn't match actual (%zu)", len, AssetSize - sizeof(ASTCHeader));
-       }
+        GLuint textureHandle = 0;
+        GLenum target = 0;
+        GLenum glError = GL_NO_ERROR;
 
-       GLenum internalFormat = __getASTCInternalFormat(header.block_x, header.block_y);
-       if (internalFormat == 0) {
-           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Unsupported ASTC block size: %dx%d", header.block_x, header.block_y);
-           return nullptr;
-       }
-       StartTime = CTimeUtils::getCurrentTime();
-       GLuint textureHandle;
-       glGenTextures(1, &textureHandle);
-       glBindTexture(GL_TEXTURE_2D, textureHandle);
-
-       // 6. 设置纹理参数
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        KTX_error_code glUploadResult = ktxTexture_GLUpload(
+                reinterpret_cast<ktxTexture*>(texture),
+                &textureHandle,
+                &target,
+                &glError
+        );
+        glBindTexture(GL_TEXTURE_2D, textureHandle);
+        
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_ASTC_DECODE_PRECISION_EXT, GL_RGBA8);
-       // 7. 直接上传压缩数据（跳过16字节头）
-       glCompressedTexImage2D(
-               GL_TEXTURE_2D,
-               0,
-               internalFormat,
-               voWidth,
-               voHeight,
-               0,
-               len,
-               pBuffer.get() + sizeof(ASTCHeader)
-       );
-        //glGenerateMipmap(GL_TEXTURE_2D);
-
-
-        int texWidth = 0, texHeight = 0, texCompressed = 0;
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texWidth);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texHeight);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &texCompressed);
-
-        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Texture Width: %d, Height: %d, Compressed: %d", texWidth, texHeight, texCompressed);
-
-        if (texWidth == 0 || texHeight == 0) {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Texture upload failed! Width or height is 0.");
-        }
-        if (!texCompressed) {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Texture is not compressed as expected.");
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        if (glUploadResult != KTX_SUCCESS || glError != GL_NO_ERROR) {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
+                      "ktxTexture_GLUpload failed. Error: %d, GL Error: 0x%x",
+                      glUploadResult, glError);
+            ktxTexture_Destroy(reinterpret_cast<ktxTexture*>(texture));
+            return nullptr;
         }
 
-        double EndTime = CTimeUtils::getCurrentTime();
-        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG, "Loading image %s from memory to GPU costs time: %f", vTexturePath.c_str(), EndTime - StartTime);
-       // 9. 检查错误
-       GLenum err = glGetError();
-       if (err != GL_NO_ERROR) {
-           LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,"Failed to upload ASTC texture (GL error: 0x%x)", err);
-           glDeleteTextures(1, &textureHandle);
-           return nullptr;
-       }
-       return new CTexture2D(textureHandle);
+        voWidth = texture->baseWidth;
+        voHeight = texture->baseHeight;
+
+        LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
+                 "Successfully loaded KTX texture. Width: %d, Height: %d, Target: 0x%x",
+                 voWidth, voHeight, target);
+
+        ktxTexture_Destroy(reinterpret_cast<ktxTexture*>(texture));
+        return new CTexture2D(textureHandle);
+
     }else if (vPictureType == EPictureType::ETC1)
    {
        const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
@@ -376,7 +350,6 @@ void CTexture2D::loadTextureFromCompressedPNG(const std::string &vTexturePath, i
     delete [] pImage1;
     delete [] pImage2;
 }
-
 CTexture2D* CTexture2D::createEmptyTexture(int vWidth, int vHeight, int vChannels)
 {
     GLint Format = GL_RGB;

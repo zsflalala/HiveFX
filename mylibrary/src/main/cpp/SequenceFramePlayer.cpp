@@ -51,10 +51,21 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
     else if (m_TextureType == EPictureType::ASTC) PictureSuffix = ".astc";
     else if (m_TextureType == EPictureType::ETC1) PictureSuffix = ".pkm";
+    else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
-        if (!m_UseCompressedPNG)
+       /* if (!m_UseCompressedPNG && m_TextureType == EPictureType::KTX2)
+        {
+            CTexture2D* pSequenceTexture = CTexture2D::loadKTX2Texture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
+            if (!pSequenceTexture)
+            {
+                LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+                return false;
+            }
+            m_SeqTextures.push_back(pSequenceTexture);
+        }
+        else*/ if (!m_UseCompressedPNG)
         {
             CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
             if (!pSequenceTexture)
@@ -81,6 +92,8 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     else if (m_TextureType == EPictureType::ETC2)
         m_pSequenceShaderProgram = CShaderProgram::createProgram("shaders/astcTexturePlayer.vert","shaders/sequenceTexturePlayerASTC.frag");
     else if (m_TextureType == EPictureType::ETC1)
+        m_pSequenceShaderProgram = CShaderProgram::createProgram("shaders/astcTexturePlayer.vert","shaders/sequenceTexturePlayerASTC.frag");
+    else if (m_TextureType == EPictureType::KTX2)
         m_pSequenceShaderProgram = CShaderProgram::createProgram("shaders/astcTexturePlayer.vert","shaders/sequenceTexturePlayerASTC.frag");
 
     if (!m_pSequenceShaderProgram)
