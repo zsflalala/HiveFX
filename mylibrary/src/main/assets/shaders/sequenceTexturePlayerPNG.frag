@@ -11,5 +11,5 @@ void main()
 {
     vec2 TexCoords = (TexCoord * texUVScale) + texUVOffset;
     vec4 TexColor = texture(sequenceTexture, TexCoords);
-    FragColor = vec4(TexColor.rgb,0.3);
+    FragColor = TexColor;
 }
