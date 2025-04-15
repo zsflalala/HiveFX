@@ -48,8 +48,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
     else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
-    else if (m_TextureType == EPictureType::ASTC) PictureSuffix = ".astc";
-    else if (m_TextureType == EPictureType::ETC1) PictureSuffix = ".pkm";
+    else if (m_TextureType == EPictureType::PKM) PictureSuffix = ".pkm";
     else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
     for (int i = 0; i < m_TextureCount; i++)
     {
@@ -76,14 +75,10 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
         m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
     else if (m_TextureType == EPictureType::JPG)
         m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragJPG);
-    else if (m_TextureType == EPictureType::ASTC)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram("shaders/astcTexturePlayer.vert","shaders/sequenceTexturePlayerASTC.frag");
-    else if (m_TextureType == EPictureType::ETC2)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram("shaders/astcTexturePlayer.vert","shaders/sequenceTexturePlayerASTC.frag");
-    else if (m_TextureType == EPictureType::ETC1)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram("shaders/astcTexturePlayer.vert","shaders/sequenceTexturePlayerASTC.frag");
+    else if (m_TextureType == EPictureType::PKM)
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
     else if (m_TextureType == EPictureType::KTX2)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram("shaders/astcTexturePlayer.vert","shaders/sequenceTexturePlayerASTC.frag");
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
 
     if (!m_pSequenceShaderProgram)
     {

@@ -131,7 +131,7 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
         ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(pTexture));
         return new CTexture2D(TextureHandle);
     }
-    else if (vPictureType == EPictureType::ETC1)
+    else if (vPictureType == EPictureType::PKM)
     {
         const char *pExtensions = (const char *)glGetString(GL_EXTENSIONS);
         if (!strstr(pExtensions, "GL_OES_compressed_ETC1_RGB8_texture"))

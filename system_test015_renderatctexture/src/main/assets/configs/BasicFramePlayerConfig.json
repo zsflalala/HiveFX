@@ -1,7 +1,7 @@
 {
   "sequence_config": {
-    "frames_path": "textures/BigSnow_foreASTC4x4",
-    "frames_type" : "ktx2",
+    "frames_path": "textures/SmallSnow_foreETC1",
+    "frames_type" : "pkm",
     "frames_count": 128,
     "play_mode": "partial",
     "position": {
