@@ -35,6 +35,7 @@ namespace hiveVG
 
         bool initTextureAndShaderProgram();
         void updateFrames();
+        void updateFramesWithInterpolation();
         void setFrameRate(int vFrameRate) { m_FrameRate = vFrameRate; }
         void setLoopPlayback(bool vLoopTag)   { m_IsLoop = vLoopTag; }
         void setValidFrames(int vValidFrames) { m_ValidFrames = vValidFrames; }
@@ -59,6 +60,7 @@ namespace hiveVG
         int                                  m_ValidFrames;
         int				                     m_SequeceSingleTextureWidth;
         int				                     m_SequeceSingleTextureHeight;
+        int                                  m_FrameCount             = 0;
         double                               m_LastFrameTime          = 0;
         double                               m_FrameLoadTimeThreshold = 0.1f;
         double                               m_CPULoadedTime;

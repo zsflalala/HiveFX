@@ -56,7 +56,7 @@ bool CAsyncSequenceFramePlayer::initTextureAndShaderProgram()
                                  { this->__loadTextureDataAsync(i, TexturePath, m_LoadedTextures, m_LoadTextureToCPUMutex, m_FramesToUploadGPU); });
     }
 
-    m_pAsyncShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert,SingleTexPlayFragPNG);
+    m_pAsyncShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert,SingleTexPlayFragPNGWithInterpolation);
     assert(m_pAsyncShaderProgram != nullptr);
 
     m_GPULoadedTime = CTimeUtils::getCurrentTime();
@@ -146,6 +146,77 @@ void CAsyncSequenceFramePlayer::updateFrames()
     m_pAsyncShaderProgram->setUniform("quadTexture", 0);
     glBindTexture(GL_TEXTURE_2D, m_pTextureHandles[m_LastLoadedFrame]);
     glActiveTexture(GL_TEXTURE0);
+}
+
+void CAsyncSequenceFramePlayer::updateFramesWithInterpolation()
+{
+    if (!m_FramesToUploadGPU.empty())
+    {
+        std::vector<int> FramesToUpload;  // 用于存储待上传的帧
+        {
+            std::lock_guard<std::mutex> lock(m_LoadTextureToCPUMutex);  // 加锁访问
+            FramesToUpload.assign(m_FramesToUploadGPU.begin(), m_FramesToUploadGPU.end());
+            m_FramesToUploadGPU.clear();  // 清空待上传队列
+        }
+
+        for (int FrameToUpload : FramesToUpload)
+        {
+            __uploadTexturesToGPU(FrameToUpload, m_LoadedTextures, m_pTextureHandles, m_FrameLoadedGPU);
+        }
+    }
+    double CurrentTime = CTimeUtils::getCurrentTime();
+    if (m_CPUCostTime.size() == m_TextureCount)
+    {
+        double CPUAverageTime = __getCostTime(m_CPUCostTime);
+        LOG_INFO(TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Loading all textures in CPU costs average time : %f, costs sum time : %f, actually costs time : %f", CPUAverageTime, CPUAverageTime * m_TextureCount, CurrentTime - m_CPULoadedTime);
+        m_CPUCostTime.clear();
+    }
+    if (m_GPUCostTime.size() == m_TextureCount)
+    {
+        double GPUAverageTime = __getCostTime(m_GPUCostTime);
+        LOG_INFO(TAG_KEYWORD::ASYNC_SEQFRAME_PALYER_TAG, "Loading all textures in GPU costs average time : %f and costs sum time : %f, actually costs time : %f", GPUAverageTime, GPUAverageTime * m_TextureCount, CurrentTime - m_GPULoadedTime);
+        m_GPUCostTime.clear();
+    }
+
+    if (m_FrameLoadedGPU[m_Frame].load())
+    {
+        m_LastLoadedFrame = (m_FrameCount / 3) % m_TextureCount;
+        m_Frame = (m_FrameCount / 3 + 1) % m_TextureCount;
+        double FrameTime = 1.0 / m_FrameRate;
+        if (CurrentTime - m_LastFrameTime >= FrameTime)
+        {
+            if (!m_IsLoop && m_Frame == m_ValidFrames - 1)
+            {
+                m_IsFinished = true;
+                return;
+            }
+            m_LastFrameTime = CurrentTime;
+        }
+    }
+
+    // 获取当前插值因子
+    float interpolationFactor = 0.0f;
+    if (m_FrameCount % 3 == 0)
+    {
+        interpolationFactor = 0.0f;  // 渲染图片1
+    } else if (m_FrameCount % 3 == 1)
+    {
+        interpolationFactor = 0.5f;  // 渲染图片1和图片2的插值
+    } else
+    {
+        interpolationFactor = 1.0f;  // 渲染图片2
+    }
+
+    m_pAsyncShaderProgram->useProgram();
+    m_pAsyncShaderProgram->setUniform("quadTexture0", 0);
+    m_pAsyncShaderProgram->setUniform("quadTexture1", 1);
+    m_pAsyncShaderProgram->setUniform("interpolationFactor", interpolationFactor);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_pTextureHandles[m_LastLoadedFrame]);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_pTextureHandles[m_Frame]);
+
+    m_FrameCount ++;
 }
 
 void CAsyncSequenceFramePlayer::__loadTextureDataAsync(int vFrameIndex,
