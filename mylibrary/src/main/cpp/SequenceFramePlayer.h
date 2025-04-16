@@ -36,6 +36,8 @@ namespace hiveVG
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
 
         bool initTextureAndShaderProgram();
+        bool initTextureAndShaderProgram(std::string vVertexShaderPath, std::string vFragShaderShaderPath);
+
         void updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
         void draw(CScreenQuad* vQuad);
 
@@ -70,7 +72,5 @@ namespace hiveVG
 
         std::vector<CTexture2D*> m_SeqTextures;
         CShaderProgram*          m_pSequenceShaderProgram = nullptr;
-
-
     };
 }

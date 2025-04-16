@@ -120,8 +120,8 @@ void CRenderer::__initRenderer()
 void CRenderer::renderScene()
 {
     __updateRenderArea();
-/*
-    if (m_pTestPlayer == nullptr) m_pTestPlayer = new CASTCSequencePlayerRenderer(m_pApp);
+
+ /*   if (m_pTestPlayer == nullptr) m_pTestPlayer = new CASTCSequencePlayerRenderer(m_pApp);
     m_pTestPlayer->renderScene(m_WindowWidth, m_WindowHeight);*/
 
     if (m_pQuantizationSeqPlayer == nullptr)

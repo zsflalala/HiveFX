@@ -1,0 +1,20 @@
+{
+  "sequence_config": {
+    "frames_path": "textures/HeavyRain_foreASTC4x4",
+    "frames_type" : "ktx2",
+    "frames_count": 128,
+    "play_mode": "partial",
+    "position": {
+      "x": -1.0,
+      "y": -0.3
+    },
+    "fps": 60,
+    "loop": true,
+    "moving_speed": [0.2, 0.0],
+    "scale": 0.6,
+    "blend_mode": "additive"
+  },
+  "Background":{
+  "frames_path": "textures/park.png"
+}
+}

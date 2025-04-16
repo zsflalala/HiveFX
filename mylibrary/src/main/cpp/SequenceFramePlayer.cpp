@@ -89,6 +89,48 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TextureRootPath.c_str());
     return true;
 }
+bool CSequenceFramePlayer::initTextureAndShaderProgram(std::string vVertexShaderPath,std::string vFragShaderShaderPath)
+{
+    if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
+        m_TextureRootPath += '/';
+    std::string PictureSuffix;
+    if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
+    else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
+    else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
+    else if (m_TextureType == EPictureType::PKM) PictureSuffix = ".pkm";
+    else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
+    for (int i = 0; i < m_TextureCount; i++)
+    {
+        std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
+        if (!m_UseCompressedPNG)
+        {
+            CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
+            if (!pSequenceTexture)
+            {
+                LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+                return false;
+            }
+            m_SeqTextures.push_back(pSequenceTexture);
+        }
+        else
+        {
+            CTexture2D::loadTextureFromCompressedPNG(TexturePath, m_SequenceWidth, m_SequenceHeight, m_SeqTextures);
+        }
+    }
+    m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
+    m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
+
+    m_pSequenceShaderProgram = CShaderProgram::createProgram(vVertexShaderPath,vFragShaderShaderPath);
+
+    if (!m_pSequenceShaderProgram)
+    {
+        LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "[%s] ShaderProgram init Failed.", m_TextureRootPath.c_str());
+        return false;
+    }
+    assert(m_pSequenceShaderProgram != nullptr);
+    LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TextureRootPath.c_str());
+    return true;
+}
 
 void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime)
 {
@@ -134,7 +176,6 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight,
             m_ScreenUVOffset.y = -ScreenMaxUV - m_ScreenUVScale.y;
     }
 }
-
 void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
 {
     if (m_UseLifeCycle && !m_SequenceState._IsAlive)

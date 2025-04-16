@@ -21,11 +21,6 @@ CQuantizationSeqPlayer::~CQuantizationSeqPlayer()
         CScreenQuad::destroy();
         m_pScreenQuad = nullptr;
     }
-    for (auto& m_SeqTexture : m_SeqTextures)
-    {
-        __deleteSafely(m_SeqTexture);
-    }
-    __deleteSafely(m_pSequenceShaderProgram);
     __deleteSafely(m_pBackFramePlayer);
 }
 
@@ -40,7 +35,6 @@ void CQuantizationSeqPlayer::__initAlgorithm()
     m_TextureCount = SnowForeConfig["frames_count"].asInt();
     m_SeqRows    = SnowForeConfig["sequenceRows"].asInt();
     m_SeqCols    = SnowForeConfig["sequenceCols"].asInt();
-    m_ValidFrames = m_SeqRows * m_SeqCols;
     m_FramePerSecond = SnowForeConfig["fps"].asFloat();
     m_OneTextureFrames = SnowForeConfig["one_texture_frames"].asInt();
     std::string VertexShader = SnowForeConfig["vertex_shader"].asString();
@@ -49,17 +43,9 @@ void CQuantizationSeqPlayer::__initAlgorithm()
     m_PictureType  = EPictureType::FromString(SnowForeConfig["frames_type"].asString());
     std::string BackgroundPath = BackConfig["frames_path"].asString();
 
-    if (!m_TexPath.empty() && m_TexPath.back() != '/')
-        m_TexPath += '/';
 
-    for (int i = 0; i < m_TextureCount; i++)
-    {
-        std::string TexPngPath = m_TexPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + ".png";
-        CTexture2D* pBackSeqTex = CTexture2D::loadTexture(TexPngPath);
-        m_SeqTextures.push_back(pBackSeqTex);
-    }
-    m_pSequenceShaderProgram = CShaderProgram::createProgram(VertexShader, FragShader);
-    assert(m_pSequenceShaderProgram != nullptr);
+    m_pForeFramePlayer= new CSingleTexturePlayer(m_TexPath,m_SeqRows,m_SeqCols,m_OneTextureFrames,m_PictureType,m_TextureCount);
+    m_pForeFramePlayer->initTextureAndShaderProgram(VertexShader,FragShader);
     m_pBackFramePlayer = new CSingleTexturePlayer(BackgroundPath);
     m_pBackFramePlayer->initTextureAndShaderProgram();
     m_pScreenQuad   = CScreenQuad::getOrCreate();
@@ -77,52 +63,9 @@ void CQuantizationSeqPlayer::renderScene(int vWindowWidth, int vWindowHeight)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    double FrameTime = 1.0 / m_FramePerSecond;
-    m_AccumFrameTime += DeltaTime;
-    if (m_AccumFrameTime >= FrameTime)
-    {
-        m_AccumFrameTime -= FrameTime;
-
-        if (m_PlayMode == EPlayMode::DEPTH)
-        {
-            m_CurrentChannel = (m_CurrentChannel + 1) % m_OneTextureFrames;
-            if (m_CurrentChannel == 0)
-            {
-                m_CurrentFrame = (m_CurrentFrame + 1) % m_ValidFrames;
-                if (m_CurrentFrame == 0)
-                    m_CurrentTexture = (m_CurrentTexture + 1) % static_cast<int>(m_SeqTextures.size());
-            }
-        }
-        else if (m_PlayMode == EPlayMode::CHANNEL)
-        {
-            m_CurrentFrame = (m_CurrentFrame + 1) % m_ValidFrames;
-            if (m_CurrentFrame == 0)
-            {
-                m_CurrentChannel = (m_CurrentChannel + 1) % m_OneTextureFrames;
-                if (m_CurrentChannel == 0)
-                    m_CurrentTexture = (m_CurrentTexture + 1) % static_cast<int>(m_SeqTextures.size());
-            }
-        }
-        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "Frame: %d, SeqTexture: %d, Current Channel: %d", m_CurrentFrame, m_CurrentTexture, m_CurrentChannel);
-    }
-
-    int   CurrentFrameRow = m_CurrentFrame / m_SeqCols;
-    int   CurrentFrameCol = m_CurrentFrame % m_SeqCols;
-    float CurrentFrameU0 = static_cast<float>(CurrentFrameCol) / static_cast<float>(m_SeqCols);
-    float CurrentFrameV0 = static_cast<float>(CurrentFrameRow) / static_cast<float>(m_SeqRows);
-    float CurrentFrameU1 = static_cast<float>(CurrentFrameCol + 1) / static_cast<float>(m_SeqCols);
-    float CurrentFrameV1 = static_cast<float>(CurrentFrameRow + 1) / static_cast<float>(m_SeqRows);
-    glm::vec2 TextureUVOffset = glm::vec2(CurrentFrameU0, CurrentFrameV0);
-    glm::vec2 TextureUVScale  = glm::vec2(CurrentFrameU1 - CurrentFrameU0, CurrentFrameV1 - CurrentFrameV0);
-
     m_pBackFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
-    m_pSequenceShaderProgram->useProgram();
-    glActiveTexture(GL_TEXTURE0);
-    m_SeqTextures[m_CurrentTexture]->bindTexture();
-    m_pSequenceShaderProgram->setUniform("texUVOffset", TextureUVOffset);
-    m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
-    m_pSequenceShaderProgram->setUniform("indexTexture", 0);
-    m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
-    m_pScreenQuad->bindAndDraw();
+    m_pForeFramePlayer->updateCompressedFrame(m_PlayMode,DeltaTime);
+    m_pForeFramePlayer->drawCompressedFrame(m_pScreenQuad);
+
 }

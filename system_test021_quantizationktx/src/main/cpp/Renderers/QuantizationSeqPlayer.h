@@ -27,12 +27,10 @@ namespace hiveVG
 
         int                        m_SeqRows                 = 0;
         int                        m_SeqCols                 = 0;
-        int                        m_ValidFrames             = 0;
-        int                        m_OneTextureFrames        = 1;
-        int                        m_CurrentChannel          = 0;
+
         int                        m_CurrentFrame            = 0;
         int                        m_TextureCount            = 0;
-        int                        m_CurrentTexture          = 0;
+        int                        m_OneTextureFrames        = 1;
         double                     m_LastFrameTime           = 0.0f;
         double                     m_CurrentTime             = 0.0f;
         double                     m_AccumFrameTime          = 0.0f;
@@ -41,9 +39,9 @@ namespace hiveVG
         EPictureType::EPictureType m_PictureType             = EPictureType::PNG;
         EPlayMode::EPlayMode       m_PlayMode                = EPlayMode::DEPTH;
         CScreenQuad*               m_pScreenQuad             = nullptr;
-        CShaderProgram*            m_pSequenceShaderProgram  = nullptr;
         CSingleTexturePlayer*      m_pBackFramePlayer        = nullptr;
-        std::vector<CTexture2D*>   m_SeqTextures;
+        CSingleTexturePlayer*      m_pForeFramePlayer        = nullptr;
+
     };
 
     template<typename T>

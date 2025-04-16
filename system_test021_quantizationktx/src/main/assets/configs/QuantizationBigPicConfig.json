@@ -7,7 +7,7 @@
     "frames_count": 1,
     "one_texture_frames": 4,
     "fps": 60,
-    "play_mode": "channel",
+    "play_mode": "depth",
     "vertex_shader" : "shaders/quantizationSeq.vert",
     "fragment_shader" : "shaders/quantizationSeq8bitRain.frag"
   },
