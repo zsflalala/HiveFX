@@ -45,7 +45,7 @@ namespace hiveVG
         Flag = fread(vBuffer, sizeof(T), vElementCount, static_cast<FILE*>(vFile));
         if (Flag != vElementCount)
             LOG_ERROR(TAG_KEYWORD::FILE_UTILS_TAG, "Error occurred while reading file.");
-
+`
         #endif
 
         return static_cast<int>(Flag);

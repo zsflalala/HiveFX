@@ -7,13 +7,12 @@ uniform sampler2D quadTexture;
 
 void main()
 {
-    vec4 QuadColor = texture(quadTexture, TexCoord);
+    vec3 QuadColor = texture(quadTexture, TexCoord).rgb;
     float alpha = 1.0;
-    float threshold = 0.5;
-    vec3 keyColor = vec3(0, 0, 0);
-    if (distance(QuadColor.rgb, keyColor) < threshold)
+    float threshold = 0.3;
+    if (length(QuadColor) < threshold)
     {
-        discard;
+        discard; // 直接丢弃片段
     }
     FragColor = vec4(QuadColor.rgb, alpha);
 }

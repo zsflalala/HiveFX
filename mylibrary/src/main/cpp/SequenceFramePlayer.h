@@ -71,5 +71,7 @@ namespace hiveVG
 
         std::vector<CTexture2D*> m_SeqTextures;
         CShaderProgram*          m_pSequenceShaderProgram = nullptr;
+
+
     };
 }

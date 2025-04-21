@@ -14,7 +14,9 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 add_library(${CMAKE_PROJECT_NAME} SHARED
     system_test009_downloadpicremote.cpp
     Renderer.cpp
-    Renderers/RendererWithExternalStorage.cpp)
+    Renderers/RendererWithExternalStorage.cpp
+    Downloader.cpp
+    jni_bridge.cpp)
 
 find_package(game-activity REQUIRED CONFIG)
 

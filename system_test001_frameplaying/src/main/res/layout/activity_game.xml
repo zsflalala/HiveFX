@@ -215,18 +215,19 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical">
-            <Button
-                android:id="@+id/btn_bottom_center_3"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:text="@string/Cloud"
-                android:textColor="#ffffff"
-                tools:ignore="VisualLintButtonSize"
-                android:clickable="false"
-                android:focusable="false"
-                android:enabled="false"/>
+
+                <Button
+                    android:id="@+id/btn_bottom_center_3"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:text="@string/Cloud"
+                    android:textColor="#ffffff"
+                    tools:ignore="VisualLintButtonSize" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

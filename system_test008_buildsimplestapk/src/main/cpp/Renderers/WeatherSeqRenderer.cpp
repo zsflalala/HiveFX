@@ -8,9 +8,7 @@
 
 using namespace hiveVG;
 
-CWeatherSeqRenderer::CWeatherSeqRenderer()
-{
-}
+CWeatherSeqRenderer::CWeatherSeqRenderer() = default;
 
 CWeatherSeqRenderer::~CWeatherSeqRenderer()
 {

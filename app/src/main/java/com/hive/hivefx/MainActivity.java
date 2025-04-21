@@ -23,7 +23,8 @@ public class MainActivity extends GameActivity
         addExtraViews();
     }
 
-    private void addExtraViews() {
+    private void addExtraViews()
+    {
         FrameLayout ParentFrameLayout = findViewById(contentViewId);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("InflateParams") View CustomLayout = inflater.inflate(R.layout.activity_game, null);

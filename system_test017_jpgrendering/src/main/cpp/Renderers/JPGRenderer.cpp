@@ -1,7 +1,4 @@
 #include "JPGRenderer.h"
-
-using namespace hiveVG;
-
 #include "Common.h"
 #include "ScreenQuad.h"
 #include "JsonReader.h"
@@ -23,21 +20,9 @@ CJPGRenderer::~CJPGRenderer()
         CScreenQuad::destroy();
         m_pScreenQuad = nullptr;
     }
-    if (m_pForeJPGPlayer)
-    {
-        delete m_pForeJPGPlayer;
-        m_pForeJPGPlayer = nullptr;
-    }
-    if (m_pBackJPGPlayer)
-    {
-        delete m_pBackJPGPlayer;
-        m_pBackJPGPlayer = nullptr;
-    }
-    if (m_pBackgroundJPGPlayer)
-    {
-        delete m_pBackgroundJPGPlayer;
-        m_pBackgroundJPGPlayer = nullptr;
-    }
+    __deleteSafely(m_pForeJPGPlayer);
+    __deleteSafely(m_pBackJPGPlayer);
+    __deleteSafely(m_pBackgroundJPGPlayer);
 }
 
 void CJPGRenderer::__initAlgorithm()
@@ -73,6 +58,7 @@ void CJPGRenderer::__initAlgorithm()
     m_pForeJPGPlayer->setFrameRate(SnowPlayFPS);
     m_pForeJPGPlayer->setLoopPlayback(SnowIsLoop);
 
+    m_PictureType  = EPictureType::FromString(BackConfig["frames_type"].asString());
     std::string BackgroundPath = BackConfig["frames_path"].asString();
     m_pBackgroundJPGPlayer   = new CSingleTexturePlayer(BackgroundPath, m_PictureType);
     m_pBackgroundJPGPlayer->initTextureAndShaderProgram();
@@ -88,6 +74,8 @@ void CJPGRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 
     glClearColor(0.345f,0.345f,0.345f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_pBackJPGPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
     m_pBackJPGPlayer->draw(m_pScreenQuad);

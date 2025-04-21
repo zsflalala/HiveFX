@@ -23,6 +23,9 @@ namespace hiveVG
     private:
         void   __initAlgorithm();
 
+        template<typename T>
+        void __deleteSafely(T*& vPointer);
+
         double                     m_LastFrameTime        = 0.0f;
         double                     m_CurrentTime          = 0.0f;
         glm::vec2                  m_UVOffset             = glm::vec2(0.0f, 0.0f);
@@ -33,4 +36,14 @@ namespace hiveVG
         CScreenQuad*               m_pScreenQuad          = nullptr;
         CSequenceFramePlayer*      m_pTestPlayer          = nullptr;
     };
+
+    template<typename T>
+    void CTestSequencePlayerRenderer::__deleteSafely(T*& vPointer)
+    {
+        if (vPointer != nullptr)
+        {
+            delete vPointer;
+            vPointer = nullptr;
+        }
+    }
 }
