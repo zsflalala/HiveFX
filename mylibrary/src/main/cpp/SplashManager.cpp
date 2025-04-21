@@ -1,15 +1,17 @@
+#include <opencv2/opencv.hpp>
 #include "SplashManager.h"
 #include <random>
 #include "TextureBlender.h"
 #include "Common.h"
+#include "FileUtils.h"
 
 using namespace hiveVG;
 
 CSplashManager::~CSplashManager()
 {
-    for (int i = 0;i < m_SequencePlayers.size();i++)
+    for (auto& m_SequencePlayer : m_SequencePlayers)
     {
-        delete m_SequencePlayers[i];
+        delete m_SequencePlayer;
     }
     if (m_pTexBlender) delete m_pTexBlender;
 }
@@ -19,8 +21,10 @@ void CSplashManager::pushBack(CSequenceFramePlayer* vSequenceFramePlayer)
     m_SequencePlayers.push_back(vSequenceFramePlayer);
 }
 
-void CSplashManager::initSequenceState()
+void CSplashManager::initSequenceState(const std::string& vImagePath, const float& vScale)
 {
+    __calculatePosition(vImagePath, vScale);
+    m_SplashScale = vScale;
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
         m_SequenceState.emplace_back(__initSequenceParams());
@@ -136,15 +140,10 @@ SSequenceState CSplashManager::__initSequenceParams()
     State._AlreadyDeadTime   = 0;
     State._AlreadyLivingTime = 0;
     State._MovingDirection   = 1;
+    State._UVScale = m_SplashScale;
 
-    State._UVScale = 0.1;
-
-    std::vector<glm::vec2> Positions = { glm::vec2(-0.2, 0.2), glm::vec2(-0.3, 0.2), glm::vec2(-0.4, 0.2),
-                                         glm::vec2(0.2, 0.2), glm::vec2(0.8, -0.11), glm::vec2(0.9, -0.11),
-                                         glm::vec2(-0.72, -0.32), glm::vec2(-0.95, -0.75), glm::vec2(-0.74, 0.19),
-                                         glm::vec2(0.43, -0.425) };
-    std::uniform_int_distribution<size_t> Dis(0, Positions.size() - 1);
-    State._UVOffset = Positions[Dis(Gen)];
+    std::uniform_int_distribution<size_t> Dis(0, m_SplashPositions.size() - 1);
+    State._UVOffset = m_SplashPositions[Dis(Gen)];
 
     State._MovingSpeed = 0.0;
     return State;
@@ -177,4 +176,127 @@ bool CSplashManager::initBlender(int vWidth, int vHeight)
 {
     m_pTexBlender = new CTextureBlender();
     return m_pTexBlender->init(vWidth, vHeight);
+}
+
+void CSplashManager::__calculatePosition(const std::string& vImagePath, const float& vScale)
+{
+    auto pAsset = CFileUtils::openFile(vImagePath.c_str());
+    if (!pAsset) return;
+    size_t FileSize = CFileUtils::getFileBytes(pAsset);
+    std::vector<uchar> Buffer(FileSize);
+    int Flag = CFileUtils::readFile<uchar>(pAsset, Buffer.data(), FileSize);
+    if (Flag < 0) return;
+    CFileUtils::closeFile(pAsset);
+
+    cv::Mat OriginImage = cv::imdecode(Buffer, cv::IMREAD_UNCHANGED);
+    cv::Mat MarkedImg = OriginImage.clone();
+    if (OriginImage.empty())
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SPLASH_MANAGER_TAG, "读取图像失败！");
+    }
+
+    cv::Mat Alpha, BinaryImg;
+    cv::extractChannel(OriginImage, Alpha, 3);
+    cv::threshold(Alpha, BinaryImg, 128, 255, cv::THRESH_BINARY);
+
+    cv::Mat BinaryCopy = BinaryImg.clone();
+    std::vector<std::vector<cv::Point>> Contours;
+    std::vector<cv::Vec4i> Hierarchy;
+    cv::findContours(BinaryImg, Contours, Hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+
+    std::vector<cv::Point> HorizontalPoints;
+    const int SegmentSize = 20; // 每段线包含的点数
+    const float AngleThreshold = 1.0f; // 角度容差
+
+    for (const auto& Contour : Contours)
+    {
+        int N = Contour.size();
+        if (N < SegmentSize)
+            continue;
+
+        for (int i = 0; i <= N - SegmentSize; i += SegmentSize)
+        {
+            std::vector<cv::Point> Segment(Contour.begin() + i, Contour.begin() + i + SegmentSize);
+
+            // 拟合这段线
+            cv::Vec4f Line;
+            cv::fitLine(Segment, Line, 2, 0, 0.01, 0.01);
+
+            float Dx = Line[0];
+            float Dy = Line[1];
+            float Angle = std::atan2(Dy, Dx) * 180.0f / CV_PI;
+            if (std::abs(Angle) < AngleThreshold || std::abs(Angle - 180.0f) < AngleThreshold || std::abs(Angle + 180.0f) < AngleThreshold)
+            {
+                HorizontalPoints.insert(HorizontalPoints.end(), Segment.begin(), Segment.end());
+            }
+        }
+    }
+
+    cv::Mat GradX, GradY;
+    cv::Sobel(BinaryCopy, GradX, CV_32F, 1, 0, 3);
+    cv::Sobel(BinaryCopy, GradY, CV_32F, 0, 1, 3);
+
+    std::vector<cv::Point> UpwardNormals;
+    for (const auto& Point : HorizontalPoints)
+    {
+        int X = Point.x;
+        int Y = Point.y;
+
+        float Dx = GradX.at<float>(Y, X);
+        float Dy = GradY.at<float>(Y, X);
+        float Mag = std::sqrt(Dx * Dx + Dy * Dy);
+        if (Mag < 1e-3) continue; // 避免除以0
+
+        // 单位法线
+        float Ny = Dy / Mag;
+        if (Ny == 1)
+        {
+            UpwardNormals.push_back(Point);
+        }
+    }
+
+    std::vector<cv::Point> SelectedPoints;
+    int MaxPoints = 50;
+    if (UpwardNormals.size() > MaxPoints)
+    {
+        int Step = UpwardNormals.size() / MaxPoints;
+
+        for (int i = 0; i < MaxPoints; ++i)
+        {
+            SelectedPoints.push_back(UpwardNormals[i * Step]);
+        }
+    }
+    else
+    {
+        SelectedPoints = UpwardNormals;
+    }
+
+    m_SplashPositions.reserve(SelectedPoints.size());
+    auto Width  = static_cast<float>(OriginImage.cols);
+    auto Height = static_cast<float>(OriginImage.rows);
+    auto Delta = vScale * Height * 0.5f;
+    for (const auto& Point : SelectedPoints)
+    {
+        float X = Point.x / Width * 2.0f - 1.0f;
+        float Y = 1.0f - ((Point.y - Delta) / Height) * 2.0f;
+        m_SplashPositions.emplace_back(glm::vec2(X, Y));
+    }
+
+    LOG_INFO(hiveVG::TAG_KEYWORD::SPLASH_MANAGER_TAG, "总轮廓点数: %d", SelectedPoints.size());
+    for (const auto& Point : SelectedPoints)
+    {
+        cv::circle(MarkedImg, Point, 3, cv::Scalar(0, 0, 255, 255), -1);
+        LOG_INFO(hiveVG::TAG_KEYWORD::SPLASH_MANAGER_TAG, "(%d, %d)", Point.x, Point.y);
+    }
+
+    std::string OutputPath = "/sdcard/Download/contour_marked.png";
+    bool Success = cv::imwrite(OutputPath, MarkedImg);
+    if (Success)
+    {
+        LOG_INFO(hiveVG::TAG_KEYWORD::SPLASH_MANAGER_TAG, "轮廓可视化图已保存到: %s", OutputPath.c_str());
+    }
+    else
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SPLASH_MANAGER_TAG, "保存图像失败！");
+    }
 }

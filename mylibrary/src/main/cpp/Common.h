@@ -29,6 +29,7 @@ namespace hiveVG::TAG_KEYWORD
     const char *const ASYNC_SEQFRAME_PALYER_TAG = "CAsyncSequenceFramePlayer";
     const char *const TEXTURE_BLENDER_TAG       = "CTextureBlender";
     const char *const BLENDER_MANAGER_TAG       = "CBlendManager";
+    const char *const SPLASH_MANAGER_TAG        = "CSplashManager";
     const char *const SYSTEMTEST_TAG            = "SystemTest";
     const char *const SNOW_STYLIZE_TAG          = "SnowStylize";
     const char *const FILE_UTILS_TAG            = "FileUtils";

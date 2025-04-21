@@ -1,13 +1,13 @@
 {
   "splash": {
-    "frames_path": "textures/Splash-up",
+    "frames_path": "textures/Splash2",
     "frames_type" : "png",
-    "frames_count": 24,
+    "frames_count": 28,
     "play_mode": "partial",
     "fps": 30,
     "loop": true,
     "moving_speed": [0.0, 0.0],
-    "scale": 0.1,
+    "scale": 0.05,
     "blend_mode": "additive"
   },
   "rain": {
@@ -20,6 +20,6 @@
     "blend_mode": "additive"
   },
   "background":{
-    "frames_path": "textures/snowScene.png"
+    "frames_path": "textures/Scene3.png"
   }
 }

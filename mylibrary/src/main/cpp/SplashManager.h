@@ -15,7 +15,7 @@ namespace hiveVG
         ~CSplashManager();
 
         void  pushBack(CSequenceFramePlayer* vSequenceFramePlayer);
-        void  initSequenceState();
+        void  initSequenceState(const std::string& vImagePath, const float& vScale);
         bool  initBlender(int vWidth, int vHeight);
         void  updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
         void  draw(CScreenQuad* vQuad);
@@ -34,15 +34,14 @@ namespace hiveVG
 
     private:
         SSequenceState __initSequenceParams();
+        void __calculatePosition(const std::string& vImagePath, const float& vScale);
 
+        float                              m_SplashScale   = 0.0f;
         double                             m_LastFrameTime = 0.0f;
         bool                               m_IsBlend       = false;
-        CTextureBlender*                   m_pTexBlender = nullptr;
+        CTextureBlender*                   m_pTexBlender   = nullptr;
         std::vector<SSequenceState>        m_SequenceState;
         std::vector<CSequenceFramePlayer*> m_SequencePlayers;
+        std::vector<glm::vec2>             m_SplashPositions;
     };
-
-
 }
-
-

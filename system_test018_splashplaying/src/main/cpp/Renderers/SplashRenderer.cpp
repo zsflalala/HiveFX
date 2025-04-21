@@ -20,7 +20,7 @@ CSplashRenderer::CSplashRenderer(android_app *vApp) : m_pApp(vApp)
 CSplashRenderer::~CSplashRenderer()
 {
     if (m_pScreenQuad)              delete m_pScreenQuad;
-    if (m_pSplashPlayer)     delete m_pSplashPlayer;
+    if (m_pSplashPlayer)            delete m_pSplashPlayer;
     if (m_pBackFramePlayer)         delete m_pBackFramePlayer;
 }
 
@@ -41,6 +41,10 @@ void CSplashRenderer::__initAlgorithm()
     float       MoveSpeedX = SplashConfig["moving_speed"][0].asFloat();
     float       MoveSpeedY = SplashConfig["moving_speed"][1].asFloat();
     m_PlayScale = SplashConfig["scale"].asFloat();
+
+    std::string BackgroundPath = BackgroundConfig["frames_path"].asString();
+    m_pBackFramePlayer = new CSingleTexturePlayer(BackgroundPath);
+    m_pBackFramePlayer->initTextureAndShaderProgram();
 
     int SequenceRows = 1, SequenceCols = 1;
     // String To Enum
@@ -66,7 +70,7 @@ void CSplashRenderer::__initAlgorithm()
     {
         m_pSplashManager->pushBack(m_pSplashPlayer->clone());
     }
-    m_pSplashManager->initSequenceState();
+    m_pSplashManager->initSequenceState(BackgroundPath, m_PlayScale);
 
     FramePath = RainConfig["frames_path"].asString();
     FrameType = RainConfig["frames_type"].asString();
@@ -80,10 +84,6 @@ void CSplashRenderer::__initAlgorithm()
     m_pRainPlayer->initTextureAndShaderProgram();
     m_pRainPlayer->setFrameRate(PlayFPS);
     m_pRainPlayer->setLoopPlayback(IsLoop);
-
-    std::string BackgroundPath = BackgroundConfig["frames_path"].asString();
-    m_pBackFramePlayer = new CSingleTexturePlayer(BackgroundPath);
-    m_pBackFramePlayer->initTextureAndShaderProgram();
 
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
