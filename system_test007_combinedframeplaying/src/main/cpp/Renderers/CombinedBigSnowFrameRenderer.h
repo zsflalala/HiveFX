@@ -22,6 +22,9 @@ namespace hiveVG
     private:
         void __initAlgorithm();
 
+        template<typename T>
+        void __deleteSafely(T*& vPointer);
+
         double                m_LastFrameTime           = 0.0f;
         double                m_CurrentTime             = 0.0f;
         android_app*          m_pApp                    = nullptr;
@@ -31,4 +34,14 @@ namespace hiveVG
         CSingleTexturePlayer* m_pBackFramePlayer        = nullptr;
         EPictureType::EPictureType m_PictureType = EPictureType::PNG;
     };
+
+    template<typename T>
+    void CCombinedBigSnowFrameRenderer::__deleteSafely(T*& vPointer)
+    {
+        if (vPointer != nullptr)
+        {
+            delete vPointer;
+            vPointer = nullptr;
+        }
+    }
 }

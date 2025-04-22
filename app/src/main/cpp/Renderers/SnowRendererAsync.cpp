@@ -14,30 +14,31 @@ CSnowRendererAsync::CSnowRendererAsync(android_app *vApp) : m_pApp(vApp)
 
 CSnowRendererAsync::~CSnowRendererAsync()
 {
-    if (m_pScreenQuad)          delete m_pScreenQuad;
-    if (m_pSmallSnowForePlayer) delete m_pSmallSnowForePlayer;
-    if (m_pSmallSnowBackPlayer) delete m_pSmallSnowBackPlayer;
-    if (m_pBigSnowForePlayer)   delete m_pSmallSnowForePlayer;
-    if (m_pBigSnowBackPlayer)   delete m_pSmallSnowBackPlayer;
-    if (m_pSingleFramePlayer)   delete m_pSingleFramePlayer;
+    if (m_pScreenQuad)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
+    __deleteSafely(m_pSmallSnowForePlayer);
+    __deleteSafely(m_pSmallSnowBackPlayer);
+    __deleteSafely(m_pBigSnowForePlayer);
+    __deleteSafely(m_pBigSnowBackPlayer);
+    __deleteSafely(m_pSingleFramePlayer);
 }
 
 void CSnowRendererAsync::__initAlgorithm()
 {
-    int TextureCount = 128;
-    EPictureType::EPictureType PictureType = EPictureType::PNG;
-    m_pScreenQuad = CScreenQuad::getOrCreate();
-
-    m_pSmallSnowForePlayer = new CAsyncSequenceFramePlayer("textures/SmallSnow_fore", TextureCount, PictureType);
-    m_pSmallSnowForePlayer->initTextureAndShaderProgram();
-    m_pSmallSnowBackPlayer = new CAsyncSequenceFramePlayer("textures/SmallSnow_back", TextureCount, PictureType);
-    m_pSmallSnowBackPlayer->initTextureAndShaderProgram();
-    m_pBigSnowForePlayer   = new CAsyncSequenceFramePlayer("textures/BigSnow_fore", TextureCount, PictureType);
-    m_pBigSnowForePlayer->initTextureAndShaderProgram();
-    m_pBigSnowBackPlayer   = new CAsyncSequenceFramePlayer("textures/BigSnow_back", TextureCount, PictureType);
-    m_pBigSnowBackPlayer->initTextureAndShaderProgram();
+//    m_pSmallSnowForePlayer = new CAsyncSequenceFramePlayer("textures/SmallSnow_fore", m_TextureCount, m_PictureType);
+//    m_pSmallSnowForePlayer->initTextureAndShaderProgram();
+//    m_pSmallSnowBackPlayer = new CAsyncSequenceFramePlayer("textures/SmallSnow_back", m_TextureCount, m_PictureType);
+//    m_pSmallSnowBackPlayer->initTextureAndShaderProgram();
+//    m_pBigSnowForePlayer   = new CAsyncSequenceFramePlayer("textures/BigSnow_fore", m_TextureCount, m_PictureType);
+//    m_pBigSnowForePlayer->initTextureAndShaderProgram();
+//    m_pBigSnowBackPlayer   = new CAsyncSequenceFramePlayer("textures/BigSnow_back", m_TextureCount, m_PictureType);
+//    m_pBigSnowBackPlayer->initTextureAndShaderProgram();
     m_pSingleFramePlayer   = new CSingleTexturePlayer("textures/snowScene.png");
     m_pSingleFramePlayer->initTextureAndShaderProgram();
+    m_pScreenQuad = CScreenQuad::getOrCreate();
 }
 
 void CSnowRendererAsync::renderScene()
@@ -45,14 +46,27 @@ void CSnowRendererAsync::renderScene()
     glClearColor(0.345f,0.345f,0.345f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (m_EnableSmallSnowBack)
     {
+        if (m_pSmallSnowBackPlayer == nullptr)
+        {
+            m_pSmallSnowBackPlayer = new CAsyncSequenceFramePlayer("textures/SmallSnow_back", m_TextureCount, m_PictureType);
+            m_pSmallSnowBackPlayer->initTextureAndShaderProgram();
+            sleep(1);
+        }
         m_pSmallSnowBackPlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
     }
     if (m_EnableBigSnowBack)
     {
+        if (m_pBigSnowBackPlayer == nullptr)
+        {
+            m_pBigSnowBackPlayer = new CAsyncSequenceFramePlayer("textures/BigSnow_back", m_TextureCount, m_PictureType);
+            m_pBigSnowBackPlayer->initTextureAndShaderProgram();
+            sleep(1);
+        }
         m_pBigSnowBackPlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
     }
@@ -60,14 +74,25 @@ void CSnowRendererAsync::renderScene()
     m_pSingleFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     if (m_EnableBigSnowFore)
     {
+        if (m_pBigSnowForePlayer == nullptr)
+        {
+            m_pBigSnowForePlayer = new CAsyncSequenceFramePlayer("textures/BigSnow_fore", m_TextureCount, m_PictureType);
+            m_pBigSnowForePlayer->initTextureAndShaderProgram();
+            sleep(1);
+        }
         m_pBigSnowForePlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
     }
     if (m_EnableSmallSnowFore)
     {
+        if (m_pSmallSnowForePlayer == nullptr)
+        {
+            m_pSmallSnowForePlayer = new CAsyncSequenceFramePlayer("textures/SmallSnow_fore", m_TextureCount, m_PictureType);
+            m_pSmallSnowForePlayer->initTextureAndShaderProgram();
+            sleep(1);
+        }
         m_pSmallSnowForePlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
     }

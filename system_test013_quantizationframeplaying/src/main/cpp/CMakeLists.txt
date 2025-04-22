@@ -15,9 +15,10 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 ########################## 第三方库 相关配置  结束################################
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
-        lodepng.cpp
         Renderer.cpp
-        system_test013_quantizationframeplaying.cpp)
+        Renderers/QuantizationRenderer.cpp
+        system_test013_quantizationframeplaying.cpp
+)
 
 set(REQUIRED_PACKAGES
         game-activity

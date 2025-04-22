@@ -19,6 +19,8 @@ namespace hiveVG
 
     private:
         void __initAlgorithm();
+        template<typename T>
+        void __deleteSafely(T*& vPointer);
 
         double                m_LastFrameTime           = 0.0f;
         double                m_CurrentTime             = 0.0f;
@@ -28,4 +30,14 @@ namespace hiveVG
         CSingleTexturePlayer* m_pBackgroundJPGPlayer    = nullptr;
         EPictureType::EPictureType m_PictureType        = EPictureType::JPG;
     };
+
+    template<typename T>
+    void CJPGRenderer::__deleteSafely(T*& vPointer)
+    {
+        if (vPointer != nullptr)
+        {
+            delete vPointer;
+            vPointer = nullptr;
+        }
+    }
 }

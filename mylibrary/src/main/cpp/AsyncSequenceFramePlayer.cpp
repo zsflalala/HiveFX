@@ -30,7 +30,8 @@ CAsyncSequenceFramePlayer::~CAsyncSequenceFramePlayer()
     }
     if (m_pTextureHandles)
     {
-        delete m_pTextureHandles;
+        glDeleteTextures(m_TextureCount, m_pTextureHandles);
+        delete[] m_pTextureHandles;
         m_pTextureHandles = nullptr;
     }
 }
@@ -234,11 +235,9 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
         double StartTime = CTimeUtils::getCurrentTime();
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
         glGenerateMipmap(GL_TEXTURE_2D);
-
         glBindTexture(GL_TEXTURE_2D, vTextureHandles[vTextureIndex]);
         GLenum Format = (Texture._Channels == 4) ? GL_RGBA : GL_RGB;
         glTexImage2D(GL_TEXTURE_2D, 0, Format, Texture._Width, Texture._Height, 0, Format, GL_UNSIGNED_BYTE, Texture._ImageData.data());
-
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -246,6 +245,8 @@ void CAsyncSequenceFramePlayer::__uploadTexturesToGPU(int vTextureIndex,
         glGenerateMipmap(GL_TEXTURE_2D);
 
         vFrameLoadedGPU[vTextureIndex].store(true);
+        Texture._ImageData.clear();
+        Texture._ImageData.shrink_to_fit();
         double EndTime = CTimeUtils::getCurrentTime();
         double Duration = EndTime - StartTime;
         m_GPUCostTime.push_back(Duration);

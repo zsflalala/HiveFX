@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">System_test001_frameplaying</string>
+    <string name="app_name">Frameplaying</string>
     <string name="speed_up_x2">Speed Up</string>
     <string name="reset_speed">Speed Reset</string>
     <string name="Top">积雪</string>

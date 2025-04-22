@@ -35,12 +35,10 @@ void CSnowSceneRendererAsync::renderScene()
     glClearColor(0.1f,0.1f,0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
-
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_pSnowSceneSeqFramePlayer->updateFrames();
     m_pScreenQuad->bindAndDraw();
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 }
 
 void CSnowSceneRendererAsync::handleInput(ERenderType vInputType, bool vIsPointerDown)

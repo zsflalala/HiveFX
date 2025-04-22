@@ -48,6 +48,8 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
     else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
+    else if (m_TextureType == EPictureType::PKM) PictureSuffix = ".pkm";
+    else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
@@ -73,6 +75,11 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
         m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
     else if (m_TextureType == EPictureType::JPG)
         m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragJPG);
+    else if (m_TextureType == EPictureType::PKM)
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
+    else if (m_TextureType == EPictureType::KTX2)
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
+
     if (!m_pSequenceShaderProgram)
     {
         LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "[%s] ShaderProgram init Failed.", m_TextureRootPath.c_str());

@@ -4,6 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
+#include "Renderers/SplashRenderer.h"
 
 using namespace hiveVG;
 
@@ -31,6 +32,7 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
+    if (m_pSplashPlayer)       delete m_pSplashPlayer;
 }
 
 void CRenderer::__initRenderer()
@@ -93,13 +95,14 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    glClearColor(0.345f, 0.345f, 0.345f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    if (m_pSplashPlayer == nullptr) m_pSplashPlayer = new CSplashRenderer(m_pApp);
+    m_pSplashPlayer->renderScene(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
-  void CRenderer::__updateRenderArea()
+
+void CRenderer::__updateRenderArea()
 {
     EGLint Width, Height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);

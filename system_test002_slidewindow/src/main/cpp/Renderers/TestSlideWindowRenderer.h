@@ -26,7 +26,4 @@ namespace hiveVG
         CScreenQuad*               m_pScreenQuad          = nullptr;
         CSlideWindow*              m_pSlideWindow         = nullptr;
     };
-
 }
-
-

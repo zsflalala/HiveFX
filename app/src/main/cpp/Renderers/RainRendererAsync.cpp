@@ -14,28 +14,30 @@ CRainRendererAsync::CRainRendererAsync(android_app *vApp) : m_pApp(vApp)
 
 CRainRendererAsync::~CRainRendererAsync()
 {
-    if (m_pScreenQuad)          delete m_pScreenQuad;
-    if (m_pSmallRainForePlayer) delete m_pSmallRainForePlayer;
-    if (m_pSmallRainBackPlayer) delete m_pSmallRainBackPlayer;
-    if (m_pBigRainForePlayer)   delete m_pSmallRainForePlayer;
-    if (m_pBigRainBackPlayer)   delete m_pSmallRainBackPlayer;
-    if (m_pSingleFramePlayer)   delete m_pSingleFramePlayer;
+    if (m_pScreenQuad)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
+    __deleteSafely(m_pSmallRainForePlayer);
+    __deleteSafely(m_pSmallRainBackPlayer);
+    __deleteSafely(m_pBigRainForePlayer);
+    __deleteSafely(m_pBigRainBackPlayer);
+    __deleteSafely(m_pSingleFramePlayer);
 }
 
 void CRainRendererAsync::__initAlgorithm()
 {
-    int TextureCount = 64;
-    EPictureType::EPictureType PictureType = EPictureType::PNG;
     m_pScreenQuad = CScreenQuad::getOrCreate();
 
-    m_pSmallRainForePlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_fore", TextureCount, PictureType);
-    m_pSmallRainForePlayer->initTextureAndShaderProgram();
-    m_pSmallRainBackPlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_back", TextureCount, PictureType);
-    m_pSmallRainBackPlayer->initTextureAndShaderProgram();
-    m_pBigRainForePlayer   = new CAsyncSequenceFramePlayer("textures/BigRain_fore", TextureCount, PictureType);
-    m_pBigRainForePlayer->initTextureAndShaderProgram();
-    m_pBigRainBackPlayer   = new CAsyncSequenceFramePlayer("textures/BigRain_back", TextureCount, PictureType);
-    m_pBigRainBackPlayer->initTextureAndShaderProgram();
+//    m_pSmallRainForePlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_fore", m_TextureCount, m_PictureType);
+//    m_pSmallRainForePlayer->initTextureAndShaderProgram();
+//    m_pSmallRainBackPlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_back", m_TextureCount, m_PictureType);
+//    m_pSmallRainBackPlayer->initTextureAndShaderProgram();
+//    m_pBigRainForePlayer   = new CAsyncSequenceFramePlayer("textures/BigRain_fore", m_TextureCount, m_PictureType);
+//    m_pBigRainForePlayer->initTextureAndShaderProgram();
+//    m_pBigRainBackPlayer   = new CAsyncSequenceFramePlayer("textures/BigRain_back", m_TextureCount, m_PictureType);
+//    m_pBigRainBackPlayer->initTextureAndShaderProgram();
     m_pSingleFramePlayer   = new CSingleTexturePlayer("textures/snowScene.png");
     m_pSingleFramePlayer->initTextureAndShaderProgram();
 }
@@ -45,14 +47,27 @@ void CRainRendererAsync::renderScene()
     glClearColor(0.345f,0.345f,0.345f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (m_EnableSmallRainBack)
     {
+        if (m_pSmallRainBackPlayer == nullptr)
+        {
+            m_pSmallRainBackPlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_fore", m_TextureCount, m_PictureType);
+            m_pSmallRainBackPlayer->initTextureAndShaderProgram();
+            sleep(0.5);
+        }
         m_pSmallRainBackPlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
     }
     if (m_EnableBigRainBack)
     {
+        if (m_pBigRainBackPlayer == nullptr)
+        {
+            m_pBigRainBackPlayer = new CAsyncSequenceFramePlayer("textures/BigRain_back", m_TextureCount, m_PictureType);
+            m_pBigRainBackPlayer->initTextureAndShaderProgram();
+            sleep(0.5);
+        }
         m_pBigRainBackPlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
     }
@@ -60,14 +75,25 @@ void CRainRendererAsync::renderScene()
     m_pSingleFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     if (m_EnableBigRainFore)
     {
+        if (m_pBigRainForePlayer == nullptr)
+        {
+            m_pBigRainForePlayer = new CAsyncSequenceFramePlayer("textures/BigRain_fore", m_TextureCount, m_PictureType);
+            m_pBigRainForePlayer->initTextureAndShaderProgram();
+            sleep(0.5);
+        }
         m_pBigRainForePlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
     }
     if (m_EnableSmallRainFore)
     {
+        if (m_pSmallRainForePlayer == nullptr)
+        {
+            m_pSmallRainForePlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_fore", m_TextureCount, m_PictureType);
+            m_pSmallRainForePlayer->initTextureAndShaderProgram();
+            sleep(0.5);
+        }
         m_pSmallRainForePlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
     }
