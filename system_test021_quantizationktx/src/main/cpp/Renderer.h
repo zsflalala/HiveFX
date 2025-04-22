@@ -8,7 +8,9 @@ struct android_app;
 namespace hiveVG
 {
     class CASTCSequencePlayerRenderer;
-    class CQuantizationSeqPlayer;
+    class CQuantizationSeqRenderer;
+    class CQuantizationBicPicRenderer;
+    class CScrollRainCompressedRenderer;
     class CRenderer
     {
     public:
@@ -27,7 +29,9 @@ namespace hiveVG
         EGLDisplay    m_Display       = EGL_NO_DISPLAY;
         EGLSurface    m_Surface       = EGL_NO_SURFACE;
         EGLContext    m_Context       = EGL_NO_CONTEXT;
-        CASTCSequencePlayerRenderer* m_pTestPlayer = nullptr;
-        CQuantizationSeqPlayer* m_pQuantizationSeqPlayer = nullptr;
+        CASTCSequencePlayerRenderer* m_pTestRenderer = nullptr;
+        CQuantizationBicPicRenderer* m_pQuantizationBigPicRenderer = nullptr;
+        CQuantizationSeqRenderer* m_pQuantizationSeqRenderer = nullptr;
+        CScrollRainCompressedRenderer* m_pSCrollRainRenderer = nullptr;
     };
 }

@@ -5,7 +5,9 @@
 #include <cassert>
 #include <algorithm>
 #include "Renderers/KtxSequencePlayerRenderer.h"
-#include "Renderers/QuantizationSeqPlayer.h"
+#include "Renderers/QuantizationBicPicRenderer.h"
+#include "Renderers/QuantizationSeqRenderer.h"
+#include "Renderers/ScrollRainCompressedRenderer.h"
 #include "Common.h"
 
 using namespace hiveVG;
@@ -34,8 +36,10 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pTestPlayer)       delete m_pTestPlayer;
-    if (m_pQuantizationSeqPlayer)       delete m_pQuantizationSeqPlayer;
+    if (m_pTestRenderer)                    delete m_pTestRenderer;
+    if (m_pQuantizationBigPicRenderer)      delete m_pQuantizationBigPicRenderer;
+    if (m_pQuantizationSeqRenderer)         delete m_pQuantizationSeqRenderer;
+    if (m_pSCrollRainRenderer)              delete m_pSCrollRainRenderer;
 }
 
 void CRenderer::__initRenderer()
@@ -121,12 +125,18 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
- /*   if (m_pTestPlayer == nullptr) m_pTestPlayer = new CASTCSequencePlayerRenderer(m_pApp);
-    m_pTestPlayer->renderScene(m_WindowWidth, m_WindowHeight);*/
+ /*   if (m_pTestRenderer == nullptr) m_pTestRenderer = new CASTCSequenceRendererRenderer(m_pApp);
+    m_pTestRenderer->renderScene(m_WindowWidth, m_WindowHeight);*/
 
-    if (m_pQuantizationSeqPlayer == nullptr)
-        m_pQuantizationSeqPlayer = new CQuantizationSeqPlayer();
-    m_pQuantizationSeqPlayer->renderScene(m_WindowWidth, m_WindowHeight);
+  /*  if (m_pQuantizationBigPicRenderer == nullptr)
+        m_pQuantizationBigPicRenderer = new CQuantizationBicPicRenderer();
+    m_pQuantizationBigPicRenderer->renderScene();*/
+    if (m_pQuantizationSeqRenderer == nullptr)
+        m_pQuantizationSeqRenderer = new CQuantizationSeqRenderer();
+    m_pQuantizationSeqRenderer->renderScene();
+
+/*    if(!m_pSCrollRainRenderer) m_pSCrollRainRenderer = new CScrollRainCompressedRenderer(m_pApp);
+    m_pSCrollRainRenderer->render();*/
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

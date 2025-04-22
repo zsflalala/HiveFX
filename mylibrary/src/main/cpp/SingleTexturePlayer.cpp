@@ -10,8 +10,8 @@ CSingleTexturePlayer::CSingleTexturePlayer(const std::string& vTexturePath, EPic
         : m_TexturePath(vTexturePath), m_TextureType(vPictureType)
 {
 }
-CSingleTexturePlayer::CSingleTexturePlayer(const std::string& vTexturePath, int vSequenceRows, int vSequenceCols,int  vOneTextureFrames, EPictureType::EPictureType vPictureType ,int vTextureCount=1)
-        : m_TexturePath(vTexturePath),m_SeqRows(vSequenceRows),m_SeqCols(vSequenceCols),m_TextureCount(vTextureCount),m_OneTextureFrames(vOneTextureFrames),m_TextureType(vPictureType)
+CSingleTexturePlayer::CSingleTexturePlayer(const std::string& vTexturePath, int vSequenceRows, int vSequenceCols, int  vOneTextureFrames, EPictureType::EPictureType vPictureType, float vFramePerSecond,int vTextureCount = 1)
+        : m_TexturePath(vTexturePath),m_SeqRows(vSequenceRows),m_SeqCols(vSequenceCols),m_TextureCount(vTextureCount),m_OneTextureFrames(vOneTextureFrames),m_TextureType(vPictureType),m_FramePerSecond(vFramePerSecond)
 {
     m_ValidFrames = m_SeqCols * m_SeqRows;
 }
@@ -57,15 +57,17 @@ bool CSingleTexturePlayer::initTextureAndShaderProgram()
     LOG_INFO(hiveVG::TAG_KEYWORD::SINGLE_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TexturePath.c_str());
     return true;
 }
-bool CSingleTexturePlayer::initTextureAndShaderProgram(std::string vVertexShaderPath,std::string vFragShaderShaderPath)
+
+bool CSingleTexturePlayer::initTextureAndShaderProgram(std::string& vVertexShaderPath, std::string& vFragShaderShaderPath)
 {
     if (!m_TexturePath.empty() && m_TexturePath.back() != '/')
         m_TexturePath += '/';
+
     std::string PictureSuffix;
     if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
     else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
-    else if (m_TextureType == EPictureType::PKM) PictureSuffix = ".pkm";
+    else if (m_TextureType == EPictureType::PKM)  PictureSuffix = ".pkm";
     else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
 
     for (int i = 0; i < m_TextureCount; i++)
@@ -82,12 +84,13 @@ bool CSingleTexturePlayer::initTextureAndShaderProgram(std::string vVertexShader
         m_SeqTextures.push_back(pSingleTexture);
     }
 
-    m_pSingleShaderProgram = CShaderProgram::createProgram(vVertexShaderPath,vFragShaderShaderPath);
+    m_pSingleShaderProgram = CShaderProgram::createProgram(vVertexShaderPath, vFragShaderShaderPath);
 
     assert(m_pSingleShaderProgram != nullptr);
     LOG_INFO(hiveVG::TAG_KEYWORD::SINGLE_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TexturePath.c_str());
     return true;
 }
+
 void CSingleTexturePlayer::updateFrame()
 {
     assert(m_pSingleShaderProgram != nullptr);
@@ -96,6 +99,7 @@ void CSingleTexturePlayer::updateFrame()
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[0]->bindTexture();
 }
+
 void CSingleTexturePlayer::updateCompressedFrame(EPlayMode::EPlayMode vPlayMode,double vDeltaTime)
 {
     double FrameTime = 1.0 / m_FramePerSecond;
@@ -126,8 +130,6 @@ void CSingleTexturePlayer::updateCompressedFrame(EPlayMode::EPlayMode vPlayMode,
         }
         LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "Frame: %d, SeqTexture: %d, Current Channel: %d", m_CurrentFrame, m_CurrentTexture, m_CurrentChannel);
     }
-
-
 }
 
 void CSingleTexturePlayer::drawCompressedFrame(CScreenQuad *vQuad)
@@ -144,11 +146,10 @@ void CSingleTexturePlayer::drawCompressedFrame(CScreenQuad *vQuad)
     glm::vec2 TextureUVScale  = glm::vec2(CurrentFrameU1 - CurrentFrameU0, CurrentFrameV1 - CurrentFrameV0);
     m_pSingleShaderProgram->useProgram();
     m_pSingleShaderProgram->setUniform("texUVOffset", TextureUVOffset);
-    m_pSingleShaderProgram->setUniform("texUVScale", TextureUVScale);
+    m_pSingleShaderProgram->setUniform("texUVScale",  TextureUVScale);
     m_pSingleShaderProgram->setUniform("indexTexture", 0);
     m_pSingleShaderProgram->setUniform("channelIndex", m_CurrentChannel);
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     vQuad->bindAndDraw();
-
 }

@@ -17,7 +17,9 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         Renderer.cpp
         system_test021_quantizationktx.cpp
         Renderers/KtxSequencePlayerRenderer.cpp
-        Renderers/QuantizationSeqPlayer.cpp
+        Renderers/QuantizationSeqRenderer.cpp
+        Renderers/QuantizationBicPicRenderer.cpp
+        Renderers/ScrollRainCompressedRenderer.cpp
 )
 
 

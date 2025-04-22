@@ -17,6 +17,7 @@ namespace hiveVG
     public:
         CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
         CSequenceFramePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG = false);
+        CSequenceFramePlayer(const std::string& vTextureRootPath, int vTextureCount,int vOneTextureFrames, float vFrameSeconds, EPictureType::EPictureType vPictureType);
         ~CSequenceFramePlayer();
 
         void setLoopPlayback(bool vLoopTag) { m_IsLoop = vLoopTag; }
@@ -36,16 +37,20 @@ namespace hiveVG
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
 
         bool initTextureAndShaderProgram();
-        bool initTextureAndShaderProgram(std::string vVertexShaderPath, std::string vFragShaderShaderPath);
+        bool initTextureAndShaderProgram(std::string& vVertexShaderPath, std::string& vFragShaderShaderPath);
 
         void updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
+        void updateQuantizationFrame(double vDeltaTime);
         void draw(CScreenQuad* vQuad);
+        void drawQuantization(CScreenQuad *vQuad);
 
     private:
         void __initSequenceParams();
 
         int               m_SequenceRows;
         int               m_SequenceCols;
+        int               m_OneTextureFrames = 1;
+        int               m_CurrentChannel = 0;
         int				  m_SequenceWidth    = 0;
         int				  m_SequenceHeight   = 0;
         int				  m_SeqSingleTexWidth  = 0;

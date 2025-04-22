@@ -82,7 +82,7 @@ void CQuantizationRenderer::renderScene()
         if (m_CurrentChannel == 0)
         {
             m_CurrentTexture++;
-            if (m_SeqTextures.size() - 1 == m_CurrentTexture)
+            if (m_SeqTextures.size() == m_CurrentTexture)
                 m_CurrentTexture = 0;
         }
         LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);

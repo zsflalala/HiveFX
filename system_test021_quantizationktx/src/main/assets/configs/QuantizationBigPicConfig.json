@@ -1,6 +1,6 @@
 {
   "SmallSnowFore": {
-    "frames_path": "textures/HeavyRain_forepre_png8_mergedpngASTC4x4",
+    "frames_path": "textures/BigPic/BigSnow_fore_png8_bigpic_8x4_depthASTC4x4",
     "sequenceRows": 8,
     "sequenceCols": 4,
     "frames_type" : "ktx2",
@@ -8,8 +8,8 @@
     "one_texture_frames": 4,
     "fps": 60,
     "play_mode": "depth",
-    "vertex_shader" : "shaders/quantizationSeq.vert",
-    "fragment_shader" : "shaders/quantizationSeq8bitRain.frag"
+    "vertex_shader" : "shaders/BigPic/quantizationSeq.vert",
+    "fragment_shader" : "shaders/BigPic/quantizationSeq8bitSnow.frag"
   },
   "Background":{
     "frames_path": "textures/park.png"

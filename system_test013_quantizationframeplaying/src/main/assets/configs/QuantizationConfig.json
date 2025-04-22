@@ -1,11 +1,11 @@
 {
     "Quantization": {
-        "back_path": "textures/HeavyRain_fore_png8",
+        "back_path": "textures/BigSnow_fore_png8",
         "background_img": "textures/park.png",
         "texture_count" : 32,
         "one_texture_frames": 4,
         "fps": 60,
         "vertex_shader" : "shaders/quantizationSeq.vert",
-        "fragment_shader" : "shaders/quantizationSeq8bitRain.frag"
+        "fragment_shader" : "shaders/quantizationSeq8bitSnow.frag"
     }
 }

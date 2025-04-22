@@ -1,0 +1,9 @@
+{
+    "slide_config": {
+        "picture_path": "textures/LongSequence/LongTexRain1920_10800_VQuarter.ktx2",
+        "picture_type": "ktx2",
+        "is_compressed": true,
+        "slide_speed" : -90.0,
+        "slide_direction" : "vertical"
+    }
+}

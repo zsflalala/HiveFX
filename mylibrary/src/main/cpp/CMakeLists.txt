@@ -51,6 +51,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         TimeUtils.cpp
         AppContext.cpp
         FileUtils.cpp
+        StringUtils.cpp
         ThreadPool.cpp
 )
 

@@ -28,7 +28,7 @@ void main()
     else if (_Channel == 3) color = texture(Texture, biasTexCoord).a;
     if (color < 0.1)
         discard;
-    color += 0.15;
+    color += 0.35;
     vec4 Color = vec4(color, color, color, 0.3);
     FragColor = Color;
 }
