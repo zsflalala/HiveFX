@@ -3,7 +3,7 @@
 #include "Texture2D.h"
 #include "ShaderProgram.h"
 #include "ScreenQuad.h"
-
+#include <algorithm>
 using namespace hiveVG;
 
 CSlideWindow::CSlideWindow(const std::string& vTexturePath, float vSpeed, const std::string& vDirection, EPictureType::EPictureType vPictureType, bool vUseCompressed)
@@ -15,31 +15,23 @@ CSlideWindow::~CSlideWindow()
     __deleteSafely(m_pShaderProgram);
 }
 
-void CSlideWindow::updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad *vQuad)
+void CSlideWindow::updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad)
 {
-    glm::vec2 ScreenParams = glm::vec2(vWindowWidth, vWindowHeight);
+    // 直接累加偏移量，不限制范围（Shader会处理循环）
     m_CoordBias += static_cast<float>(vDeltaTime) * m_SlideSpeed;
-
-    const bool IsHorizontal = (m_SlideDirection == "horizontal");
-    const int TextureSize = IsHorizontal ? m_TextureWidth : m_TextureHeight;
-    const double ratio = m_CoordBias / static_cast<float>(TextureSize);
-    const int Steps = static_cast<int>(ratio + (ratio > 0 ? -1e-9 : 1e-9));
-    if (Steps != 0)
+    float textureHeight = static_cast<float>(m_TextureHeight);
+    if(abs(m_CoordBias) >= textureHeight)
     {
-        m_CoordBias -= static_cast<float>(Steps * TextureSize); // 一步完成正负方向的调整
-        if (m_UseCompressed)
-            m_Channel = (m_Channel + abs(Steps)) % 4; // 支持快速滑动时的多步调整
+        m_CoordBias = fmod(m_CoordBias, textureHeight);
     }
-    
     m_pShaderProgram->useProgram();
-    m_pShaderProgram->setUniform("_ScreenParams", ScreenParams);
+    m_pShaderProgram->setUniform("_ScreenParams", glm::vec2(vWindowWidth, vWindowHeight));
     m_pShaderProgram->setUniform("_TextureParams", glm::vec2(m_TextureWidth, m_TextureHeight));
     m_pShaderProgram->setUniform("_CoordBias", m_CoordBias);
-    if(m_UseCompressed) m_pShaderProgram->setUniform("_Channel", m_Channel);
-    m_pShaderProgram->setUniform("Texture", 0);
+    m_pShaderProgram->setUniform("_Channel", 0);
+
     glActiveTexture(GL_TEXTURE0);
     m_pTexture->bindTexture();
-
     vQuad->bindAndDraw();
 }
 
@@ -62,6 +54,20 @@ bool CSlideWindow::initTextureAndShaderProgram()
             m_pShaderProgram = CShaderProgram::createProgram(SlideWindowVert, SlideWindowVCFrag);
     }
 
+    if (!m_pShaderProgram)
+    {
+        LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "SlideWindow ShaderProgram init Failed.");
+        return false;
+    }
+    assert(m_pShaderProgram != nullptr);
+    LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TexturePath.c_str());
+    return true;
+}
+bool CSlideWindow::initTextureAndShaderProgram(std::string& vVertexShaderPath, std::string& vFragShaderShaderPath)
+{
+    m_pTexture = CTexture2D::loadTexture(m_TexturePath, m_TextureWidth, m_TextureHeight,
+                                         m_TextureType);
+    m_pShaderProgram = CShaderProgram::createProgram(vVertexShaderPath, vFragShaderShaderPath);
     if (!m_pShaderProgram)
     {
         LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "SlideWindow ShaderProgram init Failed.");

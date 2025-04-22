@@ -15,7 +15,7 @@ namespace hiveVG
     public:
         explicit CScrollRainCompressedRenderer(android_app *vApp);
         ~CScrollRainCompressedRenderer();
-
+        void onWindowResize(int vWidth, int vHeight){m_WindowWidth=vWidth;m_WindowHeight=vHeight;};
         void render();
 
     private:

@@ -1,9 +1,11 @@
 {
     "slide_config": {
-        "picture_path": "textures/LongSequence/LongTexRain1920_10800_VQuarter.ktx2",
-        "picture_type": "ktx2",
-        "is_compressed": true,
-        "slide_speed" : -90.0,
+        "picture_path": "textures/LongSequence/LongTexRain1920_10800.png",
+        "picture_type": "png",
+        "is_compressed": false,
+        "vertex_path": "shaders/LongPic/slideWindow.vert",
+        "fragment_path": "shaders/LongPic/slideWindowVCompressed.frag",
+        "slide_speed" : -30.0,
         "slide_direction" : "vertical"
     }
 }

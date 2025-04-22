@@ -29,6 +29,7 @@ CScrollRainCompressedRenderer::~CScrollRainCompressedRenderer()
     }
 }
 
+
 void CScrollRainCompressedRenderer::render()
 {
     m_CurrentTime    = CTimeUtils::getCurrentTime();
@@ -39,7 +40,12 @@ void CScrollRainCompressedRenderer::render()
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-   // glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    if (m_pApp->window)
+    {
+        m_WindowWidth  = ANativeWindow_getWidth(m_pApp->window);
+        m_WindowHeight = ANativeWindow_getHeight(m_pApp->window);
+    }
     m_pSlideWindow->updateFrameAndDraw(m_WindowWidth, m_WindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
 }
 
@@ -50,13 +56,15 @@ void CScrollRainCompressedRenderer::__initAlgorithm()
     Json::Value SlideConfig = JsonReader.getObject("slide_config");
     std::string PicturePath = SlideConfig["picture_path"].asString();
     std::string PictureType = SlideConfig["picture_type"].asString();
+    std::string VertexPath = SlideConfig["vertex_path"].asString();
+    std::string FragmentPath = SlideConfig["fragment_path"].asString();
     float SlideSpeed = SlideConfig["slide_speed"].asFloat();
     std::string SlideDirection = SlideConfig["slide_direction"].asString();
     bool IsCompressed = SlideConfig["is_compressed"].asBool();
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pSlideWindow = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection, EPictureType::FromString(PictureType), IsCompressed);
-    m_pSlideWindow->initTextureAndShaderProgram();
+    m_pSlideWindow->initTextureAndShaderProgram(VertexPath,FragmentPath);
 
     m_LastFrameTime = CTimeUtils::getCurrentTime();
     assert(m_pApp->window != nullptr);
