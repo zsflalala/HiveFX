@@ -67,14 +67,15 @@ void CASTCPlayerRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
-    glClearColor(0.345f,0.345f,0.345f, 0.0f);
+    glClearColor(1.0f,1.0f,1.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
     glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    m_pTestPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
-    m_pTestPlayer->draw(m_pScreenQuad);
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_pSingleFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    m_pTestPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pTestPlayer->draw(m_pScreenQuad);
+
 }
