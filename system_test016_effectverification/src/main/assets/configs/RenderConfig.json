@@ -1,0 +1,16 @@
+{
+    "sequence_config": {
+        "frames_path": "textures/Rain_storm_fore_645x305",
+        "frames_type" : "png",
+        "frames_count": 1,
+        "ranks":{
+            "rows" : 1,
+            "cols" : 1
+        },
+        "play_mode": "fullscreen",
+        "fps": 60,
+        "loop": true
+    },
+    "background_path": "textures/background/park.png",
+    "output" : "RainStormFore_NB_645x305.png"
+}

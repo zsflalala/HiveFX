@@ -35,6 +35,7 @@ namespace hiveVG::TAG_KEYWORD
     const char *const APP_CONTEXT_TAG           = "AppContext";
     const char *const UNIT_TEST_TAG             = "UnitTest";
     const char *const WEATHER_TAG               = "Weather";
+    const char *const EFFECT_TEST_TAG           = "EffectTest";
 }
 
 namespace hiveVG::CONFIG_KEYWORD
