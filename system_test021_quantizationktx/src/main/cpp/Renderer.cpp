@@ -131,12 +131,12 @@ void CRenderer::renderScene()
   /*  if (m_pQuantizationBigPicRenderer == nullptr)
         m_pQuantizationBigPicRenderer = new CQuantizationBicPicRenderer();
     m_pQuantizationBigPicRenderer->renderScene();*/
-    if (m_pQuantizationSeqRenderer == nullptr)
+  /*  if (m_pQuantizationSeqRenderer == nullptr)
         m_pQuantizationSeqRenderer = new CQuantizationSeqRenderer();
-    m_pQuantizationSeqRenderer->renderScene();
+    m_pQuantizationSeqRenderer->renderScene();*/
 
-/*    if(!m_pSCrollRainRenderer) m_pSCrollRainRenderer = new CScrollRainCompressedRenderer(m_pApp);
-    m_pSCrollRainRenderer->render();*/
+    if(!m_pSCrollRainRenderer) m_pSCrollRainRenderer = new CScrollRainCompressedRenderer(m_pApp);
+    m_pSCrollRainRenderer->render();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
