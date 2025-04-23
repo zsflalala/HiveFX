@@ -17,9 +17,9 @@ CSlideWindow::~CSlideWindow()
 
 void CSlideWindow::updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad)
 {
-    // 直接累加偏移量，不限制范围（Shader会处理循环）
     m_CoordBias += static_cast<float>(vDeltaTime) * m_SlideSpeed;
     float textureHeight = static_cast<float>(m_TextureHeight);
+
     if(abs(m_CoordBias) >= textureHeight)
     {
         m_CoordBias = fmod(m_CoordBias, textureHeight);

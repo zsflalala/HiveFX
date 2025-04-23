@@ -1,7 +1,7 @@
 {
     "slide_config": {
-        "picture_path": "textures/LongSequence/LongTexRain1920_10800.png",
-        "picture_type": "png",
+        "picture_path": "textures/LongSequence/LongTexRain1920_10800.ktx2",
+        "picture_type": "ktx2",
         "is_compressed": false,
         "vertex_path": "shaders/LongPic/slideWindow.vert",
         "fragment_path": "shaders/LongPic/slideWindowVCompressed.frag",
