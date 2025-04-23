@@ -9,7 +9,7 @@ namespace hiveVG
 {
     class CScreenQuad;
     class CSlideWindow;
-
+    class CSingleTexturePlayer;
     class CScrollRainCompressedRenderer
     {
     public:
@@ -28,5 +28,6 @@ namespace hiveVG
         android_app*   m_pApp           = nullptr;
         CScreenQuad*   m_pScreenQuad    = nullptr;
         CSlideWindow*  m_pSlideWindow   = nullptr;
+        CSingleTexturePlayer* m_pBackgroundPlayer       = nullptr;
     };
 }

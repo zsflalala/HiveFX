@@ -25,9 +25,10 @@ void main()
     vec4 texColor = texture(Texture, biasTexCoord);
 
     float color = texColor[_Channel];
-    if (color < 0.1)
-        discard;
+    if (color < 0.1) {
+            discard;
+        }
+    color = clamp(color * 1.5 + 0.5, 0.0, 1.0);
 
-    color = clamp(color + 0.35, 0.0, 1.0);
-    FragColor = vec4(color, color, color, 0.3);
+    FragColor = vec4(color, color, color, 0.5);
 }

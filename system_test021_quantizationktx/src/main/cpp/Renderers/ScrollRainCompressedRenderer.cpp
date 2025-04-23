@@ -27,6 +27,11 @@ CScrollRainCompressedRenderer::~CScrollRainCompressedRenderer()
         delete m_pSlideWindow;
         m_pSlideWindow = nullptr;
     }
+    if (m_pBackgroundPlayer)
+    {
+        delete m_pBackgroundPlayer;
+        m_pBackgroundPlayer = nullptr;
+    }
 }
 
 
@@ -40,7 +45,12 @@ void CScrollRainCompressedRenderer::render()
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+    m_pBackgroundPlayer->updateFrame();
+    m_pScreenQuad->bindAndDraw();
     //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_ONE, GL_ONE);
     m_pSlideWindow->updateFrameAndDraw(m_WindowWidth, m_WindowHeight, DeltaTime * 100.0f, m_pScreenQuad);
 }
 
@@ -57,6 +67,11 @@ void CScrollRainCompressedRenderer::__initAlgorithm()
     std::string SlideDirection = SlideConfig["slide_direction"].asString();
     bool IsCompressed = SlideConfig["is_compressed"].asBool();
 
+    Json::Value BackGroundConfig = JsonReader.getObject("Background");
+    std::string ImgPath = BackGroundConfig["frames_path"].asString();
+
+    m_pBackgroundPlayer = new CSingleTexturePlayer(ImgPath);
+    m_pBackgroundPlayer->initTextureAndShaderProgram();
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_pSlideWindow = new CSlideWindow(PicturePath, SlideSpeed, SlideDirection, EPictureType::FromString(PictureType), IsCompressed);
     m_pSlideWindow->initTextureAndShaderProgram(VertexPath,FragmentPath);
