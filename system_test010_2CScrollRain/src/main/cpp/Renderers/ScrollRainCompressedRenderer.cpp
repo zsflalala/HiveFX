@@ -29,7 +29,7 @@ CScrollRainCompressedRenderer::~CScrollRainCompressedRenderer()
     }
 }
 
-void CScrollRainCompressedRenderer::render()
+void CScrollRainCompressedRenderer::renderScene()
 {
     m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;

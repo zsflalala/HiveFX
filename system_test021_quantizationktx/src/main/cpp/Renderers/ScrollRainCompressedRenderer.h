@@ -10,13 +10,15 @@ namespace hiveVG
     class CScreenQuad;
     class CSlideWindow;
     class CSingleTexturePlayer;
+
     class CScrollRainCompressedRenderer
     {
     public:
         explicit CScrollRainCompressedRenderer(android_app *vApp);
         ~CScrollRainCompressedRenderer();
-        void onWindowResize(int vWidth, int vHeight){m_WindowWidth=vWidth;m_WindowHeight=vHeight;};
-        void render();
+
+        void onWindowResize(int vWidth, int vHeight){ m_WindowWidth = vWidth; m_WindowHeight = vHeight;};
+        void renderScene();
 
     private:
         void __initAlgorithm();
@@ -28,6 +30,6 @@ namespace hiveVG
         android_app*   m_pApp           = nullptr;
         CScreenQuad*   m_pScreenQuad    = nullptr;
         CSlideWindow*  m_pSlideWindow   = nullptr;
-        CSingleTexturePlayer* m_pBackgroundPlayer       = nullptr;
+        CSingleTexturePlayer* m_pBackgroundPlayer = nullptr;
     };
 }

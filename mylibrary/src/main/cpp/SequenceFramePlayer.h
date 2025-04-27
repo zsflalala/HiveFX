@@ -44,7 +44,7 @@ namespace hiveVG
         bool initTextureAndShaderProgram();
         bool initTextureAndShaderProgram(std::string &vVertexShaderPath, std::string &vFragShaderShaderPath);
 
-        void updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
+        void updateFrameAndUV(double vDeltaTime);
         void updateQuantizationFrame(double vDeltaTime);
         void draw(CScreenQuad *vQuad);
         void drawQuantization(CScreenQuad *vQuad);
@@ -52,32 +52,32 @@ namespace hiveVG
     private:
         void __initSequenceParams();
 
-        int m_SequenceRows;
-        int m_SequenceCols;
-        int m_OneTextureFrames = 1;
-        int m_CurrentChannel = 0;
-        int m_SequenceWidth = 0;
-        int m_SequenceHeight = 0;
-        int m_SeqSingleTexWidth = 0;
-        int m_SeqSingleTexHeight = 0;
-        int m_ValidFrames;
-        float m_FramePerSecond = 24.0f;
-        bool m_IsLoop = true;
-        bool m_IsFinished = false;
-        float m_RotationAngle = 0.0f;
-        bool m_IsMoving = false;
-        bool m_UseLifeCycle = false;
-        bool m_UseCompressedPNG = false;
-        int m_CurrentFrame = 0;
-        double m_AccumFrameTime = 0.0f;
+        int    m_SequenceRows       = 1;
+        int    m_SequenceCols       = 1;
+        int    m_OneTextureFrames   = 1;
+        int    m_CurrentChannel     = 0;
+        int    m_SequenceWidth      = 0;
+        int    m_SequenceHeight     = 0;
+        int    m_SeqSingleTexWidth  = 0;
+        int    m_SeqSingleTexHeight = 0;
+        int    m_ValidFrames;
+        float  m_FramePerSecond   = 24.0f;
+        bool   m_IsLoop           = true;
+        bool   m_IsFinished       = false;
+        float  m_RotationAngle    = 0.0f;
+        bool   m_IsMoving         = false;
+        bool   m_UseLifeCycle     = false;
+        bool   m_UseCompressedPNG = false;
+        int    m_CurrentFrame     = 0;
+        double m_AccumFrameTime   = 0.0f;
         std::string m_TextureRootPath;
-        int m_CurrentTexture = 0;
-        int m_TextureCount;
+        int         m_CurrentTexture = 0;
+        int         m_TextureCount;
         SSequenceState m_SequenceState;
-        glm::vec2 m_ScreenUVScale = glm::vec2(1.0f, 1.0f);
+        glm::vec2 m_ScreenUVScale  = glm::vec2(1.0f, 1.0f);
         glm::vec2 m_ScreenUVOffset = glm::vec2(0.0f, 0.0f);
-        glm::vec2 m_WindowSize = glm::vec2(0.0f, 0.0f);
-        glm::vec2 m_MovingSpeed = glm::vec2(0.1f, 0.0f);
+        glm::vec2 m_WindowSize     = glm::vec2(0.0f, 0.0f);
+        glm::vec2 m_MovingSpeed    = glm::vec2(0.1f, 0.0f);
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
 
         std::vector<CTexture2D *> m_SeqTextures;

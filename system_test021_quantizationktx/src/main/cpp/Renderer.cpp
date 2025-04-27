@@ -36,10 +36,10 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pTestRenderer)                    delete m_pTestRenderer;
-    if (m_pQuantizationBigPicRenderer)      delete m_pQuantizationBigPicRenderer;
-    if (m_pQuantizationSeqRenderer)         delete m_pQuantizationSeqRenderer;
-    if (m_pSCrollRainRenderer)              delete m_pSCrollRainRenderer;
+    __deleteSafely(m_pTestRenderer);
+    __deleteSafely(m_pQuantizationBigPicRenderer);
+    __deleteSafely(m_pQuantizationSeqRenderer);
+    __deleteSafely(m_pScrollRainRenderer);
 }
 
 void CRenderer::__initRenderer()
@@ -125,18 +125,22 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
- /*   if (m_pTestRenderer == nullptr) m_pTestRenderer = new CASTCSequenceRendererRenderer(m_pApp);
-    m_pTestRenderer->renderScene(m_WindowWidth, m_WindowHeight);*/
+//    TODO : textures lost
+//    if (m_pTestRenderer == nullptr)
+//        m_pTestRenderer = new CASTCSequencePlayerRenderer();
+//    m_pTestRenderer->renderScene(m_WindowWidth, m_WindowHeight);
 
-  /*  if (m_pQuantizationBigPicRenderer == nullptr)
-        m_pQuantizationBigPicRenderer = new CQuantizationBicPicRenderer();
-    m_pQuantizationBigPicRenderer->renderScene();*/
-  /*  if (m_pQuantizationSeqRenderer == nullptr)
-        m_pQuantizationSeqRenderer = new CQuantizationSeqRenderer();
-    m_pQuantizationSeqRenderer->renderScene();*/
+//    if (m_pQuantizationBigPicRenderer == nullptr)
+//        m_pQuantizationBigPicRenderer = new CQuantizationBicPicRenderer();
+//    m_pQuantizationBigPicRenderer->renderScene();
 
-    if(!m_pSCrollRainRenderer) m_pSCrollRainRenderer = new CScrollRainCompressedRenderer(m_pApp);
-    m_pSCrollRainRenderer->render();
+//    if (m_pQuantizationSeqRenderer == nullptr)
+//        m_pQuantizationSeqRenderer = new CQuantizationSeqRenderer();
+//    m_pQuantizationSeqRenderer->renderScene();
+
+//    if(!m_pScrollRainRenderer)
+//        m_pScrollRainRenderer = new CScrollRainCompressedRenderer(m_pApp);
+//    m_pScrollRainRenderer->renderScene();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
@@ -153,7 +157,7 @@ void CRenderer::__updateRenderArea()
         m_WindowWidth  = Width;
         m_WindowHeight = Height;
         glViewport(0, 0, m_WindowWidth, m_WindowHeight);
-        if (m_pSCrollRainRenderer!= nullptr)
-            m_pSCrollRainRenderer->onWindowResize(Width,Height);
+        if (m_pScrollRainRenderer!= nullptr)
+            m_pScrollRainRenderer->onWindowResize(Width,Height);
     }
 }

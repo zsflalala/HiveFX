@@ -1,5 +1,4 @@
 #include "KtxSequencePlayerRenderer.h"
-#include <game-activity/native_app_glue/android_native_app_glue.h>
 #include "Common.h"
 #include "TimeUtils.h"
 #include "ScreenQuad.h"
@@ -10,16 +9,20 @@
 
 using namespace hiveVG;
 
-CASTCSequencePlayerRenderer::CASTCSequencePlayerRenderer(android_app *vApp) : m_pApp(vApp)
+CASTCSequencePlayerRenderer::CASTCSequencePlayerRenderer()
 {
     __initAlgorithm();
 }
 
 CASTCSequencePlayerRenderer::~CASTCSequencePlayerRenderer()
 {
-    if (m_pScreenQuad)              delete m_pScreenQuad;
-    if (m_pTestPlayer)              delete m_pTestPlayer;
-    if (m_pSingleFramePlayer)       delete m_pSingleFramePlayer;
+    if (m_pScreenQuad)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
+    __deleteSafely(m_pTestPlayer);
+    __deleteSafely(m_pSingleFramePlayer);
 }
 
 void CASTCSequencePlayerRenderer::__initAlgorithm()
@@ -33,8 +36,6 @@ void CASTCSequencePlayerRenderer::__initAlgorithm()
     std::string PlayMode   = SequenceConfig["play_mode"].asString();
     bool        IsLoop     = SequenceConfig["loop"].asBool();
     int         PlayFPS    = SequenceConfig["fps"].asInt();
-    float       MoveSpeedX = SequenceConfig["moving_speed"][0].asFloat();
-    float       MoveSpeedY = SequenceConfig["moving_speed"][1].asFloat();
     m_PlayScale   = SequenceConfig["scale"].asFloat();
     m_UVOffset.x  = SequenceConfig["position"]["x"].asFloat();
     m_UVOffset.y  = SequenceConfig["position"]["y"].asFloat();
@@ -52,7 +53,7 @@ void CASTCSequencePlayerRenderer::__initAlgorithm()
     }
     Json::Value BackGroundConfig = JsonReader.getObject("Background");
     std::string ImgPath = BackGroundConfig["frames_path"].asString();
-    m_pSingleFramePlayer   = new CSingleTexturePlayer(ImgPath,EPictureType::EPictureType::PNG);
+    m_pSingleFramePlayer = new CSingleTexturePlayer(ImgPath,EPictureType::EPictureType::PNG);
     m_pSingleFramePlayer->initTextureAndShaderProgram();
 
     m_pTestPlayer->setFrameRate(PlayFPS);
@@ -71,10 +72,10 @@ void CASTCSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeigh
     glClear(GL_COLOR_BUFFER_BIT);
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    m_pTestPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
-    m_pTestPlayer->draw(m_pScreenQuad);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_pSingleFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    m_pTestPlayer->updateFrameAndUV(DeltaTime);
+    m_pTestPlayer->draw(m_pScreenQuad);
 }

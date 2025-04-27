@@ -128,8 +128,8 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
         voHeight = pTexture->baseHeight;
 
         LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
-                 "Successfully loaded KTX pTexture. Width: %d, Height: %d, Target: 0x%x",
-                 voWidth, voHeight, Target);
+                 "Successfully loaded [%s] KTX pTexture. Width: %d, Height: %d, Target: 0x%x",
+                 vTexturePath.c_str(), voWidth, voHeight, Target);
 
         ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(pTexture));
         return new CTexture2D(TextureHandle);

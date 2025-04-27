@@ -4,6 +4,8 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
+#include "Renderers/RainQuantizationBicPicRenderer.h"
+#include "Renderers/RainQuantizationSeqRenderer.h"
 
 using namespace hiveVG;
 
@@ -31,6 +33,8 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
+    __deleteSafely(m_pRainQuantizationSeqRenderer);
+    __deleteSafely(m_pRainQuantizationBigPicRenderer);
 }
 
 void CRenderer::__initRenderer()
@@ -93,13 +97,18 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    glClearColor(0.345f, 0.345f, 0.345f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    if (m_pRainQuantizationBigPicRenderer == nullptr)
+        m_pRainQuantizationBigPicRenderer = new CRainQuantizationBicPicRenderer();
+    m_pRainQuantizationBigPicRenderer->renderScene();
+//    if (m_pRainQuantizationSeqRenderer == nullptr)
+//        m_pRainQuantizationSeqRenderer = new CRainQuantizationSeqRenderer();
+//    m_pRainQuantizationSeqRenderer->renderScene();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
-  void CRenderer::__updateRenderArea()
+
+void CRenderer::__updateRenderArea()
 {
     EGLint Width, Height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);

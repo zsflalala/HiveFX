@@ -34,8 +34,7 @@ CScrollRainCompressedRenderer::~CScrollRainCompressedRenderer()
     }
 }
 
-
-void CScrollRainCompressedRenderer::render()
+void CScrollRainCompressedRenderer::renderScene()
 {
     m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
@@ -46,7 +45,6 @@ void CScrollRainCompressedRenderer::render()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
     m_pBackgroundPlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
     //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -56,12 +54,12 @@ void CScrollRainCompressedRenderer::render()
 
 void CScrollRainCompressedRenderer::__initAlgorithm()
 {
-    std::string FileName = "configs/ScrollRainCompressedConfig.json";
-    CJsonReader JsonReader = CJsonReader(FileName);
+    std::string FileName    = "configs/ScrollRainCompressedConfig.json";
+    CJsonReader JsonReader  = CJsonReader(FileName);
     Json::Value SlideConfig = JsonReader.getObject("slide_config");
     std::string PicturePath = SlideConfig["picture_path"].asString();
     std::string PictureType = SlideConfig["picture_type"].asString();
-    std::string VertexPath = SlideConfig["vertex_path"].asString();
+    std::string VertexPath  = SlideConfig["vertex_path"].asString();
     std::string FragmentPath = SlideConfig["fragment_path"].asString();
     float SlideSpeed = SlideConfig["slide_speed"].asFloat();
     std::string SlideDirection = SlideConfig["slide_direction"].asString();

@@ -19,9 +19,13 @@ CSplashRenderer::CSplashRenderer(android_app *vApp) : m_pApp(vApp)
 
 CSplashRenderer::~CSplashRenderer()
 {
-    if (m_pScreenQuad)              delete m_pScreenQuad;
-    if (m_pSplashPlayer)            delete m_pSplashPlayer;
-    if (m_pBackFramePlayer)         delete m_pBackFramePlayer;
+    if (m_pScreenQuad)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
+    __deleteSafely(m_pSplashPlayer);
+    __deleteSafely(m_pBackFramePlayer);
 }
 
 void CSplashRenderer::__initAlgorithm()
@@ -62,7 +66,6 @@ void CSplashRenderer::__initAlgorithm()
     m_pSplashPlayer->setLoopPlayback(IsLoop);
     m_pSplashPlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
     m_pSplashPlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
-    //m_pSplashPlayer->setScreenUVOffset(glm::vec2(0.43, -0.425));
 
     m_pSplashManager = std::make_unique<CSplashManager>();
     int SplashNum = 7;
@@ -102,12 +105,10 @@ void CSplashRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     m_pBackFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-//    m_pSplashPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
-//    m_pSplashPlayer->draw(m_pScreenQuad);
-    m_pSplashManager->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pSplashManager->updateFrameAndUV(DeltaTime);
     m_pSplashManager->updateSequenceState(DeltaTime);
     m_pSplashManager->draw(m_pScreenQuad);
 
-    m_pRainPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pRainPlayer->updateFrameAndUV(DeltaTime);
     m_pRainPlayer->draw(m_pScreenQuad);
 }

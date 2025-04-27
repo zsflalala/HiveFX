@@ -46,6 +46,6 @@ void CSnowSceneRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pSnowSceneSeqFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pSnowSceneSeqFramePlayer->updateFrameAndUV(DeltaTime);
     m_pSnowSceneSeqFramePlayer->draw(m_pScreenQuad);
 }

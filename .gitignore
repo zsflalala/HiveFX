@@ -20,7 +20,7 @@ output.json
 .idea/
 misc.xml
 deploymentTargetDropDown.xml
-render.experimental.xml
+renderScene.experimental.xml
 
 # Keystore files
 *.jks

@@ -1,0 +1,16 @@
+{
+    "Quantization": {
+        "frames_path": "textures/BigSnow_fore_png8ASTC4x4",
+        "frames_type" : "ktx2",
+        "frames_count": 32,
+        "one_texture_frames": 4,
+        "fps": 60,
+        "vertex_shader" : "shaders/SeqPic/quantizationSeq.vert",
+        "fragment_shader" : "shaders/SeqPic/quantizationSeq8bitSnow.frag"
+    },
+    "Background":{
+        "frames_path": "textures/SnowCover_resASTC4x4",
+        "frames_count": 128,
+        "frames_type" : "ktx2"
+    }
+}

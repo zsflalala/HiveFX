@@ -52,6 +52,7 @@ namespace hiveVG
         SNOW,
         RAIN,
         CLOUD,
+        SCROLL_RAIN,
         SNOW_SCENE,
         SMALL_SNOW_FORE,
         SMALL_SNOW_BACK,
@@ -60,7 +61,13 @@ namespace hiveVG
         SMALL_RAIN_FORE,
         SMALL_RAIN_BACK,
         BIG_RAIN_FORE,
-        BIG_RAIN_BACK
+        BIG_RAIN_BACK,
+        RAIN_QBC,
+        RAIN_QBD,
+        RAIN_Q32,
+        SNOW_QBC,
+        SNOW_QBD,
+        SNOW_Q32
     };
 
     const static std::string P60SaveToPhotoPath = "/storage/emulated/0/Pictures/Screenshots/";

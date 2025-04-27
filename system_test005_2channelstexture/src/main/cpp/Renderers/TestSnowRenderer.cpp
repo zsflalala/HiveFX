@@ -62,10 +62,10 @@ void CTestSnowRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pSmallSnowForePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pSmallSnowForePlayer->updateFrameAndUV(DeltaTime);
     m_pSmallSnowForePlayer->draw(m_pScreenQuad);
     m_pSinglePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
-    m_pSmallSnowBackPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pSmallSnowBackPlayer->updateFrameAndUV(DeltaTime);
     m_pSmallSnowForePlayer->draw(m_pScreenQuad);
 }

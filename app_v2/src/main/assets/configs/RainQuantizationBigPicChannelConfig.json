@@ -1,0 +1,24 @@
+{
+  "RainFore": {
+    "frames_path": "textures/HeavyRain_fore_png8_bigpic_8x4_channelASTC4x4",
+    "sequenceRows": 8,
+    "sequenceCols": 4,
+    "frames_type" : "ktx2",
+    "frames_count": 1,
+    "one_texture_frames": 4,
+    "fps": 60,
+    "play_mode": "channel",
+    "vertex_shader" : "shaders/BigPic/quantizationSeq.vert",
+    "fragment_shader" : "shaders/BigPic/quantizationSeq8bitRain.frag"
+  },
+  "Splash": {
+    "frames_path": "textures/Splash_resASTC4x4",
+    "frames_type" : "ktx2",
+    "frames_count": 28,
+    "fps": 30,
+    "scale": 0.05
+  },
+  "Background":{
+    "frames_path": "textures/snowScene.png"
+  }
+}

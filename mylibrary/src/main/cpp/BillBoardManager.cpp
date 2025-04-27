@@ -33,7 +33,7 @@ void CBillBoardManager::updateFrameAndUV(int vWindowWidth, int vWindowHeight, do
     {
         if (m_SequencePlayers[i]->getLoopState() || (!m_SequencePlayers[i]->getLoopState() && !m_SequencePlayers[i]->getFinishState()))
         {
-            m_SequencePlayers[i]->updateFrameAndUV(vWindowWidth, vWindowHeight, vDeltaTime);
+            m_SequencePlayers[i]->updateFrameAndUV(vDeltaTime);
         }
     }
 }

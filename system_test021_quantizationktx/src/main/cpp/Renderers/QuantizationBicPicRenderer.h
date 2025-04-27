@@ -21,13 +21,12 @@ namespace hiveVG
 
     private:
         void   __initAlgorithm();
+
         template<typename T>
         void __deleteSafely(T*& vPointer);
 
-
         int                        m_SeqRows                 = 0;
         int                        m_SeqCols                 = 0;
-
         int                        m_CurrentFrame            = 0;
         int                        m_TextureCount            = 0;
         int                        m_OneTextureFrames        = 1;
@@ -41,7 +40,6 @@ namespace hiveVG
         CScreenQuad*               m_pScreenQuad             = nullptr;
         CSingleTexturePlayer*      m_pBackFramePlayer        = nullptr;
         CSingleTexturePlayer*      m_pForeFramePlayer        = nullptr;
-
     };
 
     template<typename T>

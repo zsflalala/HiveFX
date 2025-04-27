@@ -17,7 +17,7 @@ namespace hiveVG
         void  pushBack(CSequenceFramePlayer* vSequenceFramePlayer);
         void  initSequenceState(const std::string& vImagePath, const float& vScale);
         bool  initBlender(int vWidth, int vHeight);
-        void  updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime);
+        void  updateFrameAndUV(double vDeltaTime);
         void  draw(CScreenQuad* vQuad);
         int   getSequencePlayerLength() { return m_SequencePlayers.size(); }
         float getImageAspectRatioAt(int i) { return static_cast<float>(m_SequencePlayers[i]->getSingleTextureWidth()) / static_cast<float>(m_SequencePlayers[i]->getSingleTextureHeight()); }

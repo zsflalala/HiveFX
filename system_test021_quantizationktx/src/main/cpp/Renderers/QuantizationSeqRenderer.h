@@ -20,9 +20,11 @@ namespace hiveVG
         void renderScene();
 
     private:
+        bool __initAlgorithm();
+
         template<typename T>
         void __deleteSafely(T*& vPointer);
-        bool __initAlgorithm();
+
         int                   m_OneTextureFrames        = 1;
         int                   m_TextureCount            = 0;
         int                   m_CurrentTexture          = 0;

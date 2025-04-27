@@ -53,7 +53,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
     else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
-    else if (m_TextureType == EPictureType::PKM) PictureSuffix = ".pkm";
+    else if (m_TextureType == EPictureType::PKM)  PictureSuffix = ".pkm";
     else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
     for (int i = 0; i < m_TextureCount; i++)
     {
@@ -157,7 +157,7 @@ void CSequenceFramePlayer::updateQuantizationFrame(double vDeltaTime)
     LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
 }
 
-void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime)
+void CSequenceFramePlayer::updateFrameAndUV(double vDeltaTime)
 {
     double FrameTime = 1.0 / m_FramePerSecond;
     m_AccumFrameTime += vDeltaTime;
@@ -171,7 +171,7 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight,
         }
         m_CurrentFrame = (m_CurrentFrame + 1) % m_ValidFrames;
     }
-    m_WindowSize = glm::vec2(vWindowWidth, vWindowHeight);
+
     if (m_IsMoving)
     {
         if (m_UseLifeCycle)
