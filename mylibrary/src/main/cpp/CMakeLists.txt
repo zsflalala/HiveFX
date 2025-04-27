@@ -53,6 +53,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         AppContext.cpp
         FileUtils.cpp
         ThreadPool.cpp
+        EffectTester.cpp
 )
 
 set(REQUIRED_PACKAGES
