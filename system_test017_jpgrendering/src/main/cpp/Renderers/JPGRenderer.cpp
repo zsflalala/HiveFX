@@ -77,12 +77,12 @@ void CJPGRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pBackJPGPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pBackJPGPlayer->updateFrameAndUV(DeltaTime);
     m_pBackJPGPlayer->draw(m_pScreenQuad);
 
     m_pBackgroundJPGPlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-    m_pForeJPGPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pForeJPGPlayer->updateFrameAndUV(DeltaTime);
     m_pForeJPGPlayer->draw(m_pScreenQuad);
 }

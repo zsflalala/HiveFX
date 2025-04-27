@@ -138,9 +138,9 @@ void CRenderer::renderScene()
 //        m_pQuantizationSeqRenderer = new CQuantizationSeqRenderer();
 //    m_pQuantizationSeqRenderer->renderScene();
 
-//    if(!m_pScrollRainRenderer)
-//        m_pScrollRainRenderer = new CScrollRainCompressedRenderer(m_pApp);
-//    m_pScrollRainRenderer->renderScene();
+    if(!m_pScrollRainRenderer)
+        m_pScrollRainRenderer = new CScrollRainCompressedRenderer(m_pApp);
+    m_pScrollRainRenderer->renderScene();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

@@ -215,10 +215,10 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     float RotationAngle   = m_RotationAngle * M_PI / 180.0f;
     int   CurrentFrameRow = m_CurrentFrame / m_SequenceCols;
     int   CurrentFrameCol = m_CurrentFrame % m_SequenceCols;
-    float CurrentFrameU0 = CurrentFrameCol / static_cast<float>(m_SequenceCols);
-    float CurrentFrameV0 = CurrentFrameRow / static_cast<float>(m_SequenceRows);
-    float CurrentFrameU1 = (CurrentFrameCol + 1) / static_cast<float>(m_SequenceCols);
-    float CurrentFrameV1 = (CurrentFrameRow + 1) / static_cast<float>(m_SequenceRows);
+    float CurrentFrameU0 = static_cast<float>(CurrentFrameCol) / static_cast<float>(m_SequenceCols);
+    float CurrentFrameV0 = static_cast<float>(CurrentFrameRow) / static_cast<float>(m_SequenceRows);
+    float CurrentFrameU1 = static_cast<float>(CurrentFrameCol + 1) / static_cast<float>(m_SequenceCols);
+    float CurrentFrameV1 = static_cast<float>(CurrentFrameRow + 1) / static_cast<float>(m_SequenceRows);
     glm::vec2 TextureUVOffset = glm::vec2(CurrentFrameU0, CurrentFrameV0);
     glm::vec2 TextureUVScale  = glm::vec2(CurrentFrameU1 - CurrentFrameU0, CurrentFrameV1 - CurrentFrameV0);
 
