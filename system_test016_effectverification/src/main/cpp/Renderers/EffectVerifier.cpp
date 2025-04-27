@@ -45,6 +45,6 @@ void CEffectVerifier::__initAlgorithm()
 void CEffectVerifier::verify()
 {
     double PSNR, SSIM;
-    m_pTester->evaluateImagesQuality("RainStormFore_NB_2582x1220.png", "RainStormFore_NB_645x305.png",PSNR,SSIM);
+    m_pTester->evaluateImagesQuality("RainSmallFore_1291x610_2.png", "RainSmallFore_1291x610.png",PSNR,SSIM);
     LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "PSNR: %lf, SSIM: %lf", PSNR, SSIM);
 }

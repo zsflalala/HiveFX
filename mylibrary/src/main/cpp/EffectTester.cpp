@@ -37,13 +37,14 @@ bool CEffectTester::saveScreenBuffer(const std::string& vTexName)
 {
     size_t BufferSize = m_Width * m_Height * 4;
     if(m_pBuffer)
-        delete m_pBuffer;
+        delete[] m_pBuffer;
     m_pBuffer = new unsigned char[BufferSize];
     glReadPixels(0, 0, m_Width, m_Height, GL_RGBA, GL_UNSIGNED_BYTE, m_pBuffer);
     __flipBuffer();
     std::string OutputTex = m_FilePath + vTexName;
     int IsSaveSucceed = stbi_write_png(OutputTex.c_str(), m_Width, m_Height, 4, m_pBuffer, m_Width * 4);
     delete[] m_pBuffer;
+    m_pBuffer = nullptr;
     if (!IsSaveSucceed)
     {
         LOG_ERROR(TAG_KEYWORD::EFFECT_TEST_TAG, "Saving texture failed.");

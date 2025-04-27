@@ -1,6 +1,6 @@
 {
     "sequence_config": {
-        "frames_path": "textures/Rain_storm_fore_645x305",
+        "frames_path": "textures/Rain_heavy_fore",
         "frames_type" : "png",
         "frames_count": 1,
         "ranks":{
@@ -8,9 +8,9 @@
             "cols" : 1
         },
         "play_mode": "fullscreen",
-        "fps": 60,
+        "fps": 80,
         "loop": true
     },
     "background_path": "textures/background/park.png",
-    "output" : "RainStormFore_NB_645x305.png"
+    "output" : "RainHeavyFore_2700_10.png"
 }
