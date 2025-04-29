@@ -42,12 +42,14 @@ namespace hiveVG
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
 
         bool initTextureAndShaderProgram();
-        bool initTextureAndShaderProgram(std::string &vVertexShaderPath, std::string &vFragShaderShaderPath);
+        bool initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath);
 
         void updateFrameAndUV(double vDeltaTime);
         void updateQuantizationFrame(double vDeltaTime);
+        void updateInterpolationFrame(double vDeltaTime);
         void draw(CScreenQuad *vQuad);
         void drawQuantization(CScreenQuad *vQuad);
+        void drawInterpolation(CScreenQuad *vQuad);
 
     private:
         void __initSequenceParams();
@@ -69,9 +71,12 @@ namespace hiveVG
         bool   m_UseLifeCycle     = false;
         bool   m_UseCompressedPNG = false;
         int    m_CurrentFrame     = 0;
+        int    m_NextFrame        = 0;
+        float  m_InterpolationFactor = 0.0f;
         double m_AccumFrameTime   = 0.0f;
         std::string m_TextureRootPath;
         int         m_CurrentTexture = 0;
+        int         m_NextTexture = 0;
         int         m_TextureCount;
         SSequenceState m_SequenceState;
         glm::vec2 m_ScreenUVScale  = glm::vec2(1.0f, 1.0f);
