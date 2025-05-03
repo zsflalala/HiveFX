@@ -15,6 +15,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         Renderer.cpp
+        Renderers/RainMultiChannelSeqRenderer.cpp
         system_test023_channelmultiplexing.cpp
 )
 

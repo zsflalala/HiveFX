@@ -4,6 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
+#include "Renderers/RainMultiChannelSeqRenderer.h"
 
 using namespace hiveVG;
 
@@ -31,6 +32,7 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
+    __deleteSafely(m_pRainMultiChannelSeqRenderer);
 }
 
 void CRenderer::__initRenderer()
@@ -92,6 +94,10 @@ void CRenderer::__initRenderer()
 void CRenderer::renderScene()
 {
     __updateRenderArea();
+
+    if (m_pRainMultiChannelSeqRenderer == nullptr)
+        m_pRainMultiChannelSeqRenderer = new CRainMultiChannelSeqRenderer();
+    m_pRainMultiChannelSeqRenderer->renderScene();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
