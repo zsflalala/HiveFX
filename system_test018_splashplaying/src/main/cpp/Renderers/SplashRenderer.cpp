@@ -65,7 +65,7 @@ void CSplashRenderer::__initAlgorithm()
     //m_pSplashPlayer->setScreenUVOffset(glm::vec2(0.43, -0.425));
 
     m_pSplashManager = std::make_unique<CSplashManager>();
-    int SplashNum = 7;
+    int SplashNum = 20;
     for (int i = 0; i < SplashNum; i++)
     {
         m_pSplashManager->pushBack(m_pSplashPlayer->clone());

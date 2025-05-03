@@ -133,7 +133,7 @@ SSequenceState CSplashManager::__initSequenceParams()
 
     //FloatDistribution.param(std::uniform_real_distribution<>::param_type(3.0f, 4.0f));
     //State._PlannedLivingTime = FloatDistribution(Gen);
-    State._PlannedLivingTime = 0.8;
+    State._PlannedLivingTime = 1.0;
 
     FloatDistribution.param(std::uniform_real_distribution<>::param_type(1.0f, 2.0f));
     State._PlannedDeadTime   = FloatDistribution(Gen);
