@@ -38,7 +38,10 @@ void CSplashManager::updateFrameAndUV(double vDeltaTime)
     {
         if (m_SequencePlayers[i]->getLoopState() || (!m_SequencePlayers[i]->getLoopState() && !m_SequencePlayers[i]->getFinishState()))
         {
-            m_SequencePlayers[i]->updateFrameAndUV(vDeltaTime);
+            if (m_IsQuantization)
+                m_SequencePlayers[i]->updateQuantizationFrame(vDeltaTime);
+            else
+                m_SequencePlayers[i]->updateFrameAndUV(vDeltaTime);
         }
     }
 }
@@ -49,7 +52,11 @@ void CSplashManager::draw(CScreenQuad* vQuad)
     {
         if (!m_SequenceState[i]._IsAlive)
             continue;
-        m_SequencePlayers[i]->draw(vQuad);
+        if(m_IsQuantization)
+            m_SequencePlayers[i]->drawQuantization(vQuad);
+        else
+            m_SequencePlayers[i]->draw(vQuad);
+
     }
 }
 

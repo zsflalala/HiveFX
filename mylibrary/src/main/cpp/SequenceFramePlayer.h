@@ -40,6 +40,7 @@ namespace hiveVG
         [[nodiscard]] int getSingleTextureHeight() const { return m_SeqSingleTexHeight; }
         [[nodiscard]] bool getLoopState() const { return m_IsLoop; }
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
+        [[nodiscard]] EPictureType::EPictureType getPicType() const { return m_TextureType; }
 
         bool initTextureAndShaderProgram();
         bool initTextureAndShaderProgram(std::string &vVertexShaderPath, std::string &vFragShaderShaderPath);
@@ -79,7 +80,6 @@ namespace hiveVG
         glm::vec2 m_WindowSize     = glm::vec2(0.0f, 0.0f);
         glm::vec2 m_MovingSpeed    = glm::vec2(0.1f, 0.0f);
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
-
         std::vector<CTexture2D *> m_SeqTextures;
         CShaderProgram *m_pSequenceShaderProgram = nullptr;
     };

@@ -153,8 +153,9 @@ void CSequenceFramePlayer::updateQuantizationFrame(double vDeltaTime)
             if (m_SeqTextures.size() == m_CurrentTexture)
                 m_CurrentTexture = 0;
         }
+        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
     }
-    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
+
 }
 
 void CSequenceFramePlayer::updateFrameAndUV(double vDeltaTime)
@@ -239,6 +240,10 @@ void CSequenceFramePlayer::drawQuantization(CScreenQuad *vQuad)
 {
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
+    float RotationAngle   = m_RotationAngle * M_PI / 180.0f;
+    m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
+    m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
+    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
     m_pSequenceShaderProgram->setUniform("indexTexture", 0);
     m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
     glActiveTexture(GL_TEXTURE0);

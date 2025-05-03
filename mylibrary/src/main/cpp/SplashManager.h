@@ -31,7 +31,7 @@ namespace hiveVG
         void  setScreenUvOffset(glm::vec2& vUVOffset);
         void  setImageAspectRatioAt(int i, glm::vec2& vScale) { m_SequencePlayers[i]->setScreenUVScale(vScale); }
         void  setBlender(CTextureBlender* vTexBlender) { m_pTexBlender = vTexBlender; }
-
+        void  setIsQuantization(bool vIsQuantization){m_IsQuantization=vIsQuantization;}
     private:
         SSequenceState __initSequenceParams();
         void __calculatePosition(const std::string& vImagePath, const float& vScale);
@@ -39,6 +39,7 @@ namespace hiveVG
         float                              m_SplashScale   = 0.0f;
         double                             m_LastFrameTime = 0.0f;
         bool                               m_IsBlend       = false;
+        bool                               m_IsQuantization= false;
         CTextureBlender*                   m_pTexBlender   = nullptr;
         std::vector<SSequenceState>        m_SequenceState;
         std::vector<CSequenceFramePlayer*> m_SequencePlayers;
