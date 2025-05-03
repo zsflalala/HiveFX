@@ -4,11 +4,16 @@
 
 #include "stb_image.h"
 #include "Common.h"
+#include "AppContext.h"
 
 using namespace hiveVG;
 
 CEffectTester::CEffectTester()
-{ }
+{
+    std::string StoragePath = CAppContext::getStoragePath();
+    if(!StoragePath.empty())
+        setFilePath(StoragePath);
+}
 
 CEffectTester::~CEffectTester()
 {
