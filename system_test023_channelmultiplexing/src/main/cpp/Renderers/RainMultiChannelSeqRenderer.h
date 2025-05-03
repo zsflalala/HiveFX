@@ -18,7 +18,7 @@ namespace hiveVG
         CRainMultiChannelSeqRenderer();
         ~CRainMultiChannelSeqRenderer();
 
-        void renderScene();
+        void renderScene(ERenderChannel vRenderChannel);
 
     private:
         bool __initAlgorithm();

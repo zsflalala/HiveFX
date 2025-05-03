@@ -80,7 +80,7 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     return true;
 }
 
-void CRainMultiChannelSeqRenderer::renderScene()
+void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
 {
     m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
@@ -95,10 +95,9 @@ void CRainMultiChannelSeqRenderer::renderScene()
     m_pBackgroundPlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-    m_pRainSeqPlayer->updateQuantizationFrame(DeltaTime);
+    m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
     m_pRainSeqPlayer->drawQuantization(m_pScreenQuad);
 
-    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFunc(GL_ONE, GL_ONE);
     m_pSplashManager->updateFrameAndUV(DeltaTime);
     m_pSplashManager->updateSequenceState(static_cast<float>(DeltaTime));

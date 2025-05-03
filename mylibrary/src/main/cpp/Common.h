@@ -71,6 +71,14 @@ namespace hiveVG
         SNOW_Q32
     };
 
+    enum class ERenderChannel : std::uint8_t
+    {
+        R = 0,
+        G,
+        B,
+        A
+    };
+
     const static std::string P60SaveToPhotoPath = "/storage/emulated/0/Pictures/Screenshots/";
 
     // Shaders config path

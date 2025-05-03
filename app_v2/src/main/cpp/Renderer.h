@@ -30,7 +30,6 @@ namespace hiveVG
         void __deleteSafely(T*& vPointer);
 
         ERenderType   m_RenderType       = ERenderType::SNOW_QBC;
-        ERenderType   m_EnableRenderType = ERenderType::SNOW_QBC;
         int           m_WindowWidth     = -1;
         int           m_WindowHeight    = -1;
         bool          m_IsPointerDown   = false;

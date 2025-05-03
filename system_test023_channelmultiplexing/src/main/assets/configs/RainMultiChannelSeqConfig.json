@@ -1,15 +1,15 @@
 {
     "Quantization": {
-        "frames_path": "textures/HeavyRain_fore_res_png8ASTC4x4",
+        "frames_path": "textures/HeavyRain_small_cmASTC12x12",
         "frames_type" : "ktx2",
-        "frames_count": 32,
+        "frames_count": 128,
         "one_texture_frames": 4,
         "fps": 60,
         "vertex_shader" : "shaders/multiChannelRianSeq.vert",
         "fragment_shader" : "shaders/multiChannelRianSeq8bitRain.frag"
     },
     "Splash": {
-        "frames_path": "textures/Splash_resASTC4x4",
+        "frames_path": "textures/Splash_resASTC12x12",
         "frames_type" : "ktx2",
         "frames_count": 28,
         "fps": 30,

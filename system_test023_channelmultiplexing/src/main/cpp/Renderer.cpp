@@ -97,7 +97,7 @@ void CRenderer::renderScene()
 
     if (m_pRainMultiChannelSeqRenderer == nullptr)
         m_pRainMultiChannelSeqRenderer = new CRainMultiChannelSeqRenderer();
-    m_pRainMultiChannelSeqRenderer->renderScene();
+    m_pRainMultiChannelSeqRenderer->renderScene(m_RenderChannel);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
@@ -118,4 +118,75 @@ void CRenderer::__updateRenderArea()
         m_WindowHeight = Height;
         glViewport(0, ViewportY, Width, ViewportHeight);
     }
+}
+
+void CRenderer::handleInput()
+{
+    auto *pInputBuffer = android_app_swap_input_buffers(m_pApp);
+    if (!pInputBuffer)
+        return;
+
+    for (auto i = 0; i < pInputBuffer->motionEventsCount; i++)
+    {
+        auto &MotionEvent = pInputBuffer->motionEvents[i];
+        auto Action = MotionEvent.action;
+
+        auto PointerIndex = (Action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+
+        auto &Pointer = MotionEvent.pointers[PointerIndex];
+        auto PointerX = GameActivityPointerAxes_getX(&Pointer);
+        auto PointerY = GameActivityPointerAxes_getY(&Pointer);
+
+        switch (Action & AMOTION_EVENT_ACTION_MASK)
+        {
+            case AMOTION_EVENT_ACTION_DOWN:
+            case AMOTION_EVENT_ACTION_POINTER_DOWN:
+                m_IsPointerDown = true;
+                if (PointerX < m_WindowWidth / 4.0)
+                {
+                    m_RenderChannel = ERenderChannel::R;
+                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "R");
+                }
+                else if (PointerX < m_WindowWidth / 2.0)
+                {
+                    m_RenderChannel = ERenderChannel::G;
+                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "G");
+                }
+                else if (PointerX < m_WindowWidth / 4.0 * 3.0)
+                {
+                    m_RenderChannel = ERenderChannel::B;
+                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "B");
+                }
+                else
+                {
+                    m_RenderChannel = ERenderChannel::A;
+                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "A");
+                }
+                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
+                break;
+
+            case AMOTION_EVENT_ACTION_CANCEL:
+            case AMOTION_EVENT_ACTION_UP:
+            case AMOTION_EVENT_ACTION_POINTER_UP:
+                m_IsPointerDown = false;
+                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Up", Pointer.id, PointerX, PointerY);
+                break;
+
+            case AMOTION_EVENT_ACTION_MOVE:
+                for (auto Index = 0; Index < MotionEvent.pointerCount; Index++)
+                {
+                    Pointer = MotionEvent.pointers[Index];
+                    PointerX = GameActivityPointerAxes_getX(&Pointer);
+                    PointerY = GameActivityPointerAxes_getY(&Pointer);
+                    LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Move", Pointer.id, PointerX, PointerY);
+
+                    if (Index != (MotionEvent.pointerCount - 1))
+                        LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, ",");
+                }
+                break;
+            default:
+                LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Unknown MotionEvent Action: %d", Action);
+        }
+    }
+    android_app_clear_motion_events(pInputBuffer);
 }

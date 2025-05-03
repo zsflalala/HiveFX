@@ -243,7 +243,6 @@ void CRenderer::handleInput()
             case AMOTION_EVENT_ACTION_UP:
             case AMOTION_EVENT_ACTION_POINTER_UP:
                 m_IsPointerDown = false;
-//                m_RenderType = ERenderType::NONE;
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Up", Pointer.id, PointerX, PointerY);
                 break;
 
