@@ -68,7 +68,7 @@ void CSplashRenderer::__initAlgorithm()
     m_pSplashPlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
 
     m_pSplashManager = std::make_unique<CSplashManager>();
-    int SplashNum = 7;
+    int SplashNum = 20;
     for (int i = 0; i < SplashNum; i++)
     {
         m_pSplashManager->pushBack(m_pSplashPlayer->clone());

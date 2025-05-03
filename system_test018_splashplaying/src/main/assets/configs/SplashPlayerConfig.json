@@ -1,13 +1,13 @@
 {
   "splash": {
-    "frames_path": "textures/Splash2",
+    "frames_path": "textures/Splash5",
     "frames_type" : "png",
-    "frames_count": 28,
+    "frames_count": 16,
     "play_mode": "partial",
-    "fps": 30,
+    "fps": 16,
     "loop": true,
     "moving_speed": [0.0, 0.0],
-    "scale": 0.05,
+    "scale": 0.15,
     "blend_mode": "additive"
   },
   "rain": {
