@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DemoRain</string>
+    <string name="R">小雨</string>
+    <string name="G">中雨</string>
+    <string name="B">大雨</string>
+    <string name="A">暴雨</string>
+</resources>

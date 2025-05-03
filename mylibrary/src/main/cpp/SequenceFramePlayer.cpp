@@ -158,6 +158,19 @@ void CSequenceFramePlayer::updateQuantizationFrame(double vDeltaTime)
 
 }
 
+void CSequenceFramePlayer::updateMultiChannelFrame(double vDeltaTime, ERenderChannel vRenderChannel)
+{
+    double FrameTime = 1.0 / m_FramePerSecond;
+    m_AccumFrameTime += vDeltaTime;
+    if (m_AccumFrameTime >= FrameTime)
+    {
+        m_AccumFrameTime -= FrameTime;
+        m_CurrentTexture = (m_CurrentTexture + 1) % static_cast<int>(m_SeqTextures.size());
+        m_CurrentChannel = static_cast<std::uint8_t>(vRenderChannel);
+    }
+    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
+}
+
 void CSequenceFramePlayer::updateFrameAndUV(double vDeltaTime)
 {
     double FrameTime = 1.0 / m_FramePerSecond;

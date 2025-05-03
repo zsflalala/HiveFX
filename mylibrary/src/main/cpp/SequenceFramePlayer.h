@@ -47,6 +47,7 @@ namespace hiveVG
 
         void updateFrameAndUV(double vDeltaTime);
         void updateQuantizationFrame(double vDeltaTime);
+        void updateMultiChannelFrame(double vDeltaTime, ERenderChannel vRenderChannel);
         void draw(CScreenQuad *vQuad);
         void drawQuantization(CScreenQuad *vQuad);
 
@@ -64,6 +65,7 @@ namespace hiveVG
         int    m_ValidFrames;
         float  m_FramePerSecond   = 24.0f;
         bool   m_IsLoop           = true;
+        bool   m_EnableChannel    = false;
         bool   m_IsFinished       = false;
         float  m_RotationAngle    = 0.0f;
         bool   m_IsMoving         = false;
