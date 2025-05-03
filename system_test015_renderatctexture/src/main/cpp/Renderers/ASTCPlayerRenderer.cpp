@@ -75,7 +75,7 @@ void CASTCPlayerRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     m_pSingleFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    m_pTestPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pTestPlayer->updateFrameAndUV(DeltaTime);
     m_pTestPlayer->draw(m_pScreenQuad);
 
 }

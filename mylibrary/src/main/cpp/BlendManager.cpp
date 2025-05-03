@@ -288,7 +288,7 @@ void CBlendManager::__SingleTexDrawCallFunc(CSingleTexturePlayer *vSingleTexture
 
 void CBlendManager::__SequenceFrameDrawCallFunc(CSequenceFramePlayer *vSequFraPlayer, double vDeltaTime)
 {
-    vSequFraPlayer->updateFrameAndUV(m_Width, m_Height, vDeltaTime);
+    vSequFraPlayer->updateFrameAndUV(vDeltaTime);
     vSequFraPlayer->draw(m_pScreenQuad);
 }
 

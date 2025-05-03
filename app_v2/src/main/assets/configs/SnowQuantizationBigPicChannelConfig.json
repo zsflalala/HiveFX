@@ -1,0 +1,19 @@
+{
+  "SmallSnowFore": {
+    "frames_path": "textures/BigSnow_fore_png8_bigpic_8x4_channelASTC4x4",
+    "sequenceRows": 8,
+    "sequenceCols": 4,
+    "frames_type" : "ktx2",
+    "frames_count": 1,
+    "one_texture_frames": 4,
+    "fps": 60,
+    "play_mode": "channel",
+    "vertex_shader" : "shaders/BigPic/quantizationSeq.vert",
+    "fragment_shader" : "shaders/BigPic/quantizationSeq8bitSnow.frag"
+  },
+  "Background":{
+    "frames_path": "textures/SnowCover_resASTC4x4",
+    "frames_count": 128,
+    "frames_type" : "ktx2"
+  }
+}

@@ -4,6 +4,8 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
+#include "Renderers/SnowQuantizationBicPicRenderer.h"
+#include "Renderers/SnowQuantizationSeqRenderer.h"
 
 using namespace hiveVG;
 
@@ -31,6 +33,8 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
+    __deleteSafely(m_pSnowQuantizationSeqRenderer);
+    __deleteSafely(m_pSnowQuantizationBigPicRenderer);
 }
 
 void CRenderer::__initRenderer()
@@ -93,13 +97,18 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    glClearColor(0.345f, 0.345f, 0.345f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+//    if (m_pSnowQuantizationBigPicRenderer == nullptr)
+//        m_pSnowQuantizationBigPicRenderer = new CSnowQuantizationBicPicRenderer();
+//    m_pSnowQuantizationBigPicRenderer->renderScene();
+    if (m_pSnowQuantizationSeqRenderer == nullptr)
+        m_pSnowQuantizationSeqRenderer = new CSnowQuantizationSeqRenderer();
+    m_pSnowQuantizationSeqRenderer->renderScene();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
-  void CRenderer::__updateRenderArea()
+
+void CRenderer::__updateRenderArea()
 {
     EGLint Width, Height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);

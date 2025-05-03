@@ -1,0 +1,14 @@
+{
+  "sequence_config": {
+    "frames_path": "textures/Sequence/HeavyRain_fore_res_png8ASTC4x4",
+    "frames_type" : "ktx2",
+    "frames_count": 128,
+    "fps": 60,
+    "loop": true,
+    "scale": 0.6,
+    "blend_mode": "additive"
+  },
+  "Background":{
+  "frames_path": "textures/park.png"
+}
+}

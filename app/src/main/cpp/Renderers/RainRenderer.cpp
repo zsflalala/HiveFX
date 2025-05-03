@@ -62,24 +62,24 @@ void CRainRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 
     if (m_EnableSmallRainBack)
     {
-        m_pSmallRainBackPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+        m_pSmallRainBackPlayer->updateFrameAndUV(DeltaTime);
         m_pSmallRainBackPlayer->draw(m_pScreenQuad);
     }
     if (m_EnableBigRainBack)
     {
-        m_pBigRainBackPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+        m_pBigRainBackPlayer->updateFrameAndUV(DeltaTime);
         m_pBigRainBackPlayer->draw(m_pScreenQuad);
     }
     m_pBackFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
     if (m_EnableSmallRainFore)
     {
-        m_pSmallRainForePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+        m_pSmallRainForePlayer->updateFrameAndUV(DeltaTime);
         m_pSmallRainForePlayer->draw(m_pScreenQuad);
     }
     if (m_EnableBigRainFore)
     {
-        m_pBigRainForePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+        m_pBigRainForePlayer->updateFrameAndUV(DeltaTime);
         m_pBigRainForePlayer->draw(m_pScreenQuad);
     }
 }

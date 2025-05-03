@@ -55,7 +55,7 @@ void CRainRendererAsync::renderScene()
         {
             m_pSmallRainBackPlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_fore", m_TextureCount, m_PictureType);
             m_pSmallRainBackPlayer->initTextureAndShaderProgram();
-            sleep(0.5);
+            sleep(1);
         }
         m_pSmallRainBackPlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
@@ -66,7 +66,7 @@ void CRainRendererAsync::renderScene()
         {
             m_pBigRainBackPlayer = new CAsyncSequenceFramePlayer("textures/BigRain_back", m_TextureCount, m_PictureType);
             m_pBigRainBackPlayer->initTextureAndShaderProgram();
-            sleep(0.5);
+            sleep(1);
         }
         m_pBigRainBackPlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
@@ -81,7 +81,7 @@ void CRainRendererAsync::renderScene()
         {
             m_pBigRainForePlayer = new CAsyncSequenceFramePlayer("textures/BigRain_fore", m_TextureCount, m_PictureType);
             m_pBigRainForePlayer->initTextureAndShaderProgram();
-            sleep(0.5);
+            sleep(1);
         }
         m_pBigRainForePlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();
@@ -92,7 +92,7 @@ void CRainRendererAsync::renderScene()
         {
             m_pSmallRainForePlayer = new CAsyncSequenceFramePlayer("textures/SmallRain_fore", m_TextureCount, m_PictureType);
             m_pSmallRainForePlayer->initTextureAndShaderProgram();
-            sleep(0.5);
+            sleep(1);
         }
         m_pSmallRainForePlayer->updateFrames();
         m_pScreenQuad->bindAndDraw();

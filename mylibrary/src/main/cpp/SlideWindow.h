@@ -18,6 +18,7 @@ namespace hiveVG
         virtual ~CSlideWindow();
 
         bool initTextureAndShaderProgram();
+        bool initTextureAndShaderProgram(std::string& vVertexShaderPath, std::string& vFragShaderShaderPath);
         void updateFrameAndDraw(int vWindowWidth, int vWindowHeight, double vDeltaTime, CScreenQuad* vQuad);
 
     private:

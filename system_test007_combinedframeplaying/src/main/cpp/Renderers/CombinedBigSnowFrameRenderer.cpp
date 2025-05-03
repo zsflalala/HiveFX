@@ -76,12 +76,12 @@ void CCombinedBigSnowFrameRenderer::renderScene(int vWindowWidth, int vWindowHei
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pCombineBackFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pCombineBackFramePlayer->updateFrameAndUV(DeltaTime);
     m_pCombineBackFramePlayer->draw(m_pScreenQuad);
 
     m_pBackFramePlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-    m_pCombineForeFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pCombineForeFramePlayer->updateFrameAndUV(DeltaTime);
     m_pCombineForeFramePlayer->draw(m_pScreenQuad);
 }

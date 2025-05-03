@@ -28,15 +28,16 @@ namespace hiveVG::TAG_KEYWORD
     const char *const SINGLE_PALYER_TAG = "CSequenceFramePlayer";
     const char *const SEQFRAME_PALYER_TAG = "CSequenceFramePlayer";
     const char *const ASYNC_SEQFRAME_PALYER_TAG = "CAsyncSequenceFramePlayer";
-    const char *const TEXTURE_BLENDER_TAG = "CTextureBlender";
-    const char *const BLENDER_MANAGER_TAG = "CBlendManager";
-    const char *const SPLASH_MANAGER_TAG = "CSplashManager";
-    const char *const SYSTEMTEST_TAG = "SystemTest";
-    const char *const SNOW_STYLIZE_TAG = "SnowStylize";
-    const char *const FILE_UTILS_TAG = "FileUtils";
-    const char *const APP_CONTEXT_TAG = "AppContext";
-    const char *const UNIT_TEST_TAG = "UnitTest";
-    const char *const WEATHER_TAG = "Weather";
+    const char *const TEXTURE_BLENDER_TAG       = "CTextureBlender";
+    const char *const BLENDER_MANAGER_TAG       = "CBlendManager";
+    const char *const SYSTEMTEST_TAG            = "SystemTest";
+    const char *const SNOW_STYLIZE_TAG          = "SnowStylize";
+    const char *const FILE_UTILS_TAG            = "FileUtils";
+    const char *const APP_CONTEXT_TAG           = "AppContext";
+    const char *const UNIT_TEST_TAG             = "UnitTest";
+    const char *const WEATHER_TAG               = "Weather";
+    const char *const EFFECT_TEST_TAG           = "EffectTest";
+    const char *const SPLASH_MANAGER_TAG        = "CSplashManager";
 }
 
 namespace hiveVG::CONFIG_KEYWORD
@@ -52,6 +53,7 @@ namespace hiveVG
         SNOW,
         RAIN,
         CLOUD,
+        SCROLL_RAIN,
         SNOW_SCENE,
         SMALL_SNOW_FORE,
         SMALL_SNOW_BACK,
@@ -60,7 +62,13 @@ namespace hiveVG
         SMALL_RAIN_FORE,
         SMALL_RAIN_BACK,
         BIG_RAIN_FORE,
-        BIG_RAIN_BACK
+        BIG_RAIN_BACK,
+        RAIN_QBC,
+        RAIN_QBD,
+        RAIN_Q32,
+        SNOW_QBC,
+        SNOW_QBD,
+        SNOW_Q32
     };
 
     const static std::string P60SaveToPhotoPath = "/storage/emulated/0/Pictures/Screenshots/";

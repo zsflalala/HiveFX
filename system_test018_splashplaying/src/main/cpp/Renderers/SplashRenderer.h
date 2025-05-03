@@ -24,6 +24,9 @@ namespace hiveVG
     private:
         void   __initAlgorithm();
 
+        template<typename T>
+        void __deleteSafely(T*& vPointer);
+
         double                     m_LastFrameTime        = 0.0f;
         double                     m_CurrentTime          = 0.0f;
         glm::vec2                  m_UVOffset             = glm::vec2(0.0f, 0.0f);
@@ -37,4 +40,14 @@ namespace hiveVG
         CSingleTexturePlayer*      m_pBackFramePlayer     = nullptr;
         std::unique_ptr<CSplashManager> m_pSplashManager  = nullptr;
     };
+
+    template<typename T>
+    void CSplashRenderer::__deleteSafely(T*& vPointer)
+    {
+        if (vPointer != nullptr)
+        {
+            delete vPointer;
+            vPointer = nullptr;
+        }
+    }
 }

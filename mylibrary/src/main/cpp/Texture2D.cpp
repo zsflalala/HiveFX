@@ -107,10 +107,13 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
             &GlError);
 
         glBindTexture(GL_TEXTURE_2D, TextureHandle);
+/*        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // 重要！
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);*/
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 
         if (GlUploadResult != KTX_SUCCESS || GlError != GL_NO_ERROR)
         {
@@ -125,8 +128,8 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
         voHeight = pTexture->baseHeight;
 
         LOG_INFO(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,
-                 "Successfully loaded KTX pTexture. Width: %d, Height: %d, Target: 0x%x",
-                 voWidth, voHeight, Target);
+                 "Successfully loaded [%s] KTX pTexture. Width: %d, Height: %d, Target: 0x%x",
+                 vTexturePath.c_str(), voWidth, voHeight, Target);
 
         ktxTexture_Destroy(reinterpret_cast<ktxTexture *>(pTexture));
         return new CTexture2D(TextureHandle);

@@ -4,6 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include "Common.h"
+#include "Renderers/ScrollRainRenderer.h"
 
 using namespace hiveVG;
 
@@ -93,13 +94,15 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    glClearColor(0.345f, 0.345f, 0.345f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    if(!m_pScrollRainRenderer)
+        m_pScrollRainRenderer = new CScrollRainRenderer(m_pApp);
+    m_pScrollRainRenderer->renderScene();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
-  void CRenderer::__updateRenderArea()
+
+void CRenderer::__updateRenderArea()
 {
     EGLint Width, Height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);

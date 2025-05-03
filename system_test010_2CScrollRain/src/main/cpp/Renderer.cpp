@@ -100,7 +100,7 @@ void CRenderer::renderScene()
     __updateRenderArea();
 
     if(!m_pRenderer) m_pRenderer = new CScrollRainCompressedRenderer(m_pApp);
-    m_pRenderer->render();
+    m_pRenderer->renderScene();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
