@@ -1,0 +1,19 @@
+{
+    "Slide": {
+        "picture_path": "textures/LongSequence/LongTexRain1920_10800_VQuarter.ktx2",
+        "picture_type": "ktx2",
+        "is_compressed": true,
+        "slide_speed" : -90.0,
+        "slide_direction" : "vertical"
+    },
+    "Splash": {
+        "frames_path": "textures/Splash_resASTC4x4",
+        "frames_type" : "ktx2",
+        "frames_count": 28,
+        "fps": 30,
+        "scale": 0.05
+    },
+    "Background":{
+        "frames_path": "textures/snowScene.png"
+    }
+}

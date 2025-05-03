@@ -32,7 +32,7 @@ void CSceneRenderer::render(int vWindowWidth, int vWindowHeight)
 //    m_pSingleTexture->updateFrame();
 //    m_pScreenQuad->bindAndDraw();
 
-    m_pSequencePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pSequencePlayer->updateFrameAndUV(DeltaTime);
     m_pSequencePlayer->draw(m_pScreenQuad);
 }
 

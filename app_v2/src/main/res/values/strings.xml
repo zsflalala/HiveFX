@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">AppV2</string>
+    <string name="speed_up_x2">Speed Up</string>
+    <string name="reset_speed">Speed Reset</string>
+    <string name="Top">积雪</string>
+    <string name="Snow">雪</string>
+    <string name="Cloud">滑动雨</string>
+    <string name="SmallRainFore">雨-量化+大图+通道</string>
+    <string name="SmallRainBack">雨-量化+大图+深度</string>
+    <string name="BigRainFore">雨-量化+32张序列帧</string>
+    <string name="SmallSnowFore">雪-量化+大图+通道</string>
+    <string name="SmallSnowBack">雪-量化+大图+深度</string>
+    <string name="BigSnowFore">雪-量化+32张序列帧</string>
+</resources>

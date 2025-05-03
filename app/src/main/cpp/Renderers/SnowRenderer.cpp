@@ -100,24 +100,24 @@ void CSnowRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 
     if (m_EnableSmallSnowBack)
     {
-        m_pSmallSnowBackPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+        m_pSmallSnowBackPlayer->updateFrameAndUV( DeltaTime);
         m_pSmallSnowBackPlayer->draw(m_pScreenQuad);
     }
     if (m_EnableBigSnowBack)
     {
-        m_pBigSnowBackPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+        m_pBigSnowBackPlayer->updateFrameAndUV(DeltaTime);
         m_pBigSnowBackPlayer->draw(m_pScreenQuad);
     }
-    m_pSnowSceneSeqFramePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pSnowSceneSeqFramePlayer->updateFrameAndUV(DeltaTime);
     m_pSnowSceneSeqFramePlayer->draw(m_pScreenQuad);
     if (m_EnableSmallSnowFore)
     {
-        m_pSmallSnowForePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+        m_pSmallSnowForePlayer->updateFrameAndUV(DeltaTime);
         m_pSmallSnowForePlayer->draw(m_pScreenQuad);
     }
     if (m_EnableBigSnowFore)
     {
-        m_pBigSnowForePlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+        m_pBigSnowForePlayer->updateFrameAndUV(DeltaTime);
         m_pBigSnowForePlayer->draw(m_pScreenQuad);
     }
 }

@@ -15,7 +15,9 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         Renderer.cpp
-        system_test_scrollrain.cpp)
+        system_test_scrollrain.cpp
+        Renderers/ScrollRainRenderer.cpp
+)
 
 set(REQUIRED_PACKAGES
         game-activity

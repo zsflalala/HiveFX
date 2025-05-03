@@ -56,11 +56,11 @@ void CTestSequencePlayerRenderer::__initAlgorithm()
     m_pTestPlayer->setLoopPlayback(IsLoop);
     if (m_PlayMode == EPlayType::PARTIAL)
     {
-        m_pTestPlayer->setLifeCycle(true);
-        m_pTestPlayer->setIsMoving(true);
-//        m_pTestPlayer->setScreenUVOffset(m_UVOffset);
-//        m_pTestPlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
-//        m_pTestPlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
+//        m_pTestPlayer->setLifeCycle(true);
+//        m_pTestPlayer->setIsMoving(true);
+        m_pTestPlayer->setScreenUVOffset(m_UVOffset);
+        m_pTestPlayer->setScreenUVScale(glm::vec2(m_PlayScale, m_PlayScale));
+        m_pTestPlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
     }
     m_pScreenQuad = CScreenQuad::getOrCreate();
     m_LastFrameTime = CTimeUtils::getCurrentTime();
@@ -77,6 +77,6 @@ void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeigh
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pTestPlayer->updateFrameAndUV(vWindowWidth, vWindowHeight, DeltaTime);
+    m_pTestPlayer->updateFrameAndUV(vWindowWidth);
     m_pTestPlayer->draw(m_pScreenQuad);
 }

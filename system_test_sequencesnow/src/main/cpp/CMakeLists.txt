@@ -15,7 +15,10 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         Renderer.cpp
-        system_test_sequencesnow.cpp)
+        system_test_sequencesnow.cpp
+        Renderers/SnowQuantizationBicPicRenderer.cpp
+        Renderers/SnowQuantizationSeqRenderer.cpp
+)
 
 set(REQUIRED_PACKAGES
         game-activity

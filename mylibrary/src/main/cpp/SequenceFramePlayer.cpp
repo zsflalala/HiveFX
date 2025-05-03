@@ -15,6 +15,11 @@ CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, 
     m_ValidFrames = m_SequenceRows * m_SequenceCols;
 }
 
+CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, int vTextureCount, int vOneTextureFrames, float vFrameSeconds, EPictureType::EPictureType vPictureType)
+        : m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_OneTextureFrames(vOneTextureFrames), m_FramePerSecond(vFrameSeconds), m_TextureType(vPictureType)
+{
+}
+
 CSequenceFramePlayer::CSequenceFramePlayer(const std::string &vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG)
         : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_UseCompressedPNG(vUseCompressedPNG)
 {
@@ -48,7 +53,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
     else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
-    else if (m_TextureType == EPictureType::PKM) PictureSuffix = ".pkm";
+    else if (m_TextureType == EPictureType::PKM)  PictureSuffix = ".pkm";
     else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
     for (int i = 0; i < m_TextureCount; i++)
     {
@@ -90,7 +95,69 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     return true;
 }
 
-void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime)
+bool CSequenceFramePlayer::initTextureAndShaderProgram(std::string& vVertexShaderPath, std::string& vFragShaderShaderPath)
+{
+    if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
+        m_TextureRootPath += '/';
+
+    std::string PictureSuffix;
+    if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
+    else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
+    else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
+    else if (m_TextureType == EPictureType::PKM)  PictureSuffix = ".pkm";
+    else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
+    for (int i = 0; i < m_TextureCount; i++)
+    {
+        std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
+        if (!m_UseCompressedPNG)
+        {
+            CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
+            if (!pSequenceTexture)
+            {
+                LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+                return false;
+            }
+            m_SeqTextures.push_back(pSequenceTexture);
+        }
+        else
+        {
+            CTexture2D::loadTextureFromCompressedPNG(TexturePath, m_SequenceWidth, m_SequenceHeight, m_SeqTextures);
+        }
+    }
+    m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
+    m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
+
+    m_pSequenceShaderProgram = CShaderProgram::createProgram(vVertexShaderPath,vFragShaderShaderPath);
+
+    if (!m_pSequenceShaderProgram)
+    {
+        LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "[%s] ShaderProgram init Failed.", m_TextureRootPath.c_str());
+        return false;
+    }
+    assert(m_pSequenceShaderProgram != nullptr);
+    LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TextureRootPath.c_str());
+    return true;
+}
+
+void CSequenceFramePlayer::updateQuantizationFrame(double vDeltaTime)
+{
+    double FrameTime = 1.0 / m_FramePerSecond;
+    m_AccumFrameTime += vDeltaTime;
+    if (m_AccumFrameTime >= FrameTime)
+    {
+        m_AccumFrameTime -= FrameTime;
+        m_CurrentChannel = (m_CurrentChannel + 1) % m_OneTextureFrames;
+        if (m_CurrentChannel == 0)
+        {
+            m_CurrentTexture++;
+            if (m_SeqTextures.size() == m_CurrentTexture)
+                m_CurrentTexture = 0;
+        }
+    }
+    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
+}
+
+void CSequenceFramePlayer::updateFrameAndUV(double vDeltaTime)
 {
     double FrameTime = 1.0 / m_FramePerSecond;
     m_AccumFrameTime += vDeltaTime;
@@ -104,7 +171,7 @@ void CSequenceFramePlayer::updateFrameAndUV(int vWindowWidth, int vWindowHeight,
         }
         m_CurrentFrame = (m_CurrentFrame + 1) % m_ValidFrames;
     }
-    m_WindowSize = glm::vec2(vWindowWidth, vWindowHeight);
+
     if (m_IsMoving)
     {
         if (m_UseLifeCycle)
@@ -148,10 +215,10 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     float RotationAngle   = m_RotationAngle * M_PI / 180.0f;
     int   CurrentFrameRow = m_CurrentFrame / m_SequenceCols;
     int   CurrentFrameCol = m_CurrentFrame % m_SequenceCols;
-    float CurrentFrameU0 = CurrentFrameCol / static_cast<float>(m_SequenceCols);
-    float CurrentFrameV0 = CurrentFrameRow / static_cast<float>(m_SequenceRows);
-    float CurrentFrameU1 = (CurrentFrameCol + 1) / static_cast<float>(m_SequenceCols);
-    float CurrentFrameV1 = (CurrentFrameRow + 1) / static_cast<float>(m_SequenceRows);
+    float CurrentFrameU0 = static_cast<float>(CurrentFrameCol) / static_cast<float>(m_SequenceCols);
+    float CurrentFrameV0 = static_cast<float>(CurrentFrameRow) / static_cast<float>(m_SequenceRows);
+    float CurrentFrameU1 = static_cast<float>(CurrentFrameCol + 1) / static_cast<float>(m_SequenceCols);
+    float CurrentFrameV1 = static_cast<float>(CurrentFrameRow + 1) / static_cast<float>(m_SequenceRows);
     glm::vec2 TextureUVOffset = glm::vec2(CurrentFrameU0, CurrentFrameV0);
     glm::vec2 TextureUVScale  = glm::vec2(CurrentFrameU1 - CurrentFrameU0, CurrentFrameV1 - CurrentFrameV0);
 
@@ -163,6 +230,17 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("texUVOffset", TextureUVOffset);
     m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
     m_pSequenceShaderProgram->setUniform("sequenceTexture", 0);
+    glActiveTexture(GL_TEXTURE0);
+    m_SeqTextures[m_CurrentTexture]->bindTexture();
+    vQuad->bindAndDraw();
+}
+
+void CSequenceFramePlayer::drawQuantization(CScreenQuad *vQuad)
+{
+    assert(m_pSequenceShaderProgram != nullptr);
+    m_pSequenceShaderProgram->useProgram();
+    m_pSequenceShaderProgram->setUniform("indexTexture", 0);
+    m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     vQuad->bindAndDraw();

@@ -32,32 +32,24 @@ void CSplashManager::initSequenceState(const std::string& vImagePath, const floa
     }
 }
 
-void CSplashManager::updateFrameAndUV(int vWindowWidth, int vWindowHeight, double vDeltaTime)
+void CSplashManager::updateFrameAndUV(double vDeltaTime)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
         if (m_SequencePlayers[i]->getLoopState() || (!m_SequencePlayers[i]->getLoopState() && !m_SequencePlayers[i]->getFinishState()))
         {
-            m_SequencePlayers[i]->updateFrameAndUV(vWindowWidth, vWindowHeight, vDeltaTime);
+            m_SequencePlayers[i]->updateFrameAndUV(vDeltaTime);
         }
     }
 }
 
 void CSplashManager::draw(CScreenQuad* vQuad)
 {
-    auto DrawCallFunc = [this](CScreenQuad* vQuad, int Index)
-    {
-        this->m_SequencePlayers[Index]->draw(vQuad);
-    };
-
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
         if (!m_SequenceState[i]._IsAlive)
             continue;
-        if(m_IsBlend)
-            m_pTexBlender->drawAndBlend(std::bind(DrawCallFunc, vQuad, i));
-        else
-            m_SequencePlayers[i]->draw(vQuad);
+        m_SequencePlayers[i]->draw(vQuad);
     }
 }
 
@@ -131,8 +123,6 @@ SSequenceState CSplashManager::__initSequenceParams()
     SSequenceState State;
     State._IsAlive = IntDistribution(Gen);
 
-    //FloatDistribution.param(std::uniform_real_distribution<>::param_type(3.0f, 4.0f));
-    //State._PlannedLivingTime = FloatDistribution(Gen);
     State._PlannedLivingTime = 0.8;
 
     FloatDistribution.param(std::uniform_real_distribution<>::param_type(1.0f, 2.0f));

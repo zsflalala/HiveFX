@@ -16,7 +16,7 @@ namespace hiveVG
         explicit CScrollRainCompressedRenderer(android_app *vApp);
         ~CScrollRainCompressedRenderer();
 
-        void render();
+        void renderScene();
 
     private:
         void __initAlgorithm();
