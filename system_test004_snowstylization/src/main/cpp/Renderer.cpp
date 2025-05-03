@@ -110,7 +110,7 @@ void CRenderer::__initAlgorithm()
     int Rows = 1, Cols = 1, TextureCount = 5;
     m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, Rows, Cols, TextureCount,EPictureType::PNG);
     m_pTestPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayInterpolation);
-    m_pTestPlayer->setFrameRate(1);
+    m_pTestPlayer->setFrameRate(0.5f);
 }
 
 void CRenderer::renderScene()

@@ -26,6 +26,7 @@ namespace hiveVG
         void setScreenUVScale(const glm::vec2 &vScreenScale) { m_ScreenUVScale = vScreenScale; }
         void setScreenUVOffset(const glm::vec2 &vScreenOffset) { m_ScreenUVOffset = vScreenOffset; }
         void setFrameRate(int vFrameRate) { m_FramePerSecond = static_cast<float>(vFrameRate); }
+        void setFrameRate(float vFrameRate) { m_FramePerSecond = vFrameRate; }
         void setValidFrames(int vValidFrames) { m_ValidFrames = vValidFrames; }
         void setRotationAngle(float vAngle) { m_RotationAngle = vAngle; }
         void setIsMoving(bool vIsMoving) { m_IsMoving = vIsMoving; }

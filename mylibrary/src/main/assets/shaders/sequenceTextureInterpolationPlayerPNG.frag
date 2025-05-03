@@ -12,5 +12,4 @@ void main()
     vec4 CurrentColor = texture(CurrentTexture, TexCoord);
     vec4 NextColor = texture(NextTexture, TexCoord);
     FragColor = mix(CurrentColor, NextColor, Factor);
-    FragColor = CurrentColor;
 }
