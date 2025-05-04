@@ -1,0 +1,22 @@
+{
+    "lightning":
+    {
+        "frames_path": "textures/lightning0",
+        "frames_type" : "png",
+        "frames_count": 29,
+        "play_mode": "fullscreen",
+        "ranks": {
+            "rows" : 1,
+            "cols" : 1
+        },
+        "position": {
+          "x": -1.0,
+          "y": -0.3
+        },
+        "fps": 60,
+        "loop": true,
+        "moving_speed": [0.0, 0.0],
+        "scale": 0.6
+      },
+    "cloud": "textures/cloud.png"
+}

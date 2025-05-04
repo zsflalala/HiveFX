@@ -3,6 +3,7 @@
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
+#include <iomanip>
 #include "Common.h"
 #include "Renderers/SplashRenderer.h"
 #include "EffectTester.h"
@@ -96,6 +97,7 @@ void CRenderer::__initRenderer()
 void CRenderer::__initEffectTester()
 {
     m_pEffectTester = new CEffectTester();
+    m_pEffectTester->setFilePath(m_pApp->activity->externalDataPath);
 
     int Width = 0, Height = 0;
     assert(m_pApp->window != nullptr);
@@ -117,9 +119,16 @@ void CRenderer::renderScene()
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 
-    if(true)
+    static int FrameCount = 1;
+    if(true && FrameCount <= 128)
     {
-        m_pEffectTester->saveScreenBuffer("1.png");
+        std::ostringstream oss;
+        oss << "frame_"
+            << std::setw(3) << std::setfill('0') << FrameCount
+            << ".png";
+        std::string Filename = oss.str();
+        m_pEffectTester->saveScreenBuffer(Filename);
+        FrameCount++;
     }
 }
 

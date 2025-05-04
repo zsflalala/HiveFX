@@ -55,6 +55,7 @@ bool CEffectTester::saveScreenBuffer(const std::string& vTexName)
         LOG_ERROR(TAG_KEYWORD::EFFECT_TEST_TAG, "Saving texture failed.");
         return false;
     }
+    LOG_INFO(TAG_KEYWORD::EFFECT_TEST_TAG, "Saving texture %s succeed.", vTexName.c_str());
     return true;
 }
 

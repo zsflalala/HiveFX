@@ -97,18 +97,19 @@ void CSplashRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     double DeltaTime = m_CurrentTime - m_LastFrameTime;
     m_LastFrameTime  = m_CurrentTime;
 
-    glClearColor(0.3f,0.3f,0.3f, 0.0f);
+    glClearColor(0.0f,0.0f,0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pBackFramePlayer->updateFrame();
-    m_pScreenQuad->bindAndDraw();
-
+//    m_pBackFramePlayer->updateFrame();
+//    m_pScreenQuad->bindAndDraw();
+    DeltaTime = 0.0417;
+    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "%lf", DeltaTime);
     m_pSplashManager->updateFrameAndUV(DeltaTime);
     m_pSplashManager->updateSequenceState(DeltaTime);
     m_pSplashManager->draw(m_pScreenQuad);
 
-    m_pRainPlayer->updateFrameAndUV(DeltaTime);
-    m_pRainPlayer->draw(m_pScreenQuad);
+//    m_pRainPlayer->updateFrameAndUV(DeltaTime);
+//    m_pRainPlayer->draw(m_pScreenQuad);
 }

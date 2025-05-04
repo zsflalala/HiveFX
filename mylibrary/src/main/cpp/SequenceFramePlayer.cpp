@@ -95,7 +95,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     return true;
 }
 
-bool CSequenceFramePlayer::initTextureAndShaderProgram(std::string& vVertexShaderPath, std::string& vFragShaderShaderPath)
+bool CSequenceFramePlayer::initTextureAndShaderProgram(const std::string& vVertexShaderPath, const std::string& vFragShaderShaderPath)
 {
     if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
         m_TextureRootPath += '/';
@@ -161,8 +161,10 @@ void CSequenceFramePlayer::updateFrameAndUV(double vDeltaTime)
 {
     double FrameTime = 1.0 / m_FramePerSecond;
     m_AccumFrameTime += vDeltaTime;
+    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "DeltaTime: %lf", vDeltaTime);
     if (m_AccumFrameTime >= FrameTime)
     {
+        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "update Frame");
         m_AccumFrameTime = 0.0f;
         if (m_CurrentFrame == m_ValidFrames - 1)
         {

@@ -42,14 +42,14 @@ namespace hiveVG
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
 
         bool initTextureAndShaderProgram();
-        bool initTextureAndShaderProgram(std::string &vVertexShaderPath, std::string &vFragShaderShaderPath);
+        bool initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath);
 
         void updateFrameAndUV(double vDeltaTime);
         void updateQuantizationFrame(double vDeltaTime);
         void draw(CScreenQuad *vQuad);
         void drawQuantization(CScreenQuad *vQuad);
 
-    private:
+    protected:
         void __initSequenceParams();
 
         int    m_SequenceRows       = 1;
