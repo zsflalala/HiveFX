@@ -35,11 +35,11 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     std::string FileName   = "configs/RainMultiChannelSeqConfig.json";
     CJsonReader JsonReader = CJsonReader(FileName);
     Json::Value RainConfig  = JsonReader.getObject("Rain");
-    m_TexPath      =  RainConfig["frames_path"].asString();
+    std::string RainPath      =  RainConfig["frames_path"].asString();
     std::string FrameType = RainConfig["frames_type"].asString();
-    m_TextureCount =  RainConfig["frames_count"].asInt();
-    m_OneTextureFrames = RainConfig["one_texture_frames"].asInt();
-    m_FramePerSecond   = RainConfig["fps"].asFloat();
+    int RainTextureCount  =  RainConfig["frames_count"].asInt();
+    int RainOneTextureFrames = RainConfig["one_texture_frames"].asInt();
+    float RainFramePerSecond = RainConfig["fps"].asFloat();
     std::string RainVertexShader = RainConfig["vertex_shader"].asString();
     std::string RainFragShader   = RainConfig["fragment_shader"].asString();
 
@@ -60,8 +60,8 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     int   CloudPlayFPS    = CloudConfig["fps"].asInt();
     EPictureType::EPictureType CloudPicType = EPictureType::FromString(CloudType);
 
-    m_PictureType = EPictureType::FromString(FrameType);
-    m_pRainSeqPlayer = new CSequenceFramePlayer(m_TexPath, m_TextureCount, m_OneTextureFrames, m_FramePerSecond, m_PictureType);
+    EPictureType::EPictureType RainPictureType = EPictureType::FromString(FrameType);
+    m_pRainSeqPlayer = new CSequenceFramePlayer(RainPath, RainTextureCount, RainOneTextureFrames, RainFramePerSecond, RainPictureType);
     m_pRainSeqPlayer->initTextureAndShaderProgram(RainVertexShader, RainFragShader);
 
     m_pBackgroundPlayer = new CSingleTexturePlayer(BackImgPath);
