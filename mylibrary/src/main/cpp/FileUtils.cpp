@@ -18,13 +18,13 @@ using namespace hiveVG;
             auto* pAssetManager = static_cast<AAssetManager*>(CAppContext::getAssetManager());
             if (!pAssetManager)
             {
-                LOG_WARN(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "AssetManager is null.");
+                LOG_ERROR(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "AssetManager is null.");
                 return nullptr;
             }
             AAsset* pAsset = AAssetManager_open(pAssetManager, vPath, AASSET_MODE_BUFFER);
             if (!pAsset)
             {
-                LOG_WARN(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open asset: %s", vPath);
+                LOG_ERROR(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open asset: %s", vPath);
                 return nullptr;
             }
             return pAsset;
@@ -34,7 +34,7 @@ using namespace hiveVG;
             FILE* pFile = fopen(vPath, "rb");
             if (!pFile)
             {
-                LOG_WARN(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open file: %s", vPath);
+                LOG_ERROR(hiveVG::TAG_KEYWORD::FILE_UTILS_TAG, "Failed to open file: %s", vPath);
                 return nullptr;
             }
             return pFile;

@@ -9,7 +9,6 @@
 #include "StringUtils.h"
 #include "SingleTexturePlayer.h"
 #include "SequenceFramePlayer.h"
-#include "SplashManager.h"
 
 using namespace hiveVG;
 
@@ -27,53 +26,58 @@ CRainMultiChannelSeqRenderer::~CRainMultiChannelSeqRenderer()
     }
     __deleteSafely(m_pRainSeqPlayer);
     __deleteSafely(m_pBackgroundPlayer);
-    __deleteSafely(m_pSplashPlayer);
+    __deleteSafely(m_pLightingPlayer);
+    __deleteSafely(m_pCloudPlayer);
 }
 
 bool CRainMultiChannelSeqRenderer::__initAlgorithm()
 {
     std::string FileName   = "configs/RainMultiChannelSeqConfig.json";
     CJsonReader JsonReader = CJsonReader(FileName);
-    Json::Value QuantizationConfig  = JsonReader.getObject("Quantization");
-    m_TexPath      =  QuantizationConfig["frames_path"].asString();
-    std::string FrameType = QuantizationConfig["frames_type"].asString();
-    m_TextureCount =  QuantizationConfig["frames_count"].asInt();
-    m_OneTextureFrames = QuantizationConfig["one_texture_frames"].asInt();
-    m_FramePerSecond   = QuantizationConfig["fps"].asFloat();
-    std::string VertexShader = QuantizationConfig["vertex_shader"].asString();
-    std::string FragShader   = QuantizationConfig["fragment_shader"].asString();
+    Json::Value RainConfig  = JsonReader.getObject("Rain");
+    m_TexPath      =  RainConfig["frames_path"].asString();
+    std::string FrameType = RainConfig["frames_type"].asString();
+    m_TextureCount =  RainConfig["frames_count"].asInt();
+    m_OneTextureFrames = RainConfig["one_texture_frames"].asInt();
+    m_FramePerSecond   = RainConfig["fps"].asFloat();
+    std::string RainVertexShader = RainConfig["vertex_shader"].asString();
+    std::string RainFragShader   = RainConfig["fragment_shader"].asString();
 
     Json::Value BackGroundConfig = JsonReader.getObject("Background");
     std::string BackImgPath = BackGroundConfig["frames_path"].asString();
 
-    Json::Value SplashConfig = JsonReader.getObject("Splash");
-    std::string SplashPath = SplashConfig["frames_path"].asString();
-    std::string SplashType = SplashConfig["frames_type"].asString();
-    int         SplashFrameCount = SplashConfig["frames_count"].asInt();
-    std::string SplashPlayMode   = SplashConfig["play_mode"].asString();
-    int         SplashPlayFPS    = SplashConfig["fps"].asInt();
-    float  SplashPlayScale = SplashConfig["scale"].asFloat();
-    int    SplashSeqRows = 1;
-    int    SplashSeqCols = 1;
-    EPictureType::EPictureType SplashPicType = EPictureType::FromString(SplashType);
+    Json::Value LightingConfig = JsonReader.getObject("Lighting");
+    std::string LightingPath = LightingConfig["frames_path"].asString();
+    std::string LightingType = LightingConfig["frames_type"].asString();
+    int    LightingFrameCount = LightingConfig["frames_count"].asInt();
+    int    LightingPlayFPS    = LightingConfig["fps"].asInt();
+    EPictureType::EPictureType LightingPicType = EPictureType::FromString(LightingType);
+
+    Json::Value CloudConfig = JsonReader.getObject("Cloud");
+    std::string CloudPath = CloudConfig["frames_path"].asString();
+    std::string CloudType = CloudConfig["frames_type"].asString();
+    int   CloudFrameCount = CloudConfig["frames_count"].asInt();
+    int   CloudPlayFPS    = CloudConfig["fps"].asInt();
+    EPictureType::EPictureType CloudPicType = EPictureType::FromString(CloudType);
 
     m_PictureType = EPictureType::FromString(FrameType);
     m_pRainSeqPlayer = new CSequenceFramePlayer(m_TexPath, m_TextureCount, m_OneTextureFrames, m_FramePerSecond, m_PictureType);
-    m_pRainSeqPlayer->initTextureAndShaderProgram(VertexShader, FragShader);
+    m_pRainSeqPlayer->initTextureAndShaderProgram(RainVertexShader, RainFragShader);
+
     m_pBackgroundPlayer = new CSingleTexturePlayer(BackImgPath);
     m_pBackgroundPlayer->initTextureAndShaderProgram();
 
-    m_pSplashPlayer = new CSequenceFramePlayer(SplashPath, SplashSeqRows, SplashSeqCols, SplashFrameCount, SplashPicType);
-    m_pSplashPlayer->initTextureAndShaderProgram();
-    m_pSplashPlayer->setFrameRate(SplashPlayFPS);
-    m_pSplashPlayer->setScreenUVScale(glm::vec2(SplashPlayScale, SplashPlayScale));
-    m_pSplashManager = std::make_unique<CSplashManager>();
-    int SplashNum = 7;
-    for (int i = 0; i < SplashNum; i++)
-    {
-        m_pSplashManager->pushBack(m_pSplashPlayer->clone());
-    }
-    m_pSplashManager->initSequenceState(BackImgPath, SplashPlayScale);
+    int LightRows = 1;
+    int LightCols = 1;
+    m_pLightingPlayer = new CSequenceFramePlayer(LightingPath, LightRows, LightCols, LightingFrameCount, LightingPicType);
+    m_pLightingPlayer->initTextureAndShaderProgram();
+    m_pLightingPlayer->setFrameRate(LightingPlayFPS);
+
+    int CloudRows = 1;
+    int CloudCols = 1;
+    m_pCloudPlayer = new CSequenceFramePlayer(CloudPath, CloudRows, CloudCols, CloudFrameCount, CloudPicType);
+    m_pCloudPlayer->initTextureAndShaderProgram();
+    m_pCloudPlayer->setFrameRate(CloudPlayFPS);
 
     m_pScreenQuad   = CScreenQuad::getOrCreate();
     m_LastFrameTime = CTimeUtils::getCurrentTime();
@@ -95,11 +99,18 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     m_pBackgroundPlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
+    m_pCloudPlayer->updateFrameAndUV(DeltaTime);
+    m_pLightingPlayer->updateFrameAndUV(DeltaTime);
+
+    if (vRenderChannel == ERenderChannel::R || vRenderChannel == ERenderChannel::G)
+    {
+        m_pCloudPlayer->drawQuantization(m_pScreenQuad);
+    }
+    else if (vRenderChannel == ERenderChannel::B || vRenderChannel == ERenderChannel::A)
+    {
+        m_pLightingPlayer->drawQuantization(m_pScreenQuad);
+    }
+
     m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
     m_pRainSeqPlayer->drawQuantization(m_pScreenQuad);
-
-    glBlendFunc(GL_ONE, GL_ONE);
-    m_pSplashManager->updateFrameAndUV(DeltaTime);
-    m_pSplashManager->updateSequenceState(static_cast<float>(DeltaTime));
-    m_pSplashManager->draw(m_pScreenQuad);
 }

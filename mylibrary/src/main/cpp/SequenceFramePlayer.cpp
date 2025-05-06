@@ -55,6 +55,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
     else if (m_TextureType == EPictureType::PKM)  PictureSuffix = ".pkm";
     else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
+
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
@@ -77,13 +78,13 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
 
     if (m_TextureType == EPictureType::PNG)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVertPNG, SeqTexPlayFragPNG);
     else if (m_TextureType == EPictureType::JPG)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragJPG);
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVertPNG, SeqTexPlayFragJPG);
     else if (m_TextureType == EPictureType::PKM)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVertPNG, SeqTexPlayFragPNG);
     else if (m_TextureType == EPictureType::KTX2)
-        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVert,SeqTexPlayFragPNG);
+        m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVertKTX, SeqTexPlayFragKTX);
 
     if (!m_pSequenceShaderProgram)
     {
@@ -106,6 +107,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(std::string& vVertexShade
     else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
     else if (m_TextureType == EPictureType::PKM)  PictureSuffix = ".pkm";
     else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
+
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
@@ -127,7 +129,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(std::string& vVertexShade
     m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
     m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
 
-    m_pSequenceShaderProgram = CShaderProgram::createProgram(vVertexShaderPath,vFragShaderShaderPath);
+    m_pSequenceShaderProgram = CShaderProgram::createProgram(vVertexShaderPath, vFragShaderShaderPath);
 
     if (!m_pSequenceShaderProgram)
     {
@@ -155,7 +157,6 @@ void CSequenceFramePlayer::updateQuantizationFrame(double vDeltaTime)
         }
         LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
     }
-
 }
 
 void CSequenceFramePlayer::updateMultiChannelFrame(double vDeltaTime, ERenderChannel vRenderChannel)
@@ -253,13 +254,9 @@ void CSequenceFramePlayer::drawQuantization(CScreenQuad *vQuad)
 {
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
-    float RotationAngle   = m_RotationAngle * M_PI / 180.0f;
-    m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
-    m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
-    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
-    m_pSequenceShaderProgram->setUniform("indexTexture", 0);
+    m_pSequenceShaderProgram->setUniform("indexTexture", 1);
     m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE1);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     vQuad->bindAndDraw();
 }

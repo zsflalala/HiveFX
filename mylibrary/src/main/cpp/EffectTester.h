@@ -1,10 +1,9 @@
 #pragma once
+
 #include<string>
-//#include <cstdint>
 
 namespace hiveVG
 {
-
     class CEffectTester
     {
     public:
@@ -33,5 +32,4 @@ namespace hiveVG
         unsigned char* m_pBuffer = nullptr;
         std::string m_FilePath;
     };
-
 }

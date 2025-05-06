@@ -82,8 +82,10 @@ namespace hiveVG
     const static std::string P60SaveToPhotoPath = "/storage/emulated/0/Pictures/Screenshots/";
 
     // Shaders config path
-    const static std::string SeqTexPlayVert        = "shaders/sequenceTexturePlayer.vert";
+    const static std::string SeqTexPlayVertPNG     = "shaders/sequenceTexturePlayer.vert";
     const static std::string SeqTexPlayFragPNG     = "shaders/sequenceTexturePlayerPNG.frag";
+    const static std::string SeqTexPlayVertKTX     = "shaders/sequenceTexturePlayerKTX.vert";
+    const static std::string SeqTexPlayFragKTX     = "shaders/sequenceTexturePlayerKTX.frag";
     const static std::string SingleTexPlayVert     = "shaders/singleTexturePlayer.vert";
     const static std::string SingleTexPlayFragPNG  = "shaders/singleTexturePlayerPNG.frag";
     const static std::string SingleTexPlayFragJPG  = "shaders/singleTexturePlayerJPG.frag";

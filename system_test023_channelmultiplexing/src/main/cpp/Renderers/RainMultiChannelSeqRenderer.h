@@ -8,7 +8,6 @@ namespace hiveVG
     class CTexture2D;
     class CShaderProgram;
     class CScreenQuad;
-    class CSplashManager;
     class CSingleTexturePlayer;
     class CSequenceFramePlayer;
 
@@ -38,8 +37,8 @@ namespace hiveVG
         CScreenQuad*          m_pScreenQuad              = nullptr;
         CSequenceFramePlayer* m_pRainSeqPlayer           = nullptr;
         CSingleTexturePlayer* m_pBackgroundPlayer        = nullptr;
-        CSequenceFramePlayer* m_pSplashPlayer            = nullptr;
-        std::unique_ptr<CSplashManager> m_pSplashManager = nullptr;
+        CSequenceFramePlayer* m_pLightingPlayer          = nullptr;
+        CSequenceFramePlayer* m_pCloudPlayer             = nullptr;
     };
 
     template<typename T>

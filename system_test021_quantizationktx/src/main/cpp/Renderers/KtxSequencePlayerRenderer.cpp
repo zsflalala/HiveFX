@@ -51,6 +51,7 @@ void CASTCSequencePlayerRenderer::__initAlgorithm()
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return ;
     }
+
     Json::Value BackGroundConfig = JsonReader.getObject("Background");
     std::string ImgPath = BackGroundConfig["frames_path"].asString();
     m_pSingleFramePlayer = new CSingleTexturePlayer(ImgPath,EPictureType::EPictureType::PNG);
