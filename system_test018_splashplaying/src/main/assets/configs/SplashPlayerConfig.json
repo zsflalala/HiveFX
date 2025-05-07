@@ -7,7 +7,7 @@
     "fps": 24,
     "loop": true,
     "moving_speed": [0.0, 0.0],
-    "scale": 0.25,
+    "scale": 0.3,
     "blend_mode": "additive"
   },
   "rain": {

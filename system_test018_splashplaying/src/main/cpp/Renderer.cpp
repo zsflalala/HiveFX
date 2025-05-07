@@ -120,7 +120,7 @@ void CRenderer::renderScene()
     assert(SwapResult == EGL_TRUE);
 
     static int FrameCount = 1;
-    if(true && FrameCount <= 128)
+    if(false && FrameCount <= 240)
     {
         std::ostringstream oss;
         oss << "frame_"

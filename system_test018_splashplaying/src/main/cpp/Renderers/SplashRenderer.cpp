@@ -68,7 +68,7 @@ void CSplashRenderer::__initAlgorithm()
     m_pSplashPlayer->setScreenUVMovingSpeed(glm::vec2(MoveSpeedX, MoveSpeedY));
 
     m_pSplashManager = std::make_unique<CSplashManager>();
-    int SplashNum = 20;
+    int SplashNum = 40;
     for (int i = 0; i < SplashNum; i++)
     {
         m_pSplashManager->pushBack(m_pSplashPlayer->clone());
@@ -104,8 +104,8 @@ void CSplashRenderer::renderScene(int vWindowWidth, int vWindowHeight)
 
 //    m_pBackFramePlayer->updateFrame();
 //    m_pScreenQuad->bindAndDraw();
-    DeltaTime = 0.0417;
-    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "%lf", DeltaTime);
+    DeltaTime = 0.0417 * 2;
+//    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, " %lf ", DeltaTime);
     m_pSplashManager->updateFrameAndUV(DeltaTime);
     m_pSplashManager->updateSequenceState(DeltaTime);
     m_pSplashManager->draw(m_pScreenQuad);
