@@ -157,6 +157,26 @@ void CSequenceFramePlayer::updateQuantizationFrame(double vDeltaTime)
     LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
 }
 
+void CSequenceFramePlayer::updateInterpolationFrame(double vDeltaTime)
+{
+    // TODO: 目前仅针对单行单列素材做插值，合并大图插值待添加
+    double FrameTime = 1.0 / m_FramePerSecond;
+    m_AccumFrameTime += vDeltaTime;
+    if (m_AccumFrameTime >= FrameTime)
+    {
+        m_AccumFrameTime = 0.0f;
+        m_CurrentTexture = m_NextTexture;
+        m_CurrentFrame = m_NextFrame;
+        if (m_NextFrame == m_ValidFrames - 1)
+        {
+            if (m_NextTexture == m_TextureCount - 1) m_IsFinished = true;
+            m_NextTexture = (m_NextTexture + 1) % m_TextureCount;
+        }
+        m_NextFrame = (m_NextFrame + 1) % m_ValidFrames;
+    }
+    m_InterpolationFactor = m_AccumFrameTime/FrameTime;
+}
+
 void CSequenceFramePlayer::updateFrameAndUV(double vDeltaTime)
 {
     double FrameTime = 1.0 / m_FramePerSecond;
@@ -245,6 +265,20 @@ void CSequenceFramePlayer::drawQuantization(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
+    vQuad->bindAndDraw();
+}
+
+void CSequenceFramePlayer::drawInterpolation(CScreenQuad *vQuad)
+{
+    assert(m_pSequenceShaderProgram != nullptr);
+    m_pSequenceShaderProgram->useProgram();
+    m_pSequenceShaderProgram->setUniform("CurrentTexture", 0);
+    m_pSequenceShaderProgram->setUniform("NextTexture", 1);
+    m_pSequenceShaderProgram->setUniform("Factor", m_InterpolationFactor);
+    glActiveTexture(GL_TEXTURE0);
+    m_SeqTextures[m_CurrentTexture]->bindTexture();
+    glActiveTexture(GL_TEXTURE1);
+    m_SeqTextures[m_NextTexture]->bindTexture();
     vQuad->bindAndDraw();
 }
 

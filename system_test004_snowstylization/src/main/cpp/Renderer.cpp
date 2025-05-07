@@ -109,8 +109,8 @@ void CRenderer::__initAlgorithm()
     m_pScreenQuad = CScreenQuad::getOrCreate();
     int Rows = 1, Cols = 1, TextureCount = 5;
     m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, Rows, Cols, TextureCount,EPictureType::PNG);
-    m_pTestPlayer->initTextureAndShaderProgram();
-    m_pTestPlayer->setFrameRate(5);
+    m_pTestPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayInterpolation);
+    m_pTestPlayer->setFrameRate(0.5f);
 }
 
 void CRenderer::renderScene()
@@ -126,8 +126,8 @@ void CRenderer::renderScene()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pTestPlayer->updateFrameAndUV(DeltaTime);
-    m_pTestPlayer->draw(m_pScreenQuad);
+    m_pTestPlayer->updateInterpolationFrame(DeltaTime);
+    m_pTestPlayer->drawInterpolation(m_pScreenQuad);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
