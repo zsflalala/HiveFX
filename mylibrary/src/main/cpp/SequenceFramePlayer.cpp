@@ -267,6 +267,7 @@ void CSequenceFramePlayer::drawKTX(CScreenQuad *vQuad)
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
     m_pSequenceShaderProgram->setUniform("indexTexture", 1);
+    m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentTexture);
     glActiveTexture(GL_TEXTURE1);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     vQuad->bindAndDraw();

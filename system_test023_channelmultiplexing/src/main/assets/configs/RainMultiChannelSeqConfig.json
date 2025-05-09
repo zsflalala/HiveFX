@@ -13,7 +13,7 @@
         "frames_type" : "ktx2",
         "frames_count": 109,
         "one_texture_frames": 4,
-        "fps": 9,
+        "fps": 15,
         "vertex_shader" : "shaders/multiChannelRianSeq.vert",
         "fragment_shader" : "shaders/multiChannelRianSeq8bitLightCloud.frag"
     },
