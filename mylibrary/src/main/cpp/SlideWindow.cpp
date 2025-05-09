@@ -24,11 +24,22 @@ void CSlideWindow::updateFrameAndDraw(int vWindowWidth, int vWindowHeight, doubl
     {
         m_CoordBias = fmod(m_CoordBias, textureHeight);
     }
+    const bool IsHorizontal = (m_SlideDirection == "horizontal");
+    const int TextureSize = IsHorizontal ? m_TextureWidth : m_TextureHeight;
+    const double ratio = m_CoordBias / static_cast<float>(TextureSize);
+    const int Steps = static_cast<int>(ratio + (ratio > 0 ? -1e-9 : 1e-9));
+    if (Steps != 0)
+    {
+        m_CoordBias -= static_cast<float>(Steps * TextureSize); // 一步完成正负方向的调整
+        if (m_UseCompressed)
+            m_Channel = (m_Channel + abs(Steps)) % 4; // 支持快速滑动时的多步调整
+    }
     m_pShaderProgram->useProgram();
     m_pShaderProgram->setUniform("_ScreenParams", glm::vec2(vWindowWidth, vWindowHeight));
     m_pShaderProgram->setUniform("_TextureParams", glm::vec2(m_TextureWidth, m_TextureHeight));
     m_pShaderProgram->setUniform("_CoordBias", m_CoordBias);
-    m_pShaderProgram->setUniform("_Channel", 0);
+    if(m_UseCompressed) m_pShaderProgram->setUniform("_Channel", m_Channel);
+    m_pShaderProgram->setUniform("Texture", 0);
 
     glActiveTexture(GL_TEXTURE0);
     m_pTexture->bindTexture();

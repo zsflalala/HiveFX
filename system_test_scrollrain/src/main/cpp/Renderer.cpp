@@ -113,5 +113,7 @@ void CRenderer::__updateRenderArea()
         m_WindowWidth  = Width;
         m_WindowHeight = Height;
         glViewport(0, 0, m_WindowWidth, m_WindowHeight);
+        if (m_pScrollRainRenderer!= nullptr)
+            m_pScrollRainRenderer->onWindowResize(Width,Height);
     }
 }

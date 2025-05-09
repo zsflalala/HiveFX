@@ -114,7 +114,6 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
         if (GlUploadResult != KTX_SUCCESS || GlError != GL_NO_ERROR)
         {
             LOG_ERROR(hiveVG::TAG_KEYWORD::TEXTURE2D_TAG,

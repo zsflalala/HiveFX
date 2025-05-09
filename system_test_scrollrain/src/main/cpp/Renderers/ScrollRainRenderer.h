@@ -20,7 +20,7 @@ namespace hiveVG
         ~CScrollRainRenderer();
 
         void renderScene();
-
+        void onWindowResize(int vWidth, int vHeight){ m_WindowWidth = vWidth; m_WindowHeight = vHeight;};
     private:
         void __initAlgorithm();
 
@@ -33,7 +33,8 @@ namespace hiveVG
         int            m_WindowHeight   = 0;
         android_app*   m_pApp           = nullptr;
         CScreenQuad*   m_pScreenQuad    = nullptr;
-        CSlideWindow*  m_pSlideWindow   = nullptr;
+        CSlideWindow*  m_pSlideWindowFore   = nullptr;
+        CSlideWindow*  m_pSlideWindowBack   = nullptr;
         CSingleTexturePlayer* m_pBackFramePlayer = nullptr;
         CSequenceFramePlayer* m_pSplashPlayer    = nullptr;
         std::unique_ptr<CSplashManager> m_pSplashManager = nullptr;

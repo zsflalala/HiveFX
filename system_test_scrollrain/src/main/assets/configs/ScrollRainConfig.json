@@ -1,19 +1,38 @@
 {
-    "Slide": {
-        "picture_path": "textures/LongSequence/LongTexRain1920_10800_VQuarter.ktx2",
+    "SlideFore": {
+        "picture_path": "textures/LongSequence/QHRfore.ktx2",
         "picture_type": "ktx2",
         "is_compressed": true,
-        "slide_speed" : -90.0,
+        "slide_speed" : -30.0,
+        "vertex_path": "shaders/slideWindow.vert",
+        "fragment_path": "shaders/slideWindowVCompressed.frag",
+        "slide_direction" : "vertical"
+    },
+    "SlideBack": {
+        "picture_path": "textures/LongSequence/QHRback.ktx2",
+        "picture_type": "ktx2",
+        "is_compressed": true,
+        "slide_speed" : -30.0,
+        "vertex_path": "shaders/slideWindow.vert",
+        "fragment_path": "shaders/slideWindowVCompressed.frag",
         "slide_direction" : "vertical"
     },
     "Splash": {
-        "frames_path": "textures/Splash_resASTC4x4",
+        "frames_path": "textures/Splash_res_mergedpngASTC12x12",
         "frames_type" : "ktx2",
-        "frames_count": 28,
+        "is_compressed": true,
+        "vertex_path": "shaders/quantizationSeq.vert",
+        "fragment_path": "shaders/quantizationSeq8bitRain.frag",
+        "frames_count": 7,
+        "one_texture_frames": 4,
         "fps": 30,
         "scale": 0.05
     },
     "Background":{
-        "frames_path": "textures/snowScene.png"
+        "ktxframes_path": "textures",
+        "frames_path": "textures/snowScene.png",
+        "frames_type": "ktx2",
+        "vertex_path": "shaders/singleTexturePlayer.vert",
+        "fragment_path": "shaders/singleTexturePlayer.frag"
     }
 }

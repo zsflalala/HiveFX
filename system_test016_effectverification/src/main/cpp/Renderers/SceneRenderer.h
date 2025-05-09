@@ -11,6 +11,7 @@ namespace hiveVG
     class CScreenQuad;
     class CSingleTexturePlayer;
     class CSequenceFramePlayer;
+
     class CSceneRenderer
     {
     public:

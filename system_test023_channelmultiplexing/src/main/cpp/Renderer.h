@@ -16,6 +16,7 @@ namespace hiveVG
         ~CRenderer();
 
         void renderScene();
+        void handleInput();
 
     private:
         void __initRenderer();
@@ -24,12 +25,14 @@ namespace hiveVG
         template<typename T>
         void __deleteSafely(T*& vPointer);
 
-        int           m_WindowWidth   = -1;
-        int           m_WindowHeight  = -1;
-        android_app*  m_pApp          = nullptr;
-        EGLDisplay    m_Display       = EGL_NO_DISPLAY;
-        EGLSurface    m_Surface       = EGL_NO_SURFACE;
-        EGLContext    m_Context       = EGL_NO_CONTEXT;
+        bool           m_IsPointerDown = false;
+        ERenderChannel m_RenderChannel = ERenderChannel::R;
+        int            m_WindowWidth   = -1;
+        int            m_WindowHeight  = -1;
+        android_app*   m_pApp          = nullptr;
+        EGLDisplay     m_Display       = EGL_NO_DISPLAY;
+        EGLSurface     m_Surface       = EGL_NO_SURFACE;
+        EGLContext     m_Context       = EGL_NO_CONTEXT;
         CRainMultiChannelSeqRenderer* m_pRainMultiChannelSeqRenderer = nullptr;
     };
 

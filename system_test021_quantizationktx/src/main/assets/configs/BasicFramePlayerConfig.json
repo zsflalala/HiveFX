@@ -5,10 +5,9 @@
     "frames_count": 128,
     "fps": 60,
     "loop": true,
-    "scale": 0.6,
-    "blend_mode": "additive"
+    "scale": 0.6
   },
   "Background":{
-  "frames_path": "textures/park.png"
-}
+    "frames_path": "textures/park.png"
+  }
 }

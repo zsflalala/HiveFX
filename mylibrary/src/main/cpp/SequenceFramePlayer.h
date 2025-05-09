@@ -41,12 +41,14 @@ namespace hiveVG
         [[nodiscard]] int getSingleTextureHeight() const { return m_SeqSingleTexHeight; }
         [[nodiscard]] bool getLoopState() const { return m_IsLoop; }
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
+        [[nodiscard]] EPictureType::EPictureType getPicType() const { return m_TextureType; }
 
         bool initTextureAndShaderProgram();
         bool initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath);
 
         void updateFrameAndUV(double vDeltaTime);
         void updateQuantizationFrame(double vDeltaTime);
+        void updateMultiChannelFrame(double vDeltaTime, ERenderChannel vRenderChannel);
         void updateInterpolationFrame(double vDeltaTime);
         void draw(CScreenQuad *vQuad);
         void drawQuantization(CScreenQuad *vQuad);
@@ -66,6 +68,7 @@ namespace hiveVG
         int    m_ValidFrames;
         float  m_FramePerSecond   = 24.0f;
         bool   m_IsLoop           = true;
+        bool   m_EnableChannel    = false;
         bool   m_IsFinished       = false;
         float  m_RotationAngle    = 0.0f;
         bool   m_IsMoving         = false;
@@ -85,7 +88,6 @@ namespace hiveVG
         glm::vec2 m_WindowSize     = glm::vec2(0.0f, 0.0f);
         glm::vec2 m_MovingSpeed    = glm::vec2(0.1f, 0.0f);
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
-
         std::vector<CTexture2D *> m_SeqTextures;
         CShaderProgram *m_pSequenceShaderProgram = nullptr;
     };
