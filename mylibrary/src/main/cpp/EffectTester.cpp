@@ -3,11 +3,16 @@
 #include "stb_image_write.h"
 #include "stb_image.h"
 #include "Common.h"
+#include "AppContext.h"
 
 using namespace hiveVG;
 
 CEffectTester::CEffectTester()
-{ }
+{
+    std::string StoragePath = CAppContext::getStoragePath();
+    if(!StoragePath.empty())
+        setFilePath(StoragePath);
+}
 
 CEffectTester::~CEffectTester()
 {
@@ -49,6 +54,7 @@ bool CEffectTester::saveScreenBuffer(const std::string& vTexName)
         LOG_ERROR(TAG_KEYWORD::EFFECT_TEST_TAG, "Saving texture failed.");
         return false;
     }
+    LOG_INFO(TAG_KEYWORD::EFFECT_TEST_TAG, "Saving texture %s succeed.", vTexName.c_str());
     return true;
 }
 

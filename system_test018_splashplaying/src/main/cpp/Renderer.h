@@ -8,6 +8,7 @@ struct android_app;
 namespace hiveVG
 {
     class CSplashRenderer;
+    class CEffectTester;
 
     class CRenderer
     {
@@ -20,6 +21,7 @@ namespace hiveVG
     private:
         void __initRenderer();
         void __updateRenderArea();
+        void __initEffectTester();
 
         int           m_WindowWidth   = -1;
         int           m_WindowHeight  = -1;
@@ -28,5 +30,6 @@ namespace hiveVG
         EGLSurface    m_Surface       = EGL_NO_SURFACE;
         EGLContext    m_Context       = EGL_NO_CONTEXT;
         CSplashRenderer* m_pSplashPlayer = nullptr;
+        CEffectTester* m_pEffectTester = nullptr;
     };
 }
