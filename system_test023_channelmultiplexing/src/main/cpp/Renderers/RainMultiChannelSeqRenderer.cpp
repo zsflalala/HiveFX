@@ -70,13 +70,13 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     int LightRows = 1;
     int LightCols = 1;
     m_pLightingPlayer = new CSequenceFramePlayer(LightingPath, LightRows, LightCols, LightingFrameCount, LightingPicType);
-    m_pLightingPlayer->initTextureAndShaderProgram();
+    m_pLightingPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayInterpolation);
     m_pLightingPlayer->setFrameRate(LightingPlayFPS);
 
     int CloudRows = 1;
     int CloudCols = 1;
     m_pCloudPlayer = new CSequenceFramePlayer(CloudPath, CloudRows, CloudCols, CloudFrameCount, CloudPicType);
-    m_pCloudPlayer->initTextureAndShaderProgram();
+    m_pCloudPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayInterpolation);
     m_pCloudPlayer->setFrameRate(CloudPlayFPS);
 
     m_pScreenQuad   = CScreenQuad::getOrCreate();
@@ -99,16 +99,16 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     m_pBackgroundPlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-    m_pCloudPlayer->updateFrameAndUV(DeltaTime);
-    m_pLightingPlayer->updateFrameAndUV(DeltaTime);
+    m_pCloudPlayer->updateInterpolationFrame(DeltaTime);
+    m_pLightingPlayer->updateInterpolationFrame(DeltaTime);
 
     if (vRenderChannel == ERenderChannel::R || vRenderChannel == ERenderChannel::G)
     {
-        m_pCloudPlayer->drawQuantization(m_pScreenQuad);
+        m_pCloudPlayer->drawInterpolation(m_pScreenQuad);
     }
     else if (vRenderChannel == ERenderChannel::B || vRenderChannel == ERenderChannel::A)
     {
-        m_pLightingPlayer->drawQuantization(m_pScreenQuad);
+        m_pLightingPlayer->drawInterpolation(m_pScreenQuad);
     }
 
     m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
