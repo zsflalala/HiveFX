@@ -67,7 +67,7 @@ void CCloudInterpolationRenderer::__initAlgorithm()
     EPlayType::EPlayType PlayType = EPlayType::FromString(PlayMode);
 
     m_pCloudPlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, PictureType);
-    if(!m_pCloudPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayInterpolation))
+    if(!m_pCloudPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayLerp))
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
         return;

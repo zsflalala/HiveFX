@@ -70,13 +70,13 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     int LightRows = 1;
     int LightCols = 1;
     m_pLightingPlayer = new CSequenceFramePlayer(LightingPath, LightRows, LightCols, LightingFrameCount, LightingPicType);
-    m_pLightingPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayInterpolation);
+    m_pLightingPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayLerp);
     m_pLightingPlayer->setFrameRate(LightingPlayFPS);
 
     int CloudRows = 1;
     int CloudCols = 1;
     m_pCloudPlayer = new CSequenceFramePlayer(CloudPath, CloudRows, CloudCols, CloudFrameCount, CloudPicType);
-    m_pCloudPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayInterpolation);
+    m_pCloudPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayLerp);
     m_pCloudPlayer->setFrameRate(CloudPlayFPS);
 
     m_pScreenQuad   = CScreenQuad::getOrCreate();
