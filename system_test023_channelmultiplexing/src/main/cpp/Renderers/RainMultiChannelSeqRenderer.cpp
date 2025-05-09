@@ -90,9 +90,9 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     m_pBackgroundPlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-    m_pLightingPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
+    m_pLightingPlayer->updateQuantizationFrame(DeltaTime);
     m_pLightingPlayer->drawKTX(m_pScreenQuad);
 
-    m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
+    m_pRainSeqPlayer->updateQuantizationFrame(DeltaTime);
     m_pRainSeqPlayer->drawQuantization(m_pScreenQuad);
 }
