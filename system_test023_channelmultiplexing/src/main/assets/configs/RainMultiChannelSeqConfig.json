@@ -11,16 +11,16 @@
     "Lighting": {
         "frames_path": "textures/LightingCloud_ASTC12x12_Linear",
         "frames_type" : "ktx2",
-        "frames_count": 273,
-        "fps": 10
-    },
-    "Cloud": {
-        "frames_path": "textures/Cloud",
-        "frames_type" : "ktx2",
-        "frames_count": 110,
-        "fps": 10
+        "frames_count": 109,
+        "one_texture_frames": 4,
+        "fps": 15,
+        "vertex_shader" : "shaders/multiChannelRianSeq.vert",
+        "fragment_shader" : "shaders/multiChannelRianSeq8bitLightCloud.frag"
     },
     "Background":{
-        "frames_path": "textures/snowScene.png"
+        "frames_path": "textures/Background",
+        "frames_type": "ktx2",
+        "vertex_shader": "shaders/singleTexturePlayer.vert",
+        "fragment_shader": "shaders/singleTexturePlayer.frag"
     }
 }

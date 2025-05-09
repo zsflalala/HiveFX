@@ -189,7 +189,7 @@ void CSequenceFramePlayer::updateInterpolationFrame(double vDeltaTime)
         }
         m_NextFrame = (m_NextFrame + 1) % m_ValidFrames;
     }
-    m_InterpolationFactor = m_AccumFrameTime/FrameTime;
+    m_InterpolationFactor = m_AccumFrameTime / FrameTime;
 }
 
 void CSequenceFramePlayer::updateFrameAndUV(double vDeltaTime)
