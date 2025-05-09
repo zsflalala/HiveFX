@@ -5,7 +5,6 @@ out vec4 FragColor;
 in vec2 TexCoord;
 
 uniform sampler2D indexTexture;
-uniform int channelIndex;
 
 void main()
 {

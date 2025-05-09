@@ -20,13 +20,6 @@ CSequenceFramePlayer::CSequenceFramePlayer(const std::string& vTextureRootPath, 
 {
 }
 
-CSequenceFramePlayer::CSequenceFramePlayer(const std::string &vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG)
-        : m_SequenceRows(vSequenceRows), m_SequenceCols(vSequenceCols), m_TextureRootPath(vTextureRootPath), m_TextureCount(vTextureCount), m_UseCompressedPNG(vUseCompressedPNG)
-{
-    m_ValidFrames = m_SequenceRows * m_SequenceCols;
-    m_TextureType = EPictureType::PNG;
-}
-
 CSequenceFramePlayer::~CSequenceFramePlayer()
 {
     for (int i = m_SeqTextures.size() - 1; i >= 0; i--)
@@ -59,20 +52,14 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
-        if (!m_UseCompressedPNG)
+        CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
+        if (!pSequenceTexture)
         {
-            CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
-            if (!pSequenceTexture)
-            {
-                LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
-                return false;
-            }
-            m_SeqTextures.push_back(pSequenceTexture);
+            LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+            return false;
         }
-        else
-        {
-            CTexture2D::loadTextureFromCompressedPNG(TexturePath, m_SequenceWidth, m_SequenceHeight, m_SeqTextures);
-        }
+        m_SeqTextures.push_back(pSequenceTexture);
+
     }
     m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
     m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
@@ -111,20 +98,13 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(std::string& vVertexShade
     for (int i = 0; i < m_TextureCount; i++)
     {
         std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
-        if (!m_UseCompressedPNG)
+        CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
+        if (!pSequenceTexture)
         {
-            CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
-            if (!pSequenceTexture)
-            {
-                LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
-                return false;
-            }
-            m_SeqTextures.push_back(pSequenceTexture);
+            LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+            return false;
         }
-        else
-        {
-            CTexture2D::loadTextureFromCompressedPNG(TexturePath, m_SequenceWidth, m_SequenceHeight, m_SeqTextures);
-        }
+        m_SeqTextures.push_back(pSequenceTexture);
     }
     m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
     m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
@@ -254,8 +234,17 @@ void CSequenceFramePlayer::drawQuantization(CScreenQuad *vQuad)
 {
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
+    m_pSequenceShaderProgram->setUniform("indexTexture", 2);
+    glActiveTexture(GL_TEXTURE2);
+    m_SeqTextures[m_CurrentTexture]->bindTexture();
+    vQuad->bindAndDraw();
+}
+
+void CSequenceFramePlayer::drawKTX(CScreenQuad *vQuad)
+{
+    assert(m_pSequenceShaderProgram != nullptr);
+    m_pSequenceShaderProgram->useProgram();
     m_pSequenceShaderProgram->setUniform("indexTexture", 1);
-    m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
     glActiveTexture(GL_TEXTURE1);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     vQuad->bindAndDraw();

@@ -50,6 +50,7 @@ namespace hiveVG
         void updateMultiChannelFrame(double vDeltaTime, ERenderChannel vRenderChannel);
         void draw(CScreenQuad *vQuad);
         void drawQuantization(CScreenQuad *vQuad);
+        void drawKTX(CScreenQuad *vQuad);
 
     private:
         void __initSequenceParams();
@@ -82,7 +83,7 @@ namespace hiveVG
         glm::vec2 m_WindowSize     = glm::vec2(0.0f, 0.0f);
         glm::vec2 m_MovingSpeed    = glm::vec2(0.1f, 0.0f);
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
-        std::vector<CTexture2D *> m_SeqTextures;
-        CShaderProgram *m_pSequenceShaderProgram = nullptr;
+        std::vector<CTexture2D *>  m_SeqTextures;
+        CShaderProgram*            m_pSequenceShaderProgram = nullptr;
     };
 }

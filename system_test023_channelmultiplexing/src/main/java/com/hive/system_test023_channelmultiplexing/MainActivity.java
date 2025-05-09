@@ -20,7 +20,7 @@ public class MainActivity extends GameActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        addExtraViews();
+//        addExtraViews();
     }
 
     private void addExtraViews()

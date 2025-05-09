@@ -10,6 +10,7 @@ CSingleTexturePlayer::CSingleTexturePlayer(const std::string& vTexturePath, EPic
         : m_TexturePath(vTexturePath), m_TextureType(vPictureType)
 {
 }
+
 CSingleTexturePlayer::CSingleTexturePlayer(const std::string& vTexturePath, int vSequenceRows, int vSequenceCols, int  vOneTextureFrames, EPictureType::EPictureType vPictureType, float vFramePerSecond,int vTextureCount = 1)
         : m_TexturePath(vTexturePath),m_SeqRows(vSequenceRows),m_SeqCols(vSequenceCols),m_TextureCount(vTextureCount),m_OneTextureFrames(vOneTextureFrames),m_TextureType(vPictureType),m_FramePerSecond(vFramePerSecond)
 {
@@ -18,11 +19,6 @@ CSingleTexturePlayer::CSingleTexturePlayer(const std::string& vTexturePath, int 
 
 CSingleTexturePlayer::~CSingleTexturePlayer()
 {
-   /* if (m_pSingleTexture)
-    {
-        delete m_pSingleTexture;
-        m_pSingleTexture = nullptr;
-    }*/
     for (int i = m_SeqTextures.size() - 1; i >= 0; i--)
     {
         if (m_SeqTextures[i])
@@ -44,15 +40,18 @@ bool CSingleTexturePlayer::initTextureAndShaderProgram()
     CTexture2D* pSingleTexture = CTexture2D::loadTexture(m_TexturePath);
     if (!pSingleTexture)
     {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG,
-                  "Error loading texture from path [%s].", m_TexturePath.c_str());
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", m_TexturePath.c_str());
         return false;
     }
     m_SeqTextures.push_back(pSingleTexture);
+
     if (m_TextureType == EPictureType::PNG)
         m_pSingleShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert, SingleTexPlayFragPNG);
     else if (m_TextureType == EPictureType::JPG)
         m_pSingleShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert, SingleTexPlayFragJPG);
+    else if (m_TextureType == EPictureType::KTX2)
+        m_pSingleShaderProgram = CShaderProgram::createProgram(SingleTexPlayVert, SingleTexPlayFragPNG);
+
     assert(m_pSingleShaderProgram != nullptr);
     LOG_INFO(hiveVG::TAG_KEYWORD::SINGLE_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TexturePath.c_str());
     return true;

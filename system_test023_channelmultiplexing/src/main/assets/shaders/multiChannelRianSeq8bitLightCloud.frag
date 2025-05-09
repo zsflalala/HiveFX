@@ -5,11 +5,12 @@ out vec4 FragColor;
 in vec2 TexCoord;
 
 uniform sampler2D indexTexture;
+uniform int channelIndex;
 
 void main()
 {
     vec4 indexColor = texture(indexTexture, TexCoord);
 
-    float index = indexColor.r + indexColor.g + indexColor.b + indexColor.a;;
-    FragColor = vec4(index, index, index, 0.1);
+    float index = indexColor[channelIndex];
+    FragColor = vec4(1.0, 1.0, 1.0, index);
 }
