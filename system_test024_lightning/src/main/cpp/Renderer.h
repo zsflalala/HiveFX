@@ -8,7 +8,7 @@ struct android_app;
 namespace hiveVG
 {
     class CLightningRenderer;
-
+    class CCloudInterpolationRenderer;
     class CRenderer
     {
     public:
@@ -30,5 +30,6 @@ namespace hiveVG
         EGLContext   m_Context       = EGL_NO_CONTEXT;
 
         CLightningRenderer*   m_pLightningRenderer = nullptr;
+        CCloudInterpolationRenderer* m_pCloudInterpolationRenderer = nullptr;
     };
 }

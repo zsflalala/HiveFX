@@ -275,6 +275,7 @@ void CSequenceFramePlayer::drawInterpolation(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("CurrentTexture", 0);
     m_pSequenceShaderProgram->setUniform("NextTexture", 1);
     m_pSequenceShaderProgram->setUniform("Factor", m_InterpolationFactor);
+    m_pSequenceShaderProgram->setUniform("Displacement", 0.012f);
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     glActiveTexture(GL_TEXTURE1);

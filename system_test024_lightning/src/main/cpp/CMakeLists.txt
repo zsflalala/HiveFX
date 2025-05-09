@@ -16,7 +16,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
     system_test024_lightning.cpp
     Renderer.cpp
     Renderers/LightningRenderer.cpp
-    Renderers/LightningSequencePlayer.cpp)
+    Renderers/LightningSequencePlayer.cpp
+    Renderers/CloudInterpolationRenderer.cpp)
 
 find_package(game-activity REQUIRED CONFIG)
 
