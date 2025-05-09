@@ -3,8 +3,10 @@
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
+#include <iomanip>
 #include "Common.h"
 #include "Renderers/SplashRenderer.h"
+#include "EffectTester.h"
 
 using namespace hiveVG;
 
@@ -12,6 +14,7 @@ CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 {
     CAppContext::setAssetManager(vApp->activity->assetManager);
     __initRenderer();
+    __initEffectTester();
 }
 
 CRenderer::~CRenderer()
@@ -91,6 +94,21 @@ void CRenderer::__initRenderer()
     m_Context = Context;
 }
 
+void CRenderer::__initEffectTester()
+{
+    m_pEffectTester = new CEffectTester();
+    m_pEffectTester->setFilePath(m_pApp->activity->externalDataPath);
+
+    int Width = 0, Height = 0;
+    assert(m_pApp->window != nullptr);
+    if (m_pApp->window)
+    {
+        Width = ANativeWindow_getWidth(m_pApp->window);
+        Height = ANativeWindow_getHeight(m_pApp->window);
+    }
+    m_pEffectTester->init(Width, Height);
+}
+
 void CRenderer::renderScene()
 {
     __updateRenderArea();
@@ -100,6 +118,18 @@ void CRenderer::renderScene()
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
+
+    static int FrameCount = 1;
+    if(false && FrameCount <= 240)
+    {
+        std::ostringstream oss;
+        oss << "frame_"
+            << std::setw(3) << std::setfill('0') << FrameCount
+            << ".png";
+        std::string Filename = oss.str();
+        m_pEffectTester->saveScreenBuffer(Filename);
+        FrameCount++;
+    }
 }
 
 void CRenderer::__updateRenderArea()

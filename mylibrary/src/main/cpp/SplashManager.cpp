@@ -36,6 +36,8 @@ void CSplashManager::updateFrameAndUV(double vDeltaTime)
 {
     for (int i = 0; i < m_SequencePlayers.size(); i++)
     {
+        if (!m_SequenceState[i]._IsAlive)
+            continue;
         if (m_SequencePlayers[i]->getLoopState() || (!m_SequencePlayers[i]->getLoopState() && !m_SequencePlayers[i]->getFinishState()))
         {
             if (m_IsQuantization)
@@ -128,12 +130,16 @@ SSequenceState CSplashManager::__initSequenceParams()
     std::uniform_real_distribution<> FloatDistribution(0.0, 1.0);
 
     SSequenceState State;
-    State._IsAlive = IntDistribution(Gen);
+//    State._IsAlive = IntDistribution(Gen);
+    State._IsAlive = false;
 
-    State._PlannedLivingTime = 0.8;
+    //FloatDistribution.param(std::uniform_real_distribution<>::param_type(3.0f, 4.0f));
+    //State._PlannedLivingTime = FloatDistribution(Gen);
+    State._PlannedLivingTime = 0.67;
 
-    FloatDistribution.param(std::uniform_real_distribution<>::param_type(1.0f, 2.0f));
+    FloatDistribution.param(std::uniform_real_distribution<>::param_type(0.0f, 0.4f));
     State._PlannedDeadTime   = FloatDistribution(Gen);
+    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "=================Planned dead time: %lf", State._PlannedDeadTime);
     State._AlreadyDeadTime   = 0;
     State._AlreadyLivingTime = 0;
     State._MovingDirection   = 1;
