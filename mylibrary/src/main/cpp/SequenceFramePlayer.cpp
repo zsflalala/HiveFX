@@ -215,7 +215,6 @@ void CSequenceFramePlayer::updateLerpQuantFrame(double vDeltaTime)
             m_CurrentTexture = m_NextTexture;
             m_CurrentChannel = 0;
         }
-        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "%d", m_CurrentChannel);
     }
     m_InterpolationFactor = m_AccumFrameTime/FrameTime;
 }
