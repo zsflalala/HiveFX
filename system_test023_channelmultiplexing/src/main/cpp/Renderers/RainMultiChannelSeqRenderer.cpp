@@ -93,6 +93,6 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     m_pLightingPlayer->updateLerpQuantFrame(DeltaTime);
     m_pLightingPlayer->drawInterpolation(m_pScreenQuad);
 
-    m_pRainSeqPlayer->updateQuantizationFrame(DeltaTime);
+    m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
     m_pRainSeqPlayer->drawQuantization(m_pScreenQuad);
 }

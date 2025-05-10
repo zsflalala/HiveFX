@@ -3,17 +3,14 @@
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
-#include "Renderers/WeatherAPKRenderer.h"
-#include "Renderers/BackGroundAPKRenderer.h"
-#include "Renderers/WeatherSeqRenderer.h"
-#include "Renderers/WeatherAsyncRenderer.h"
+#include "Renderers/RainMultiChannelSeqRenderer.h"
 #include "Common.h"
 
 using namespace hiveVG;
 
 CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 {
-    setAssetManager(vApp->activity->assetManager);
+    CAppContext::setAssetManager(vApp->activity->assetManager);
     __initRenderer();
 }
 
@@ -35,21 +32,7 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pWeatherRenderer != nullptr)
-    {
-        delete m_pWeatherRenderer;
-        m_pWeatherRenderer = nullptr;
-    }
-    if (m_pWeatherSeqRenderer != nullptr)
-    {
-        delete m_pWeatherSeqRenderer;
-        m_pWeatherSeqRenderer = nullptr;
-    }
-    if (m_pBackgroundRenderer != nullptr)
-    {
-        delete m_pBackgroundRenderer;
-        m_pBackgroundRenderer = nullptr;
-    }
+    __deleteSafely(m_pRainMultiChannelSeqRenderer);
 }
 
 void CRenderer::__initRenderer()
@@ -112,44 +95,27 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-//    if (m_pBackgroundRenderer == nullptr)
-//        m_pBackgroundRenderer = new CBackgroundAPKRenderer();
-//    m_pBackgroundRenderer->renderScene();
-
-//    if (m_pWeatherRenderer == nullptr)
-//    {
-//        m_pWeatherRenderer = new CWeatherAPKRenderer();
-//        m_pWeatherRenderer->initTextureAndShaderProgram();
-//    }
-//    m_pWeatherRenderer->renderScene();
-
-//    if (m_pWeatherSeqRenderer == nullptr)
-//    {
-//        m_pWeatherSeqRenderer = new CWeatherSeqRenderer();
-//        m_pWeatherSeqRenderer->initTextureAndShaderProgram();
-//    }
-//    m_pWeatherSeqRenderer->renderScene();
-
-    if (m_pWeatherAsyncRenderer == nullptr)
-    {
-        m_pWeatherAsyncRenderer = new CWeatherAsyncRenderer();
-        m_pWeatherAsyncRenderer->initTextureAndShaderProgram();
-    }
-    m_pWeatherAsyncRenderer->renderScene();
+    if (m_pRainMultiChannelSeqRenderer == nullptr)
+        m_pRainMultiChannelSeqRenderer = new CRainMultiChannelSeqRenderer();
+    m_pRainMultiChannelSeqRenderer->renderScene(m_RenderChannel);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
 }
-  void CRenderer::__updateRenderArea()
+
+void CRenderer::__updateRenderArea()
 {
     EGLint Width, Height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);
     eglQuerySurface(m_Display, m_Surface, EGL_HEIGHT, &Height);
 
+    int ViewportY = Height / 5 * 3;
+    int ViewportHeight = Height / 5;
+
     if (Width != m_WindowWidth || Height != m_WindowHeight)
     {
         m_WindowWidth  = Width;
         m_WindowHeight = Height;
-        glViewport(0, 0, m_WindowWidth, m_WindowHeight);
+        glViewport(0, ViewportY, Width, ViewportHeight);
     }
 }

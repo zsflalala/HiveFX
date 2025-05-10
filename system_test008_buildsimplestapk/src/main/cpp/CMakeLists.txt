@@ -5,7 +5,6 @@ project("system_test008_buildsimplestapk")
 set(REQUIRED_PACKAGES
         game-activity
         glm
-        WebP
         jsoncpp
 )
 
@@ -15,6 +14,7 @@ endforeach()
 
 add_library(BasicLibrary SHARED
         ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/SingleTexturePlayer.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/SequenceFramePlayer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/ShaderProgram.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/ScreenQuad.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/Texture2D.cpp
@@ -23,8 +23,24 @@ add_library(BasicLibrary SHARED
         ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/TimeUtils.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/AppContext.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/FileUtils.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary/ThreadPool.cpp
 )
+
+# KTX 路径设置
+if(CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a")
+    set(KTX_LIB_PATH ${CMAKE_SOURCE_DIR}/BasicLibrary/KTX-4.4.0/arm64-v8a/lib)
+    set(KTX_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/BasicLibrary/KTX-4.4.0/arm64-v8a/include)
+elseif(CMAKE_ANDROID_ARCH_ABI STREQUAL "x86_64")
+    set(KTX_LIB_PATH ${CMAKE_SOURCE_DIR}/BasicLibrary/KTX-4.4.0/x86_64/lib)
+    set(KTX_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/BasicLibrary/KTX-4.4.0/x86_64/include)
+else()
+    message(FATAL_ERROR "Unsupported ABI: ${CMAKE_ANDROID_ARCH_ABI}")
+endif()
+
+include_directories(${KTX_INCLUDE_PATH})
+
+# KTX
+add_library(ktx SHARED IMPORTED)
+set_target_properties(ktx PROPERTIES IMPORTED_LOCATION ${KTX_LIB_PATH}/libktx.so)
 
 target_include_directories(BasicLibrary PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/BasicLibrary
@@ -38,17 +54,14 @@ target_link_libraries(BasicLibrary PUBLIC
         android
         log
         glm::glm
-        libwebp::libwebp
         JsonCpp::JsonCpp
+        ktx
 )
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         system_test008_buildsimplestapk.cpp
         Renderer.cpp
-        Renderers/WeatherAPKRenderer.cpp
-        Renderers/BackGroundAPKRenderer.cpp
-        Renderers/WeatherSeqRenderer.cpp
-        Renderers/WeatherAsyncRenderer.cpp
+        Renderers/RainMultiChannelSeqRenderer.cpp
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}

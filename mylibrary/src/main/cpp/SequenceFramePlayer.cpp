@@ -135,7 +135,7 @@ void CSequenceFramePlayer::updateQuantizationFrame(double vDeltaTime)
             if (m_SeqTextures.size() == m_CurrentTexture)
                 m_CurrentTexture = 0;
         }
-//        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
+        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
     }
 }
 
@@ -196,8 +196,7 @@ void CSequenceFramePlayer::updateLerpQuantFrame(double vDeltaTime)
             m_CurrentTexture = m_NextTexture;
             m_CurrentChannel = 0;
         }
-        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "CurrentSeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
-        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "NextSeqTexture: %d" , m_NextTexture);
+        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "CurrentSeqTexture: %d, Current Channel: %d NextSeqTexture: %d" , m_CurrentTexture, m_CurrentChannel, m_NextTexture);
     }
     m_InterpolationFactor = m_AccumFrameTime/FrameTime;
 }
