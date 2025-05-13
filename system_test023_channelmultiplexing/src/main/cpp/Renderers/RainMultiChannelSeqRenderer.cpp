@@ -34,50 +34,41 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
 {
     std::string FileName   = "configs/RainMultiChannelSeqConfig.json";
     CJsonReader JsonReader = CJsonReader(FileName);
-    Json::Value RainConfig  = JsonReader.getObject("Rain");
-    std::string RainPath      =  RainConfig["frames_path"].asString();
-    std::string FrameType = RainConfig["frames_type"].asString();
-    int RainTextureCount  =  RainConfig["frames_count"].asInt();
+    Json::Value RainConfig = JsonReader.getObject("Rain");
+    std::string RainPath   =  RainConfig["frames_path"].asString();
+    std::string RainFrameType = RainConfig["frames_type"].asString();
+    int RainTextureCount   =  RainConfig["frames_count"].asInt();
     int RainOneTextureFrames = RainConfig["one_texture_frames"].asInt();
     float RainFramePerSecond = RainConfig["fps"].asFloat();
     std::string RainVertexShader = RainConfig["vertex_shader"].asString();
     std::string RainFragShader   = RainConfig["fragment_shader"].asString();
 
     Json::Value BackGroundConfig = JsonReader.getObject("Background");
-    std::string BackImgPath = BackGroundConfig["frames_path"].asString();
+    std::string BackImgPath      = BackGroundConfig["frames_path"].asString();
+    std::string BackFrameType    = BackGroundConfig["frames_type"].asString();
+    std::string BackVertexShader = BackGroundConfig["vertex_shader"].asString();
+    std::string BackFragShader   = BackGroundConfig["fragment_shader"].asString();
+    EPictureType::EPictureType BackPicType = EPictureType::FromString(BackFrameType);
 
     Json::Value LightingConfig = JsonReader.getObject("Lighting");
     std::string LightingPath = LightingConfig["frames_path"].asString();
     std::string LightingType = LightingConfig["frames_type"].asString();
-    int    LightingFrameCount = LightingConfig["frames_count"].asInt();
-    int    LightingPlayFPS    = LightingConfig["fps"].asInt();
+    int   LightingFrameCount = LightingConfig["frames_count"].asInt();
+    int   LightingOneTextureFrames = LightingConfig["one_texture_frames"].asInt();
+    float LightingPlayFPS    = LightingConfig["fps"].asFloat();
+    std::string LightingVertexShader = LightingConfig["vertex_shader"].asString();
+    std::string LightingFragShader   = LightingConfig["fragment_shader"].asString();
     EPictureType::EPictureType LightingPicType = EPictureType::FromString(LightingType);
 
-    Json::Value CloudConfig = JsonReader.getObject("Cloud");
-    std::string CloudPath = CloudConfig["frames_path"].asString();
-    std::string CloudType = CloudConfig["frames_type"].asString();
-    int   CloudFrameCount = CloudConfig["frames_count"].asInt();
-    int   CloudPlayFPS    = CloudConfig["fps"].asInt();
-    EPictureType::EPictureType CloudPicType = EPictureType::FromString(CloudType);
-
-    EPictureType::EPictureType RainPictureType = EPictureType::FromString(FrameType);
+    EPictureType::EPictureType RainPictureType = EPictureType::FromString(RainFrameType);
     m_pRainSeqPlayer = new CSequenceFramePlayer(RainPath, RainTextureCount, RainOneTextureFrames, RainFramePerSecond, RainPictureType);
     m_pRainSeqPlayer->initTextureAndShaderProgram(RainVertexShader, RainFragShader);
 
-    m_pBackgroundPlayer = new CSingleTexturePlayer(BackImgPath);
-    m_pBackgroundPlayer->initTextureAndShaderProgram();
+    m_pBackgroundPlayer = new CSingleTexturePlayer(BackImgPath, BackPicType);
+    m_pBackgroundPlayer->initTextureAndShaderProgram(BackVertexShader, BackFragShader);
 
-    int LightRows = 1;
-    int LightCols = 1;
-    m_pLightingPlayer = new CSequenceFramePlayer(LightingPath, LightRows, LightCols, LightingFrameCount, LightingPicType);
-    m_pLightingPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayLerp);
-    m_pLightingPlayer->setFrameRate(LightingPlayFPS);
-
-    int CloudRows = 1;
-    int CloudCols = 1;
-    m_pCloudPlayer = new CSequenceFramePlayer(CloudPath, CloudRows, CloudCols, CloudFrameCount, CloudPicType);
-    m_pCloudPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayLerp);
-    m_pCloudPlayer->setFrameRate(CloudPlayFPS);
+    m_pLightingPlayer = new CSequenceFramePlayer(LightingPath, LightingFrameCount, LightingOneTextureFrames, LightingPlayFPS, LightingPicType);
+    m_pLightingPlayer->initTextureAndShaderProgram(LightingVertexShader, LightingFragShader);
 
     m_pScreenQuad   = CScreenQuad::getOrCreate();
     m_LastFrameTime = CTimeUtils::getCurrentTime();
@@ -99,17 +90,8 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     m_pBackgroundPlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-    m_pCloudPlayer->updateInterpolationFrame(DeltaTime);
-    m_pLightingPlayer->updateInterpolationFrame(DeltaTime);
-
-    if (vRenderChannel == ERenderChannel::R || vRenderChannel == ERenderChannel::G)
-    {
-        m_pCloudPlayer->drawInterpolation(m_pScreenQuad);
-    }
-    else if (vRenderChannel == ERenderChannel::B || vRenderChannel == ERenderChannel::A)
-    {
-        m_pLightingPlayer->drawInterpolation(m_pScreenQuad);
-    }
+    m_pLightingPlayer->updateLerpQuantFrame(DeltaTime);
+    m_pLightingPlayer->drawInterpolation(m_pScreenQuad);
 
     m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
     m_pRainSeqPlayer->drawQuantization(m_pScreenQuad);
