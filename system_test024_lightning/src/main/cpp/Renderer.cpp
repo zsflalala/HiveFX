@@ -118,11 +118,14 @@ void CRenderer::__updateRenderArea()
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &Width);
     eglQuerySurface(m_Display, m_Surface, EGL_HEIGHT, &Height);
 
+    int ViewportY = Height / 5 * 3;
+    int ViewportHeight = Height / 5;
+
     if (Width != m_WindowWidth || Height != m_WindowHeight)
     {
         m_WindowWidth  = Width;
         m_WindowHeight = Height;
-        glViewport(0, 0, m_WindowWidth, m_WindowHeight);
+        glViewport(0, ViewportY, Width, ViewportHeight);
     }
 }
 

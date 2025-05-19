@@ -1,8 +1,8 @@
 {
   "cloud": {
-    "frames_path": "textures/cloud_帧采样",
-    "frames_type" : "png",
-    "frames_count": 108,
+    "frames_path": "textures/cloud_ASTC12x12_7.5fps",
+    "frames_type" : "ktx2",
+    "frames_count": 128,
     "play_mode": "fullscreen",
     "ranks": {
       "rows" : 1,
@@ -12,7 +12,7 @@
       "x": -1.0,
       "y": -0.3
     },
-    "fps": 9,
+    "fps": 7,
     "loop": true,
     "moving_speed": [0.0, 0.0],
     "scale": 0.6
