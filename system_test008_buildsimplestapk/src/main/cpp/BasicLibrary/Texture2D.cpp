@@ -197,49 +197,7 @@ CTexture2D *CTexture2D::loadTexture(const std::string &vTexturePath, int &voWidt
     StartTime = CTimeUtils::getCurrentTime();
 
     GLuint TextureHandle = 0;
-    if (!vIsCompressed)
-    {
-        TextureHandle = __createHandle(Format, voWidth, voHeight, pImageData);
-    }
-    else
-    {
-        const uint32_t compHeight = voHeight;
-        const uint32_t origHeight = compHeight * 2;
-        voHeight *= 2;
-
-        std::vector<uint8_t> OrigPixels;
-        OrigPixels.resize(voWidth * origHeight * 4);
-
-        for (uint32_t y = 0; y < compHeight; ++y)
-        {
-            for (uint32_t x = 0; x < voWidth; ++x)
-            {
-                const uint8_t *src = pImageData + (y * voWidth + x) * 4;
-
-                // 上半部分（R和Alpha通道）
-                uint8_t upperR = src[0];
-                uint8_t upperA = src[1];
-
-                // 下半部分（B和Alpha通道）
-                uint8_t lowerR = src[2];
-                uint8_t lowerA = src[3];
-
-                // 填充目标像素
-                uint8_t *upperDst = OrigPixels.data() + ((y * voWidth) + x) * 4;
-                upperDst[0] = upperR; // R
-                upperDst[1] = upperR; // G
-                upperDst[2] = upperR; // B
-                upperDst[3] = upperA; // A
-
-                uint8_t *lowerDst = OrigPixels.data() + (((y + compHeight) * voWidth) + x) * 4;
-                lowerDst[0] = lowerR; // R
-                lowerDst[1] = lowerR; // G
-                lowerDst[2] = lowerR; // B
-                lowerDst[3] = lowerA; // A
-            }
-        }
-        TextureHandle = __createHandle(Format, voWidth, voHeight, OrigPixels.data());
-    }
+    TextureHandle = __createHandle(Format, voWidth, voHeight, pImageData);
 
     if (TextureHandle == 0)
     {

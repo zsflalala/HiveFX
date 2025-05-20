@@ -53,7 +53,7 @@ namespace hiveVG
         void updateLerpQuantFrame(double vDeltaTime);
         void draw(CScreenQuad *vQuad);
         void drawQuantization(CScreenQuad *vQuad);
-        void drawKTX(CScreenQuad *vQuad);
+        void drawMultiChannelKTX(CScreenQuad *vQuad);
         void drawInterpolation(CScreenQuad *vQuad);
 
     protected:

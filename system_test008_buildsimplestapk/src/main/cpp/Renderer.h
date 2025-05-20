@@ -15,6 +15,7 @@ namespace hiveVG
         CRenderer(android_app *vApp);
         ~CRenderer();
 
+        void handleInput();
         void renderScene();
 
     private:
@@ -26,7 +27,7 @@ namespace hiveVG
 
         int          m_WindowWidth   = -1;
         int          m_WindowHeight  = -1;
-        ERenderChannel m_RenderChannel = ERenderChannel::A;
+        ERenderChannel m_RenderChannel = ERenderChannel::R;
         android_app* m_pApp          = nullptr;
         EGLDisplay   m_Display       = EGL_NO_DISPLAY;
         EGLSurface   m_Surface       = EGL_NO_SURFACE;

@@ -291,7 +291,7 @@ void CSequenceFramePlayer::drawQuantization(CScreenQuad *vQuad)
     vQuad->bindAndDraw();
 }
 
-void CSequenceFramePlayer::drawKTX(CScreenQuad *vQuad)
+void CSequenceFramePlayer::drawMultiChannelKTX(CScreenQuad *vQuad)
 {
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();

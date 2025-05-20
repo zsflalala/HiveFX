@@ -47,14 +47,18 @@ namespace hiveVG
         bool initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath);
 
         void updateFrameAndUV(double vDeltaTime);
+        void updateSeqKTXFrame(double vDeltaTime);
         void updateQuantizationFrame(double vDeltaTime);
         void updateMultiChannelFrame(double vDeltaTime, ERenderChannel vRenderChannel);
         void updateInterpolationFrame(double vDeltaTime);
         void updateLerpQuantFrame(double vDeltaTime);
         void draw(CScreenQuad *vQuad);
         void drawQuantization(CScreenQuad *vQuad);
-        void drawKTX(CScreenQuad *vQuad);
+        void drawMultiChannelKTX(CScreenQuad *vQuad);
+        void drawSeqKTX(CScreenQuad *vQuad);
         void drawInterpolation(CScreenQuad *vQuad);
+        void drawInterpolationWithDisplacement(CScreenQuad *vQuad);
+        void drawInterpolationWithFiltering(CScreenQuad *vQuad);
 
     protected:
         void __initSequenceParams();
@@ -79,10 +83,10 @@ namespace hiveVG
         int    m_CurrentFrame     = 0;
         int    m_NextFrame        = 0;
         float  m_InterpolationFactor = 0.0f;
-        double m_AccumFrameTime   = 0.0f;
+        double m_AccumFrameTime      = 0.0f;
         std::string m_TextureRootPath;
-        int         m_CurrentTexture = 0;
-        int         m_NextTexture = 0;
+        int         m_CurrentTexture  = 0;
+        int         m_NextTexture     = 0;
         int         m_TextureCount;
         SSequenceState m_SequenceState;
         glm::vec2 m_ScreenUVScale  = glm::vec2(1.0f, 1.0f);

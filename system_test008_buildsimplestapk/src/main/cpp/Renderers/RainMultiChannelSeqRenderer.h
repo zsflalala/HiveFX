@@ -33,6 +33,8 @@ namespace hiveVG
         CSingleTexturePlayer* m_pBackgroundPlayer        = nullptr;
         CSequenceFramePlayer* m_pLightingPlayer          = nullptr;
         CSequenceFramePlayer* m_pCloudPlayer             = nullptr;
+        CSequenceFramePlayer* m_pSmallRaindropPlayer     = nullptr;
+        CSequenceFramePlayer* m_pBigRaindropPlayer       = nullptr;
     };
 
     template<typename T>

@@ -72,6 +72,7 @@ void android_main(struct android_app* vApp)
         if (vApp->userData)
         {
             auto *pRenderer = reinterpret_cast<hiveVG::CRenderer*>(vApp->userData);
+            pRenderer->handleInput();
             pRenderer->renderScene();
         }
     } while (!vApp->destroyRequested);
