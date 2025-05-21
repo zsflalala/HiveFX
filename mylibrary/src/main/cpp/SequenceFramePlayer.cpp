@@ -129,6 +129,7 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(const std::string& vVerte
     m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
     m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
 
+
     m_pSequenceShaderProgram = CShaderProgram::createProgram(vVertexShaderPath, vFragShaderShaderPath);
 
     if (!m_pSequenceShaderProgram)
@@ -266,7 +267,7 @@ void CSequenceFramePlayer::updateFrameAndUV(double vDeltaTime)
     }
 }
 
-void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
+void CSequenceFramePlayer::    draw(CScreenQuad *vQuad)
 {
     if (m_UseLifeCycle && !m_SequenceState._IsAlive)
         return ;
@@ -299,7 +300,7 @@ void CSequenceFramePlayer::draw(CScreenQuad *vQuad)
     vQuad->bindAndDraw();
 }
 
-void CSequenceFramePlayer::drawQuantization(CScreenQuad *vQuad)
+void CSequenceFramePlayer::drawMultiChannelKTX(CScreenQuad *vQuad)
 {
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
@@ -317,7 +318,7 @@ void CSequenceFramePlayer::drawInterpolation(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("CurrentTexture", 0);
     m_pSequenceShaderProgram->setUniform("NextTexture", 1);
     m_pSequenceShaderProgram->setUniform("Factor", m_InterpolationFactor);
-    m_pSequenceShaderProgram->setUniform("Displacement", 0.0f);
+    m_pSequenceShaderProgram->setUniform("Displacement", 0.01f);
     m_pSequenceShaderProgram->setUniform("CurrentChannel", m_CurrentChannel);
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
@@ -326,6 +327,14 @@ void CSequenceFramePlayer::drawInterpolation(CScreenQuad *vQuad)
     vQuad->bindAndDraw();
 }
 
+void CSequenceFramePlayer::setRatioUniform()
+{
+    assert(m_pSequenceShaderProgram != nullptr);
+    m_pSequenceShaderProgram->useProgram();
+    m_pSequenceShaderProgram->setUniform("uScreenSize", glm::vec2(m_WindowSize.x,m_WindowSize.y));
+    m_pSequenceShaderProgram->setUniform("uTextureSize",glm::vec2(m_SeqSingleTexWidth,m_SeqSingleTexHeight));
+    m_pSequenceShaderProgram->setUniform("uScale",0.85f);
+}
 void CSequenceFramePlayer::__initSequenceParams()
 {
     std::random_device Rd;

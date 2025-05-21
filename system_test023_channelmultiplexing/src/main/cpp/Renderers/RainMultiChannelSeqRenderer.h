@@ -14,7 +14,8 @@ namespace hiveVG
     class CRainMultiChannelSeqRenderer
     {
     public:
-        CRainMultiChannelSeqRenderer();
+        CRainMultiChannelSeqRenderer(glm::vec2 vWindowSize);
+
         ~CRainMultiChannelSeqRenderer();
 
         void renderScene(ERenderChannel vRenderChannel);
@@ -33,6 +34,9 @@ namespace hiveVG
         CSingleTexturePlayer* m_pBackgroundPlayer        = nullptr;
         CSequenceFramePlayer* m_pLightingPlayer          = nullptr;
         CSequenceFramePlayer* m_pCloudPlayer             = nullptr;
+        CSequenceFramePlayer* m_pSmallRaindropPlayer     = nullptr;
+        CSequenceFramePlayer* m_pBigRaindropPlayer       = nullptr;
+        glm::vec2             m_WindowSize               = glm::vec2 (0,0);
     };
 
     template<typename T>

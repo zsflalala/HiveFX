@@ -96,7 +96,7 @@ void CRainQuantizationSeqRenderer::renderScene()
     m_pScreenQuad->bindAndDraw();
 
     m_pRainSeqPlayer->updateQuantizationFrame(DeltaTime);
-    m_pRainSeqPlayer->drawQuantization(m_pScreenQuad);
+    m_pRainSeqPlayer->drawMultiChannelKTX(m_pScreenQuad);
 
     //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFunc(GL_ONE, GL_ONE);
