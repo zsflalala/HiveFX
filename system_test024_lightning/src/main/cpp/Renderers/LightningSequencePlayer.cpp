@@ -55,7 +55,9 @@ void CLightningSequencePlayer::draw(CScreenQuad *vQuad)
 
 void CLightningSequencePlayer::initBackground(const std::string &vTexturePath)
 {
-    m_pStaticCloud = CTexture2D::loadTexture(vTexturePath);
+    int Width, Height;
+    auto PictureType = EPictureType::EPictureType::PNG;
+    m_pStaticCloud = CTexture2D::loadTexture(vTexturePath, Width, Height, PictureType);
     if (!m_pStaticCloud)
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG,
