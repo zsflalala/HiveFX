@@ -318,6 +318,21 @@ void CSequenceFramePlayer::drawInterpolation(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("CurrentTexture", 0);
     m_pSequenceShaderProgram->setUniform("NextTexture", 1);
     m_pSequenceShaderProgram->setUniform("Factor", m_InterpolationFactor);
+    m_pSequenceShaderProgram->setUniform("Displacement", 0);
+    m_pSequenceShaderProgram->setUniform("CurrentChannel", m_CurrentChannel);
+    glActiveTexture(GL_TEXTURE0);
+    m_SeqTextures[m_CurrentTexture]->bindTexture();
+    glActiveTexture(GL_TEXTURE1);
+    m_SeqTextures[m_NextTexture]->bindTexture();
+    vQuad->bindAndDraw();
+}
+void CSequenceFramePlayer::drawDisplacementInterpolation(CScreenQuad *vQuad)
+{
+    assert(m_pSequenceShaderProgram != nullptr);
+    m_pSequenceShaderProgram->useProgram();
+    m_pSequenceShaderProgram->setUniform("CurrentTexture", 0);
+    m_pSequenceShaderProgram->setUniform("NextTexture", 1);
+    m_pSequenceShaderProgram->setUniform("Factor", m_InterpolationFactor);
     m_pSequenceShaderProgram->setUniform("Displacement", 0.01f);
     m_pSequenceShaderProgram->setUniform("CurrentChannel", m_CurrentChannel);
     glActiveTexture(GL_TEXTURE0);

@@ -55,6 +55,7 @@ namespace hiveVG
         void draw(CScreenQuad *vQuad);
         void drawMultiChannelKTX(CScreenQuad *vQuad);
         void drawInterpolation(CScreenQuad *vQuad);
+        void drawDisplacementInterpolation(CScreenQuad *vQuad);
         void setRatioUniform();
 
     protected:
@@ -93,6 +94,5 @@ namespace hiveVG
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
         std::vector<CTexture2D *> m_SeqTextures;
         CShaderProgram *m_pSequenceShaderProgram = nullptr;
-
     };
 }
