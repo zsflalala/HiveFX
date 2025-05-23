@@ -55,7 +55,7 @@ void CSplashManager::draw(CScreenQuad* vQuad)
         if (!m_SequenceState[i]._IsAlive)
             continue;
         if(m_IsQuantization)
-            m_SequencePlayers[i]->drawQuantization(vQuad);
+            m_SequencePlayers[i]->drawMultiChannelKTX(vQuad);
         else
             m_SequencePlayers[i]->draw(vQuad);
 

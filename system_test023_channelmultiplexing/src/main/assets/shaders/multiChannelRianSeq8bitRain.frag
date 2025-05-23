@@ -11,22 +11,10 @@ void main()
 {
     vec4 indexColor = texture(indexTexture, TexCoord);
 
-    float index = 0.0;
-    if (channelIndex == 0)
-    {
-        index = indexColor.r;
-    }
-    else if (channelIndex == 1)
-    {
-        index = indexColor.r + indexColor.g;
-    }
-    else if (channelIndex == 2)
-    {
-        index = indexColor.r + indexColor.g + indexColor.b;
-    }
-    else if (channelIndex == 3)
-    {
-        index = indexColor.r + indexColor.g + indexColor.b + indexColor.a;
-    }
+    float index = indexColor.r
+             + indexColor.g * float(channelIndex >= 1)
+             + indexColor.b * float(channelIndex >= 2)
+             + indexColor.a * float(channelIndex >= 3);
+
     FragColor = vec4(index, index, index, 0.1);
 }

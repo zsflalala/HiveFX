@@ -30,6 +30,7 @@ namespace hiveVG
         void setValidFrames(int vValidFrames) { m_ValidFrames = vValidFrames; }
         void setRotationAngle(float vAngle) { m_RotationAngle = vAngle; }
         void setIsMoving(bool vIsMoving) { m_IsMoving = vIsMoving; }
+        void setWindowSize(glm::vec2 vWindowSize) { m_WindowSize = vWindowSize; }
         void setLifeCycle(bool vUseLifeCycle)
         {
             m_UseLifeCycle = vUseLifeCycle;
@@ -52,8 +53,9 @@ namespace hiveVG
         void updateInterpolationFrame(double vDeltaTime);
         void updateLerpQuantFrame(double vDeltaTime);
         void draw(CScreenQuad *vQuad);
-        void drawQuantization(CScreenQuad *vQuad);
+        void drawMultiChannelKTX(CScreenQuad *vQuad);
         void drawInterpolation(CScreenQuad *vQuad);
+        void setRatioUniform();
 
     protected:
         void __initSequenceParams();
@@ -91,5 +93,6 @@ namespace hiveVG
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
         std::vector<CTexture2D *> m_SeqTextures;
         CShaderProgram *m_pSequenceShaderProgram = nullptr;
+
     };
 }

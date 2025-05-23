@@ -3,8 +3,8 @@
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
-#include "Common.h"
 #include "Renderers/RainMultiChannelSeqRenderer.h"
+#include "Common.h"
 
 using namespace hiveVG;
 
@@ -96,7 +96,7 @@ void CRenderer::renderScene()
     __updateRenderArea();
 
     if (m_pRainMultiChannelSeqRenderer == nullptr)
-        m_pRainMultiChannelSeqRenderer = new CRainMultiChannelSeqRenderer();
+        m_pRainMultiChannelSeqRenderer = new CRainMultiChannelSeqRenderer(glm::vec2(m_WindowWidth,m_WindowHeight));
     m_pRainMultiChannelSeqRenderer->renderScene(m_RenderChannel);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
@@ -115,8 +115,10 @@ void CRenderer::__updateRenderArea()
     if (Width != m_WindowWidth || Height != m_WindowHeight)
     {
         m_WindowWidth  = Width;
-        m_WindowHeight = Height;
-        glViewport(0, ViewportY, Width, ViewportHeight);
+        //m_WindowHeight = Height;
+        m_WindowHeight = 504;
+        // glViewport(0, ViewportY, Width, ViewportHeight);
+        glViewport(0, ViewportY, m_WindowWidth, m_WindowHeight);
     }
 }
 
@@ -141,7 +143,6 @@ void CRenderer::handleInput()
         {
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
-                m_IsPointerDown = true;
                 if (PointerX < m_WindowWidth / 4.0)
                 {
                     m_RenderChannel = ERenderChannel::R;
@@ -168,7 +169,6 @@ void CRenderer::handleInput()
             case AMOTION_EVENT_ACTION_CANCEL:
             case AMOTION_EVENT_ACTION_UP:
             case AMOTION_EVENT_ACTION_POINTER_UP:
-                m_IsPointerDown = false;
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Up", Pointer.id, PointerX, PointerY);
                 break;
 
