@@ -17,7 +17,7 @@ CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
     CAppContext::setAssetManager(vApp->activity->assetManager);
     CAppContext::setStoragePath(vApp->activity->externalDataPath);
     m_pLightningRenderer = new CLightningRenderer(m_pApp);
-    m_pCloudInterpolationRenderer = new CCloudInterpolationRenderer(m_pApp);
+    //m_pCloudInterpolationRenderer = new CCloudInterpolationRenderer(m_pApp);
 }
 
 CRenderer::~CRenderer()
@@ -103,9 +103,9 @@ void CRenderer::renderScene()
     __updateRenderArea();
     glClearColor(0.5f,0.5f,0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    if(false)
-        m_pLightningRenderer->render(m_WindowWidth, m_WindowHeight);
     if(true)
+        m_pLightningRenderer->render(m_WindowWidth, m_WindowHeight);
+    if(false)
         m_pCloudInterpolationRenderer->render(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
@@ -125,7 +125,7 @@ void CRenderer::__updateRenderArea()
     {
         m_WindowWidth  = Width;
         m_WindowHeight = Height;
-        glViewport(0, ViewportY, Width, ViewportHeight);
+        glViewport(0, 0, Width, Height);
     }
 }
 

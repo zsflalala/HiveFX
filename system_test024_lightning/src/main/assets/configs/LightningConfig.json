@@ -1,9 +1,9 @@
 {
     "lightning":
     {
-        "frames_path": "textures/lightning0",
+        "frames_path": "textures/lightningWithMask9",
         "frames_type" : "png",
-        "frames_count": 29,
+        "frames_count": 30,
         "play_mode": "fullscreen",
         "ranks": {
             "rows" : 1,
