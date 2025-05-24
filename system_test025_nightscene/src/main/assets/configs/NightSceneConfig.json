@@ -1,0 +1,21 @@
+{
+    "raining": {
+        "frames_path": "textures/HeavyRain_small_splash_cmASTC12x12",
+        "frames_type" : "ktx2",
+        "frames_count": 128,
+        "play_mode": "fullscreen",
+        "ranks": {
+            "rows" : 1,
+            "cols" : 1
+        },
+        "position": {
+          "x": -1.0,
+          "y": -0.3
+        },
+        "fps": 80,
+        "loop": true,
+        "moving_speed": [0.0, 0.0],
+        "scale": 0.6
+      },
+    "background": "textures/NightSceneWithLightMask.png"
+}
