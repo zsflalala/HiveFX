@@ -9,6 +9,11 @@ namespace hiveVG
     {
     public:
         CLightningSequencePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
+
+        CLightningSequencePlayer(const std::string &vTextureRootPath, int vTextureCount,
+                                 int vOneTextureFrames, float vFrameSeconds,
+                                 EPictureType::EPictureType vPictureType);
+
         ~CLightningSequencePlayer();
 
         void initBackground(const std::string& vTexturePath);

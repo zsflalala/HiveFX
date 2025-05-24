@@ -57,7 +57,7 @@ void main()
     vec2 TexCoords = (TexCoord * texUVScale) + texUVOffset;
     vec4 LightningColor = texture(lightningSequenceTexture, TexCoords);
 
-    float LightningMask = LightningColor.a;
+    float LightningMask = LightningColor.r;
     CloudColor.rgb = mix(CloudColorWithoutLight, CloudColor.rgb, LightningMask);
 
     FragColor = CloudColor;

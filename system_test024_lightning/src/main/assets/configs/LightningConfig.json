@@ -1,9 +1,12 @@
 {
     "lightning":
     {
-        "frames_path": "textures/lightningWithMask9",
-        "frames_type" : "png",
-        "frames_count": 30,
+        "frames_path": "textures/lightningMask0处理后/10x7/10x7_mergedpngASTC12x12_Linear",
+        "frames_type" : "ktx2",
+
+        "frames_count": 8,
+        "one_texture_frames": 4,
+
         "play_mode": "fullscreen",
         "ranks": {
             "rows" : 1,

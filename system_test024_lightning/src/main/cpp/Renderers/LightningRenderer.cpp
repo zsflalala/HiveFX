@@ -36,7 +36,7 @@ void CLightningRenderer::render(int vWindowWidth, int vWindowHeight)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pLightningPlayer->updateFrameAndUV(DeltaTime);
+    m_pLightningPlayer->updateQuantizationFrame(DeltaTime);
     m_pLightningPlayer->draw(m_pScreenQuad);
 }
 
@@ -52,17 +52,18 @@ void CLightningRenderer::__initAlgorithm()
     std::string FramePath    = LightningConfig["frames_path"].asString();
     std::string FrameType    = LightningConfig["frames_type"].asString();
     int         FrameCount   = LightningConfig["frames_count"].asInt();
+    int         OneTextureFrames   = LightningConfig["one_texture_frames"].asInt();
     int         SequenceRows = LightningConfig["ranks"]["rows"].asInt();
     int         SequenceCols = LightningConfig["ranks"]["cols"].asInt();
     std::string PlayMode     = LightningConfig["play_mode"].asString();
 
-    int         PlayFPS      = LightningConfig["fps"].asInt();
+    float        PlayFPS      = LightningConfig["fps"].asFloat();
     bool        IsLoop       = LightningConfig["loop"].asBool();
 
     EPictureType::EPictureType PictureType = EPictureType::FromString(FrameType);
     EPlayType::EPlayType PlayType = EPlayType::FromString(PlayMode);
 
-    m_pLightningPlayer = new CLightningSequencePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, PictureType);
+    m_pLightningPlayer = new CLightningSequencePlayer(FramePath, FrameCount,OneTextureFrames ,PlayFPS ,PictureType);
     if(!m_pLightningPlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");

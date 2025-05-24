@@ -9,6 +9,9 @@ using namespace hiveVG;
 CLightningSequencePlayer::CLightningSequencePlayer(const std::string &vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType)
     : CSequenceFramePlayer(vTextureRootPath, vSequenceRows, vSequenceCols, vTextureCount, vPictureType)
 { }
+CLightningSequencePlayer::CLightningSequencePlayer(const std::string& vTextureRootPath, int vTextureCount, int vOneTextureFrames, float vFrameSeconds, EPictureType::EPictureType vPictureType)
+        : CSequenceFramePlayer(vTextureRootPath, vTextureCount, vOneTextureFrames, vFrameSeconds, vPictureType)
+{ }
 
 CLightningSequencePlayer::~CLightningSequencePlayer()
 {
@@ -44,6 +47,7 @@ void CLightningSequencePlayer::draw(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("texUVOffset", TextureUVOffset);
     m_pSequenceShaderProgram->setUniform("texUVScale", TextureUVScale);
     m_pSequenceShaderProgram->setUniform("lightningSequenceTexture", 0);
+    m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
 
@@ -68,6 +72,6 @@ void CLightningSequencePlayer::initBackground(const std::string &vTexturePath)
 
 bool CLightningSequencePlayer::initTextureAndShaderProgram()
 {
-    CSequenceFramePlayer::initTextureAndShaderProgram("shaders/lightning.vert", "shaders/lightning.frag");
+    CSequenceFramePlayer::initTextureAndShaderProgram("shaders/lightning.vert", "shaders/lightningMutiKtx.frag");
     return true;
 }
