@@ -137,7 +137,7 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     m_pLightingPlayer->updateLerpQuantFrame(DeltaTime);
     if (vRenderChannel == ERenderChannel::R || vRenderChannel == ERenderChannel::G)
     {
-        m_pCloudPlayer->drawInterpolation(m_pScreenQuad);
+        m_pCloudPlayer->drawDisplacementInterpolation(m_pScreenQuad);
     }
     else if (vRenderChannel == ERenderChannel::B || vRenderChannel == ERenderChannel::A)
     {

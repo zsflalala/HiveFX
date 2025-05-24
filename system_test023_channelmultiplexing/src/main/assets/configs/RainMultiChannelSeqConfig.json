@@ -18,7 +18,7 @@
         "fragment_shader" : "shaders/multiChannelRianSeqLerp8bitLightCloud.frag"
     },
     "Lighting": {
-        "frames_path": "textures/LightingCloud_newE_ASTC12x12",
+        "frames_path": "textures/LightingCloud_ASTC12x12",
         "frames_type" : "ktx2",
         "frames_count": 91,
         "one_texture_frames": 4,
