@@ -1,6 +1,5 @@
 {
-    "lightning":
-    {
+    "lightning": {
         "frames_path": "textures/lightningWithMask9",
         "frames_type" : "png",
         "frames_count": 30,

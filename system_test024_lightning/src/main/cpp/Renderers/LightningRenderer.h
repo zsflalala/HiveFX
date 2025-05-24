@@ -3,8 +3,6 @@
 #include <EGL/egl.h>
 #include <memory>
 
-struct android_app;
-
 namespace hiveVG
 {
     class CScreenQuad;
@@ -14,15 +12,14 @@ namespace hiveVG
     class CLightningRenderer
     {
     public:
-        CLightningRenderer(android_app *vApp);
+        CLightningRenderer();
         ~CLightningRenderer();
 
-        void render(int vWindowWidth, int vWindowHeight);
+        void render();
 
     private:
         void __initAlgorithm();
 
-        android_app* m_pApp = nullptr;
         double       m_LastFrameTime = 0.0f;
         double       m_CurrentTime   = 0.0f;
 

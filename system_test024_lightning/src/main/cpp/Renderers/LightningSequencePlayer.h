@@ -1,4 +1,5 @@
 #pragma once
+
 #include "SequenceFramePlayer.h"
 
 namespace hiveVG
@@ -12,11 +13,10 @@ namespace hiveVG
         ~CLightningSequencePlayer();
 
         void initBackground(const std::string& vTexturePath);
-        bool initTextureAndShaderProgram();
-        void draw(CScreenQuad *vQuad);
+        bool initTextureAndShaderProgram() override;
+        void draw(CScreenQuad *vQuad) override;
 
     private:
-        CTexture2D * m_pStaticCloud = nullptr;
+        CTexture2D* m_pStaticCloud = nullptr;
     };
-
 }

@@ -95,7 +95,7 @@ void CRenderer::renderScene()
 {
     __updateRenderArea();
 
-    if (m_pTestSnow == nullptr) m_pTestSnow = new CTestSnowRenderer(m_pApp);
+    if (m_pTestSnow == nullptr) m_pTestSnow = new CTestSnowRenderer();
     m_pTestSnow->renderScene(m_WindowWidth, m_WindowHeight);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);

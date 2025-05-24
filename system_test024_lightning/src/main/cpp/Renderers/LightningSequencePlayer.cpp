@@ -8,12 +8,15 @@ using namespace hiveVG;
 
 CLightningSequencePlayer::CLightningSequencePlayer(const std::string &vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType)
     : CSequenceFramePlayer(vTextureRootPath, vSequenceRows, vSequenceCols, vTextureCount, vPictureType)
-{ }
+{}
 
 CLightningSequencePlayer::~CLightningSequencePlayer()
 {
-    if(m_pStaticCloud)
+    if (m_pStaticCloud)
+    {
         delete m_pStaticCloud;
+        m_pStaticCloud = nullptr;
+    }
 }
 
 void CLightningSequencePlayer::draw(CScreenQuad *vQuad)

@@ -12,42 +12,17 @@
 
 using namespace hiveVG;
 
-CTestSnowRenderer::CTestSnowRenderer(android_app *vApp) : m_pApp(vApp)
+CTestSnowRenderer::CTestSnowRenderer()
 {
     __initAlgorithm();
 }
 
 CTestSnowRenderer::~CTestSnowRenderer()
 {
-    if (m_pScreenQuad)              delete m_pScreenQuad;
-    if (m_pSmallSnowForePlayer)     delete m_pSmallSnowForePlayer;
 }
 
 void CTestSnowRenderer::__initAlgorithm()
 {
-    int SequenceRows = 1, SequenceCols = 1, FrameCount = 64;
-    bool UseCompressedPNG = true;
-    std::string FramePath = "textures/SmallSnow_back_compressed";
-
-    m_pScreenQuad = CScreenQuad::getOrCreate();
-    m_pSmallSnowForePlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, UseCompressedPNG);
-    if(!m_pSmallSnowForePlayer->initTextureAndShaderProgram())
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
-        return ;
-    }
-
-    FramePath = "textures/SmallSnow_fore_compressed";
-    m_pSmallSnowBackPlayer = new CSequenceFramePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, UseCompressedPNG);
-    if(!m_pSmallSnowBackPlayer->initTextureAndShaderProgram())
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
-        return ;
-    }
-
-    FramePath = "textures/snowScene.png";
-    m_pSinglePlayer = new CSingleTexturePlayer(FramePath);
-    m_pSinglePlayer->initTextureAndShaderProgram();
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
@@ -62,10 +37,4 @@ void CTestSnowRenderer::renderScene(int vWindowWidth, int vWindowHeight)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pSmallSnowForePlayer->updateFrameAndUV(DeltaTime);
-    m_pSmallSnowForePlayer->draw(m_pScreenQuad);
-    m_pSinglePlayer->updateFrame();
-    m_pScreenQuad->bindAndDraw();
-    m_pSmallSnowBackPlayer->updateFrameAndUV(DeltaTime);
-    m_pSmallSnowForePlayer->draw(m_pScreenQuad);
 }

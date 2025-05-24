@@ -1,5 +1,4 @@
 #include "LightningRenderer.h"
-#include <game-activity/native_app_glue/android_native_app_glue.h>
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
@@ -12,7 +11,7 @@
 
 using namespace hiveVG;
 
-CLightningRenderer::CLightningRenderer(android_app *vApp) : m_pApp(vApp)
+CLightningRenderer::CLightningRenderer()
 {
     __initAlgorithm();
 }
@@ -20,12 +19,18 @@ CLightningRenderer::CLightningRenderer(android_app *vApp) : m_pApp(vApp)
 CLightningRenderer::~CLightningRenderer()
 {
     if (m_pScreenQuad)
-        delete m_pScreenQuad;
-    if(m_pLightningPlayer)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
+    if (m_pLightningPlayer)
+    {
         delete m_pLightningPlayer;
+        m_pLightningPlayer = nullptr;
+    }
 }
 
-void CLightningRenderer::render(int vWindowWidth, int vWindowHeight)
+void CLightningRenderer::render()
 {
     m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;

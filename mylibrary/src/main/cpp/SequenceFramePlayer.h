@@ -16,7 +16,6 @@ namespace hiveVG
     {
     public:
         CSequenceFramePlayer(const std::string &vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
-        CSequenceFramePlayer(const std::string &vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, bool vUseCompressedPNG = false);
         CSequenceFramePlayer(const std::string &vTextureRootPath, int vTextureCount, int vOneTextureFrames, float vFrameSeconds, EPictureType::EPictureType vPictureType);
         [[nodiscard]] CSequenceFramePlayer *clone() const { return new CSequenceFramePlayer(*this); }
         ~CSequenceFramePlayer();
@@ -44,7 +43,7 @@ namespace hiveVG
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
         [[nodiscard]] EPictureType::EPictureType getPicType() const { return m_TextureType; }
 
-        bool initTextureAndShaderProgram();
+        virtual bool initTextureAndShaderProgram();
         bool initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath);
 
         void updateFrameAndUV(double vDeltaTime);
@@ -52,7 +51,8 @@ namespace hiveVG
         void updateMultiChannelFrame(double vDeltaTime, ERenderChannel vRenderChannel);
         void updateInterpolationFrame(double vDeltaTime);
         void updateLerpQuantFrame(double vDeltaTime);
-        void draw(CScreenQuad *vQuad);
+
+        virtual void draw(CScreenQuad *vQuad);
         void drawMultiChannelKTX(CScreenQuad *vQuad);
         void drawInterpolation(CScreenQuad *vQuad);
         void setRatioUniform();
@@ -76,7 +76,6 @@ namespace hiveVG
         float  m_RotationAngle    = 0.0f;
         bool   m_IsMoving         = false;
         bool   m_UseLifeCycle     = false;
-        bool   m_UseCompressedPNG = false;
         int    m_CurrentFrame     = 0;
         int    m_NextFrame        = 0;
         float  m_InterpolationFactor = 0.0f;

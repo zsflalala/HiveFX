@@ -1,6 +1,5 @@
 #include "CloudInterpolationRenderer.h"
 #include "LightningRenderer.h"
-#include <game-activity/native_app_glue/android_native_app_glue.h>
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
@@ -12,7 +11,7 @@
 
 using namespace hiveVG;
 
-CCloudInterpolationRenderer::CCloudInterpolationRenderer(android_app *vApp) : m_pApp(vApp)
+CCloudInterpolationRenderer::CCloudInterpolationRenderer()
 {
     __initAlgorithm();
 }
@@ -20,12 +19,18 @@ CCloudInterpolationRenderer::CCloudInterpolationRenderer(android_app *vApp) : m_
 CCloudInterpolationRenderer::~CCloudInterpolationRenderer()
 {
     if (m_pScreenQuad)
-        delete m_pScreenQuad;
-    if(m_pCloudPlayer)
+    {
+        CScreenQuad::destroy();
+        m_pScreenQuad = nullptr;
+    }
+    if (m_pCloudPlayer)
+    {
         delete m_pCloudPlayer;
+        m_pCloudPlayer = nullptr;
+    }
 }
 
-void CCloudInterpolationRenderer::render(int vWindowWidth, int vWindowHeight)
+void CCloudInterpolationRenderer::render()
 {
     m_CurrentTime    = CTimeUtils::getCurrentTime();
     double DeltaTime = m_CurrentTime - m_LastFrameTime;

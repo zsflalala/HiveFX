@@ -16,8 +16,8 @@ CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 
     CAppContext::setAssetManager(vApp->activity->assetManager);
     CAppContext::setStoragePath(vApp->activity->externalDataPath);
-    m_pLightningRenderer = new CLightningRenderer(m_pApp);
-    //m_pCloudInterpolationRenderer = new CCloudInterpolationRenderer(m_pApp);
+    m_pLightningRenderer = new CLightningRenderer();
+//    m_pCloudInterpolationRenderer = new CCloudInterpolationRenderer();
 }
 
 CRenderer::~CRenderer()
@@ -104,9 +104,9 @@ void CRenderer::renderScene()
     glClearColor(0.5f,0.5f,0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     if(true)
-        m_pLightningRenderer->render(m_WindowWidth, m_WindowHeight);
+        m_pLightningRenderer->render();
     if(false)
-        m_pCloudInterpolationRenderer->render(m_WindowWidth, m_WindowHeight);
+        m_pCloudInterpolationRenderer->render();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

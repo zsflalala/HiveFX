@@ -4,8 +4,6 @@
 #include <glm/glm.hpp>
 #include "Common.h"
 
-struct android_app;
-
 namespace hiveVG
 {
     class CScreenQuad;
@@ -15,7 +13,7 @@ namespace hiveVG
     class CTestSnowRenderer
     {
     public:
-        CTestSnowRenderer(android_app *vApp);
+        CTestSnowRenderer();
         ~CTestSnowRenderer();
 
         void renderScene(int vWindowWidth, int vWindowHeight);
@@ -29,10 +27,5 @@ namespace hiveVG
         EPlayType::EPlayType       m_PlayMode             = EPlayType::FULLSCREEN;
         EPictureType::EPictureType m_PictureType          = EPictureType::PNG;
         float                      m_PlayScale            = 1.0f;
-        android_app*               m_pApp                 = nullptr;
-        CScreenQuad*               m_pScreenQuad          = nullptr;
-        CSingleTexturePlayer*      m_pSinglePlayer        = nullptr;
-        CSequenceFramePlayer*      m_pSmallSnowForePlayer = nullptr;
-        CSequenceFramePlayer*      m_pSmallSnowBackPlayer = nullptr;
     };
 }

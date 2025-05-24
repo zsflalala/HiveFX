@@ -77,6 +77,6 @@ void CTestSequencePlayerRenderer::renderScene(int vWindowWidth, int vWindowHeigh
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pTestPlayer->updateFrameAndUV(vWindowWidth);
+    m_pTestPlayer->updateFrameAndUV(DeltaTime);
     m_pTestPlayer->draw(m_pScreenQuad);
 }
