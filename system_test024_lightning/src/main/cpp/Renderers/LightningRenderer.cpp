@@ -41,7 +41,8 @@ void CLightningRenderer::render()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pLightningPlayer->updateFrameAndUV(DeltaTime);
+//    m_pLightningPlayer->updateFrameAndUV(DeltaTime);
+    m_pLightningPlayer->updateQuantizationFrame(DeltaTime);
     m_pLightningPlayer->draw(m_pScreenQuad);
 }
 
@@ -54,19 +55,22 @@ void CLightningRenderer::__initAlgorithm()
 
     Json::Value LightningConfig = JsonConfig.getObject("lightning");
 
-    std::string LightningFramePath    = LightningConfig["frames_path"].asString();
-    std::string LightningFrameType    = LightningConfig["frames_type"].asString();
-    int         LightningFrameCount   = LightningConfig["frames_count"].asInt();
-    int         LightningSequenceRows = LightningConfig["ranks"]["rows"].asInt();
-    int         LightningSequenceCols = LightningConfig["ranks"]["cols"].asInt();
-    std::string LightningPlayMode     = LightningConfig["play_mode"].asString();
-    int         LightningPlayFPS      = LightningConfig["fps"].asInt();
-    bool        LightningIsLoop       = LightningConfig["loop"].asBool();
-    bool        LightningInFront      = LightningConfig["lightning_front"].asBool();
+    std::string LightningFramePath        = LightningConfig["frames_path"].asString();
+    std::string LightningFrameMaskPath    = LightningConfig["frames_mask_path"].asString();
+    std::string LightningFrameType        = LightningConfig["frames_type"].asString();
+    int         LightningFrameCount       = LightningConfig["frames_count"].asInt();
+    int         LightningOneTextureFrames = LightningConfig["one_texture_frames"].asInt();
+    int         LightningSequenceRows     = LightningConfig["ranks"]["rows"].asInt();
+    int         LightningSequenceCols     = LightningConfig["ranks"]["cols"].asInt();
+    std::string LightningPlayMode         = LightningConfig["play_mode"].asString();
+    float       LightningPlayFPS          = LightningConfig["fps"].asFloat();
+    bool        LightningIsLoop           = LightningConfig["loop"].asBool();
+    bool        LightningInFront          = LightningConfig["lightning_front"].asBool();
     EPictureType::EPictureType PictureType = EPictureType::FromString(LightningFrameType);
     EPlayType::EPlayType PlayType = EPlayType::FromString(LightningPlayMode);
 
-    m_pLightningPlayer = new CLightningSequencePlayer(LightningFramePath, LightningSequenceRows, LightningSequenceCols, LightningFrameCount, PictureType);
+    m_pLightningPlayer = new CLightningSequencePlayer(LightningFramePath, LightningFrameCount, LightningOneTextureFrames, LightningPlayFPS, PictureType);
+//    m_pLightningPlayer = new CLightningSequencePlayer(LightningFramePath, LightningSequenceRows, LightningSequenceCols, LightningFrameCount, PictureType);
     if(!m_pLightningPlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "LightningPlayer initialization failed.");

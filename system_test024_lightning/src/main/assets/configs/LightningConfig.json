@@ -1,14 +1,15 @@
 {
     "lightning": {
-        "frames_path": "textures/lightningWithMask9",
-        "frames_type" : "png",
-        "frames_count": 30,
+        "frames_path": "textures/lightningKTX/lightningAndMask3",
+        "frames_type" : "ktx2",
+        "frames_count": 16,
+        "one_texture_frames": 4,
         "play_mode": "partial",
         "ranks": {
             "rows" : 1,
             "cols" : 1
         },
-        "fps": 60,
+        "fps": 30,
         "lightning_front" : true,
         "loop": true,
         "scale": 0.5,

@@ -47,7 +47,8 @@ namespace hiveVG
         bool initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath);
 
         virtual void updateFrameAndUV(double vDeltaTime);
-        void updateQuantizationFrame(double vDeltaTime);
+
+        virtual void updateQuantizationFrame(double vDeltaTime);
         void updateMultiChannelFrame(double vDeltaTime, ERenderChannel vRenderChannel);
         void updateInterpolationFrame(double vDeltaTime);
         void updateLerpQuantFrame(double vDeltaTime);

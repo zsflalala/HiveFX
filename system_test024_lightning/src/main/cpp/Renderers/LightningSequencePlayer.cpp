@@ -11,6 +11,10 @@ CLightningSequencePlayer::CLightningSequencePlayer(const std::string &vTextureRo
     : CSequenceFramePlayer(vTextureRootPath, vSequenceRows, vSequenceCols, vTextureCount, vPictureType)
 {}
 
+CLightningSequencePlayer::CLightningSequencePlayer(const std::string& vTextureRootPath, int vTextureCount, int vOneTextureFrames, float vFrameSeconds, EPictureType::EPictureType vPictureType)
+        : CSequenceFramePlayer(vTextureRootPath, vTextureCount, vOneTextureFrames, vFrameSeconds, vPictureType)
+{ }
+
 CLightningSequencePlayer::~CLightningSequencePlayer()
 {
     if (m_pStaticCloud)
@@ -58,25 +62,67 @@ void CLightningSequencePlayer::updateFrameAndUV(double vDeltaTime)
     }
 }
 
+void CLightningSequencePlayer::updateQuantizationFrame(double vDeltaTime)
+{
+    if (m_IsWaiting)
+    {
+        m_WaitTime += vDeltaTime;
+        if (m_WaitTime >= m_TargetWaitTime)
+        {
+            __resetPlayback();
+        }
+        return;
+    }
+
+    if (m_FramePerSecond <= 0.0) return;
+
+    double FrameTime = 1.0 / m_FramePerSecond;
+    m_AccumFrameTime += vDeltaTime;
+
+    if (m_AccumFrameTime >= FrameTime)
+    {
+        m_AccumFrameTime -= FrameTime;
+
+        m_CurrentChannel = (m_CurrentChannel + 1) % m_OneTextureFrames;
+
+        if (m_CurrentChannel == 0)
+        {
+            m_CurrentTexture++;
+
+            if (m_CurrentTexture >= m_SeqTextures.size() / 2)
+            {
+                m_CurrentTexture = 0; // 可选：是否重置为 0 看业务逻辑
+                m_IsFinished = true;
+                m_IsWaiting = true;
+                m_TargetWaitTime = m_WaitDist(m_Rng);
+                return;
+            }
+        }
+    }
+}
+
 void CLightningSequencePlayer::draw(CScreenQuad *vQuad)
 {
     float RotationAngle = glm::radians(static_cast<float>(m_RotationAngle));
-    float uFlashProgress = (float)m_CurrentTexture / (float)(m_TextureCount - 1);
-    uFlashProgress = glm::clamp(uFlashProgress, 0.0f, 1.0f);
+    float FlashProgress = (float)m_CurrentTexture / (float)(m_TextureCount - 1);
+    FlashProgress = glm::clamp(FlashProgress, 0.0f, 1.0f);
+    int bindTextureIndex = m_CurrentTexture + (m_LightningInFront ? 0 : 8);
 
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
-    m_pSequenceShaderProgram->setUniform("uFlashProgress", uFlashProgress);
-    m_pSequenceShaderProgram->setUniform("uFlashColor", glm::vec3(1.0f));
-    m_pSequenceShaderProgram->setUniform("uFlashAlpha", 0.3f);
+    m_pSequenceShaderProgram->setUniform("flashProgress", FlashProgress);
+    m_pSequenceShaderProgram->setUniform("flashColor", glm::vec3(1.0f));
+    m_pSequenceShaderProgram->setUniform("flashAlpha", 0.3f);
     m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
     m_pSequenceShaderProgram->setUniform("lightningInFront", m_LightningInFront);
     m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
     m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
+    m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
     m_pSequenceShaderProgram->setUniform("lightningSequenceTexture", 0);
     m_pSequenceShaderProgram->setUniform("cloudTexture", 1);
+
     glActiveTexture(GL_TEXTURE0);
-    m_SeqTextures[m_CurrentTexture]->bindTexture();
+    m_SeqTextures[bindTextureIndex]->bindTexture();
     glActiveTexture(GL_TEXTURE1);
     m_pStaticCloud->bindTexture();
     vQuad->bindAndDraw();
@@ -97,8 +143,7 @@ void CLightningSequencePlayer::initBackground(const std::string &vTexturePath)
 
 bool CLightningSequencePlayer::initTextureAndShaderProgram()
 {
-    CSequenceFramePlayer::initTextureAndShaderProgram("shaders/lightning.vert", "shaders/lightning.frag");
-    return true;
+    return CSequenceFramePlayer::initTextureAndShaderProgram("shaders/lightning.vert", "shaders/lightning.frag");
 }
 
 void CLightningSequencePlayer::__resetPlayback()
@@ -109,6 +154,7 @@ void CLightningSequencePlayer::__resetPlayback()
     m_WaitTime   = 0.0;
     m_CurrentFrame   = 0;
     m_CurrentTexture = 0;
+    m_CurrentChannel = 0;
 
     __randomizeLightningParameters();
 }
@@ -119,7 +165,7 @@ void CLightningSequencePlayer::__randomizeLightningParameters()
     m_ScreenUVScale.y = m_ScaleDist(m_Rng);
 
     float maxOffsetX = std::max(0.0f, 1.0f - m_ScreenUVScale.x);
-    float maxOffsetY = std::max(0.0f, 0.5f - m_ScreenUVScale.y);
+    float maxOffsetY = std::max(0.0f, 0.8f - m_ScreenUVScale.y);
 
     std::uniform_real_distribution<float> OffsetXDist(0.0f, maxOffsetX);
     std::uniform_real_distribution<float> OffsetYDist(0.0f, maxOffsetY);

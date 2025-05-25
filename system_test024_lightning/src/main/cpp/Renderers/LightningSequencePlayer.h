@@ -11,6 +11,7 @@ namespace hiveVG
     {
     public:
         CLightningSequencePlayer(const std::string& vTextureRootPath, int vSequenceRows, int vSequenceCols, int vTextureCount, EPictureType::EPictureType vPictureType = EPictureType::PNG);
+        CLightningSequencePlayer(const std::string &vTextureRootPath, int vTextureCount, int vOneTextureFrames, float vFrameSeconds, EPictureType::EPictureType vPictureType);
         ~CLightningSequencePlayer();
 
         void setLightningMode(bool vLightningInFront) { m_LightningInFront = vLightningInFront;};
@@ -18,6 +19,7 @@ namespace hiveVG
         void initBackground(const std::string& vTexturePath);
         bool initTextureAndShaderProgram() override;
         void updateFrameAndUV(double vDeltaTime) override;
+        void updateQuantizationFrame(double vDeltaTime) override;
         void draw(CScreenQuad *vQuad) override;
 
     private:
@@ -31,7 +33,7 @@ namespace hiveVG
         double      m_TargetWaitTime   = 0.0;
 
         std::mt19937 m_Rng{std::random_device{}()};
-        std::uniform_real_distribution<float> m_ScaleDist{0.8f, 1.2f};
+        std::uniform_real_distribution<float> m_ScaleDist{0.6f, 1.4f};
         std::uniform_real_distribution<float> m_WaitDist{1.0f, 3.0f};
         std::uniform_int_distribution<int>    m_BoolDist{0, 1};
     };
