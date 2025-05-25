@@ -38,7 +38,7 @@ CSequenceFramePlayer::~CSequenceFramePlayer()
     }
 }
 
-bool CSequenceFramePlayer::initTextureAndShaderProgram()
+bool CSequenceFramePlayer::initTexture()
 {
     if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
         m_TextureRootPath += '/';
@@ -63,6 +63,13 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
     }
     m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
     m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
+    return true;
+}
+
+bool CSequenceFramePlayer::initTextureAndShaderProgram()
+{
+    if(!initTexture())
+        return false;
 
     if (m_TextureType == EPictureType::PNG)
         m_pSequenceShaderProgram = CShaderProgram::createProgram(SeqTexPlayVertPNG, SeqTexPlayFragPNG);
@@ -85,29 +92,8 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram()
 
 bool CSequenceFramePlayer::initTextureAndShaderProgram(const std::string& vVertexShaderPath, const std::string& vFragShaderShaderPath)
 {
-    if (!m_TextureRootPath.empty() && m_TextureRootPath.back() != '/')
-        m_TextureRootPath += '/';
-
-    std::string PictureSuffix;
-    if (m_TextureType == EPictureType::PNG)       PictureSuffix = ".png";
-    else if (m_TextureType == EPictureType::JPG)  PictureSuffix = ".jpg";
-    else if (m_TextureType == EPictureType::WEBP) PictureSuffix = ".webp";
-    else if (m_TextureType == EPictureType::PKM)  PictureSuffix = ".pkm";
-    else if (m_TextureType == EPictureType::KTX2) PictureSuffix = ".ktx2";
-
-    for (int i = 0; i < m_TextureCount; i++)
-    {
-        std::string TexturePath = m_TextureRootPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
-        CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, m_SequenceWidth, m_SequenceHeight, m_TextureType);
-        if (!pSequenceTexture)
-        {
-            LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
-            return false;
-        }
-        m_SeqTextures.push_back(pSequenceTexture);
-    }
-    m_SeqSingleTexWidth  = m_SequenceWidth / m_SequenceCols;
-    m_SeqSingleTexHeight = m_SequenceHeight / m_SequenceRows;
+    if(!initTexture())
+        return false;
 
     m_pSequenceShaderProgram = CShaderProgram::createProgram(vVertexShaderPath, vFragShaderShaderPath);
 
@@ -119,6 +105,39 @@ bool CSequenceFramePlayer::initTextureAndShaderProgram(const std::string& vVerte
     assert(m_pSequenceShaderProgram != nullptr);
     LOG_INFO(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "%s frames load Succeed. Program Created Succeed.", m_TextureRootPath.c_str());
     return true;
+}
+
+void CSequenceFramePlayer::setUniformFraMux(CShaderProgram* vShaderProgram, int vTextureUnit, std::string vUniformPrefix)
+{
+    assert(vShaderProgram != nullptr);
+    if (!vShaderProgram)
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "ShaderProgram is nullptr.");
+        return;
+    }
+    vShaderProgram->setUniform(vUniformPrefix + "channelIndex", m_CurrentChannel);
+    vShaderProgram->setUniform(vUniformPrefix + "SequenceTexture", vTextureUnit);
+    glActiveTexture(GL_TEXTURE0 + vTextureUnit);
+    m_SeqTextures[m_CurrentTexture]->bindTexture();
+}
+
+void CSequenceFramePlayer::setUniformSeqChaMuxLerp(CShaderProgram* vShaderProgram, int vTextureUnit1, int vTextureUnit2, std::string vUniformPrefix)
+{
+    assert(vShaderProgram != nullptr);
+    if (!vShaderProgram)
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_PALYER_TAG, "ShaderProgram is nullptr.");
+        return;
+    }
+    vShaderProgram->setUniform(vUniformPrefix + "CurrentTexture", vTextureUnit1);
+    vShaderProgram->setUniform(vUniformPrefix + "NextTexture", vTextureUnit2);
+    vShaderProgram->setUniform(vUniformPrefix + "Factor", m_InterpolationFactor);
+    vShaderProgram->setUniform(vUniformPrefix + "Displacement", 0);
+    vShaderProgram->setUniform(vUniformPrefix + "CurrentChannel", m_CurrentChannel);
+    glActiveTexture(GL_TEXTURE0 + vTextureUnit1);
+    m_SeqTextures[m_CurrentTexture]->bindTexture();
+    glActiveTexture(GL_TEXTURE0 + vTextureUnit2);
+    m_SeqTextures[m_NextTexture]->bindTexture();
 }
 
 void CSequenceFramePlayer::updateQuantizationFrame(double vDeltaTime)

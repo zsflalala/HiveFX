@@ -49,6 +49,12 @@ int CJsonReader::getInt(const std::string& vKey) const
     return m_Root[vKey].asInt();
 }
 
+float CJsonReader::getFloat(const std::string& vKey) const
+{
+    __checkKeyExists(vKey);
+    return m_Root[vKey].asFloat();
+}
+
 double CJsonReader::getDouble(const std::string& vKey) const
 {
     __checkKeyExists(vKey);

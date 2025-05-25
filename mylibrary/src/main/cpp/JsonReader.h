@@ -14,6 +14,7 @@ namespace hiveVG
         [[nodiscard]] bool        hasKey(const std::string& vKey)     const;
         [[nodiscard]] std::string getString(const std::string& vKey)  const;
         [[nodiscard]] int         getInt(const std::string& vKey)     const;
+        [[nodiscard]] float       getFloat(const std::string& vKey)   const;
         [[nodiscard]] double      getDouble(const std::string& vKey)  const;
         [[nodiscard]] bool        getBool(const std::string& vKey)    const;
         [[nodiscard]] Json::Value getArray(const std::string& vKey)   const;

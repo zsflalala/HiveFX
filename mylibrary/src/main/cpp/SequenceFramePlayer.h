@@ -30,6 +30,7 @@ namespace hiveVG
         void setValidFrames(int vValidFrames) { m_ValidFrames = vValidFrames; }
         void setRotationAngle(float vAngle) { m_RotationAngle = vAngle; }
         void setIsMoving(bool vIsMoving) { m_IsMoving = vIsMoving; }
+        void setCurrentChannel(int vChannelIndex) {m_CurrentChannel = vChannelIndex;}
         void setLifeCycle(bool vUseLifeCycle)
         {
             m_UseLifeCycle = vUseLifeCycle;
@@ -43,8 +44,11 @@ namespace hiveVG
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
         [[nodiscard]] EPictureType::EPictureType getPicType() const { return m_TextureType; }
 
+        bool initTexture();
         bool initTextureAndShaderProgram();
         bool initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath);
+        void setUniformFraMux(CShaderProgram* vShaderProgram, int vTextureUnit, std::string vUniformPrefix = "");
+        void setUniformSeqChaMuxLerp(CShaderProgram* vShaderProgram, int vTextureUnit1, int vTextureUnit2, std::string vUniformPrefix = "");
 
         void updateFrameAndUV(double vDeltaTime);
         void updateQuantizationFrame(double vDeltaTime);
