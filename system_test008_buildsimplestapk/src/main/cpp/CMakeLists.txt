@@ -62,6 +62,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         system_test008_buildsimplestapk.cpp
         Renderer.cpp
         Renderers/RainMultiChannelSeqRenderer.cpp
+        Renderers/NightSceneSequencePlayer.cpp
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}

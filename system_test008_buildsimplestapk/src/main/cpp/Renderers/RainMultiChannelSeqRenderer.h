@@ -8,8 +8,8 @@ namespace hiveVG
     class CTexture2D;
     class CShaderProgram;
     class CScreenQuad;
-    class CSingleTexturePlayer;
     class CSequenceFramePlayer;
+    class CNightSceneSequencePlayer;
 
     class CRainMultiChannelSeqRenderer
     {
@@ -29,12 +29,13 @@ namespace hiveVG
         double                m_CurrentTime              = 0.0f;
         double                m_AccumFrameTime           = 0.0f;
         CScreenQuad*          m_pScreenQuad              = nullptr;
-        CSequenceFramePlayer* m_pRainSeqPlayer           = nullptr;
-        CSingleTexturePlayer* m_pBackgroundPlayer        = nullptr;
+
         CSequenceFramePlayer* m_pLightingPlayer          = nullptr;
         CSequenceFramePlayer* m_pCloudPlayer             = nullptr;
         CSequenceFramePlayer* m_pSmallRaindropPlayer     = nullptr;
         CSequenceFramePlayer* m_pBigRaindropPlayer       = nullptr;
+
+        CNightSceneSequencePlayer* m_pRainSeqPlayer           = nullptr;
     };
 
     template<typename T>

@@ -1,12 +1,16 @@
 {
+    "Background":{
+        "frames_path": "textures/Background/NightSceneWithLightMask.png",
+        "frames_type": "png"
+    },
     "Rain": {
         "frames_path": "textures/HeavyRain_small_splash_cmASTC12x12",
         "frames_type" : "ktx2",
         "frames_count": 128,
         "one_texture_frames": 4,
-        "fps": 60,
+        "fps": 80,
         "vertex_shader" : "shaders/multiChannelRianSeq.vert",
-        "fragment_shader" : "shaders/multiChannelRianSeq8bitRain.frag"
+        "fragment_shader" : "shaders/multiChannelRianSeq8bitRainWithBackground.frag"
     },
     "Cloud": {
         "frames_path": "textures/Cloud_ASTC12x12",
@@ -43,11 +47,5 @@
         "fps": 10,
         "vertex_shader" : "shaders/multiChannelRianSeq.vert",
         "fragment_shader" : "shaders/multiChannelRianSeq8bitRaindrop.frag"
-    },
-    "Background":{
-        "frames_path": "textures/Background",
-        "frames_type": "ktx2",
-        "vertex_shader": "shaders/singleTexturePlayer.vert",
-        "fragment_shader": "shaders/singleTexturePlayer.frag"
     }
 }

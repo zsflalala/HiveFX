@@ -7,6 +7,7 @@
 #include "TimeUtils.h"
 #include "SingleTexturePlayer.h"
 #include "SequenceFramePlayer.h"
+#include "NightSceneSequencePlayer.h"
 
 using namespace hiveVG;
 
@@ -23,7 +24,6 @@ CRainMultiChannelSeqRenderer::~CRainMultiChannelSeqRenderer()
         m_pScreenQuad = nullptr;
     }
     __deleteSafely(m_pRainSeqPlayer);
-    __deleteSafely(m_pBackgroundPlayer);
     __deleteSafely(m_pLightingPlayer);
     __deleteSafely(m_pCloudPlayer);
     __deleteSafely(m_pSmallRaindropPlayer);
@@ -91,11 +91,9 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     std::string BigRaindropFragShader   = BigRaindropConfig["fragment_shader"].asString();
     EPictureType::EPictureType BigRaindropPicType = EPictureType::FromString(BigRaindropFrameType);
 
-    m_pRainSeqPlayer = new CSequenceFramePlayer(RainPath, RainTextureCount, RainOneTextureFrames, RainFramePerSecond, RainPictureType);
+    m_pRainSeqPlayer = new CNightSceneSequencePlayer(RainPath, RainTextureCount, RainOneTextureFrames, RainFramePerSecond, RainPictureType);
     m_pRainSeqPlayer->initTextureAndShaderProgram(RainVertexShader, RainFragShader);
-
-    m_pBackgroundPlayer = new CSingleTexturePlayer(BackImgPath, BackPicType);
-    m_pBackgroundPlayer->initTextureAndShaderProgram(BackVertexShader, BackFragShader);
+    m_pRainSeqPlayer->initBackground(BackImgPath, BackPicType);
 
     m_pLightingPlayer = new CSequenceFramePlayer(LightingPath, LightingFrameCount, LightingOneTextureFrames, LightingPlayFPS, LightingPicType);
     m_pLightingPlayer->initTextureAndShaderProgram(LightingVertexShader, LightingFragShader);
@@ -126,7 +124,6 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
 
-    m_pBackgroundPlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
     m_pCloudPlayer->updateLerpQuantFrame(DeltaTime);
@@ -140,8 +137,9 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
         m_pLightingPlayer->drawInterpolation(m_pScreenQuad);
     }
 
+    m_pRainSeqPlayer->setCurrentChannel(static_cast<std::uint8_t>(vRenderChannel));
     m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
-    m_pRainSeqPlayer->drawMultiChannelKTX(m_pScreenQuad);
+    m_pRainSeqPlayer->draw(m_pScreenQuad);
 
     m_pSmallRaindropPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
     m_pBigRaindropPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
