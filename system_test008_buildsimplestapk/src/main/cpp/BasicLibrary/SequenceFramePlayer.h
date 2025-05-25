@@ -42,7 +42,8 @@ namespace hiveVG
         [[nodiscard]] bool getLoopState() const { return m_IsLoop; }
         [[nodiscard]] bool getFinishState() const { return m_IsFinished; }
         [[nodiscard]] EPictureType::EPictureType getPicType() const { return m_TextureType; }
-
+        [[nodiscard]] std::vector<CTexture2D *> getTextures() const { return m_SeqTextures; }
+        
         bool initTextureAndShaderProgram();
         bool initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath);
 

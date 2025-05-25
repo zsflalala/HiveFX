@@ -28,7 +28,28 @@
         "one_texture_frames": 4,
         "fps": 20,
         "vertex_shader" : "shaders/multiChannelRianSeq.vert",
-        "fragment_shader" : "shaders/multiChannelRianSeqLerp8bitLightCloud.frag"
+        "fragment_shader" : "shaders/multiChannelRianSeqLerp8FilteringbitLightCloud.frag"
+    },
+    "lightningAndMask": {
+        "frames_path": "textures/lightningKTX/lightningAndMask3",
+        "frames_type" : "ktx2",
+        "frames_count": 16,
+        "one_texture_frames": 4,
+        "play_mode": "partial",
+        "ranks": {
+            "rows" : 1,
+            "cols" : 1
+        },
+        "fps": 30,
+        "lightning_front" : true,
+        "loop": true,
+        "scale": 0.5,
+        "position": {
+            "x": 0.1,
+            "y": 0.5
+        },
+        "vertex_shader" : "shaders/lightning.vert",
+        "fragment_shader" : "shaders/lightningCloud.frag"
     },
     "SmallRaindrop": {
         "frames_path": "textures/SmallRaindrop_ASTC12x12",
