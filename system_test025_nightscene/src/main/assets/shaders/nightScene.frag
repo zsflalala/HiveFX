@@ -31,7 +31,7 @@ void main()
                          + RainColor.b * float(channelIndex >= 2)
                          + RainColor.a * float(channelIndex >= 3);
 
-    vec4 SrcColor = vec4(vec3(FinalRainColor), 0.05 + LightMask / 1.5);
+    vec4 SrcColor = vec4(vec3(FinalRainColor), 0.1 + LightMask);
 
     vec4 DstColor = BackgroundColor;
     DstColor.a = 1.0;

@@ -90,7 +90,6 @@ void CNightSceneRenderer::__initAlgorithm()
 
     std::string CloudTex = JsonConfig.getString("background");
     m_pNightSceneSequencePlayer->initBackground(CloudTex);
-    m_pNightSceneSequencePlayer->setCurrentChannel(3);
     m_LastFrameTime = CTimeUtils::getCurrentTime();
 }
 
