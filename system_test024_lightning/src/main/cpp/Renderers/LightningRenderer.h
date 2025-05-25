@@ -20,11 +20,10 @@ namespace hiveVG
     private:
         void __initAlgorithm();
 
-        double       m_LastFrameTime = 0.0f;
-        double       m_CurrentTime   = 0.0f;
+        double m_LastFrameTime = 0.0f;
+        double m_CurrentTime   = 0.0f;
 
-        CScreenQuad*          m_pScreenQuad = nullptr;
-        //CSingleTexturePlayer* m_pStaticCloud = nullptr;
+        CScreenQuad*              m_pScreenQuad = nullptr;
         CLightningSequencePlayer* m_pLightningPlayer = nullptr;
     };
 }

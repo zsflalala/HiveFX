@@ -38,8 +38,16 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pLightningRenderer) delete m_pLightningRenderer;
-    if (m_pCloudInterpolationRenderer) delete m_pCloudInterpolationRenderer;
+    if (m_pLightningRenderer)
+    {
+        delete m_pLightningRenderer;
+        m_pLightningRenderer = nullptr;
+    }
+    if (m_pCloudInterpolationRenderer)
+    {
+        delete m_pCloudInterpolationRenderer;
+        m_pCloudInterpolationRenderer = nullptr;
+    }
 }
 
 void CRenderer::__initRenderer()
@@ -103,10 +111,9 @@ void CRenderer::renderScene()
     __updateRenderArea();
     glClearColor(0.5f,0.5f,0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    if(true)
-        m_pLightningRenderer->render();
-    if(false)
-        m_pCloudInterpolationRenderer->render();
+
+    m_pLightningRenderer->render();
+//    m_pCloudInterpolationRenderer->render();
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);

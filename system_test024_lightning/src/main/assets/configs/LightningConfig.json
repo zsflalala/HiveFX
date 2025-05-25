@@ -3,19 +3,19 @@
         "frames_path": "textures/lightningWithMask9",
         "frames_type" : "png",
         "frames_count": 30,
-        "play_mode": "fullscreen",
+        "play_mode": "partial",
         "ranks": {
             "rows" : 1,
             "cols" : 1
         },
-        "position": {
-          "x": -1.0,
-          "y": -0.3
-        },
         "fps": 60,
+        "lightning_front" : true,
         "loop": true,
-        "moving_speed": [0.0, 0.0],
-        "scale": 0.6
+        "scale": 0.5,
+        "position": {
+            "x": 0.1,
+            "y": 0.5
+        }
       },
     "cloud": "textures/cloud.png"
 }

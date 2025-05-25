@@ -54,39 +54,36 @@ void CLightningRenderer::__initAlgorithm()
 
     Json::Value LightningConfig = JsonConfig.getObject("lightning");
 
-    std::string FramePath    = LightningConfig["frames_path"].asString();
-    std::string FrameType    = LightningConfig["frames_type"].asString();
-    int         FrameCount   = LightningConfig["frames_count"].asInt();
-    int         SequenceRows = LightningConfig["ranks"]["rows"].asInt();
-    int         SequenceCols = LightningConfig["ranks"]["cols"].asInt();
-    std::string PlayMode     = LightningConfig["play_mode"].asString();
+    std::string LightningFramePath    = LightningConfig["frames_path"].asString();
+    std::string LightningFrameType    = LightningConfig["frames_type"].asString();
+    int         LightningFrameCount   = LightningConfig["frames_count"].asInt();
+    int         LightningSequenceRows = LightningConfig["ranks"]["rows"].asInt();
+    int         LightningSequenceCols = LightningConfig["ranks"]["cols"].asInt();
+    std::string LightningPlayMode     = LightningConfig["play_mode"].asString();
+    int         LightningPlayFPS      = LightningConfig["fps"].asInt();
+    bool        LightningIsLoop       = LightningConfig["loop"].asBool();
+    bool        LightningInFront      = LightningConfig["lightning_front"].asBool();
+    EPictureType::EPictureType PictureType = EPictureType::FromString(LightningFrameType);
+    EPlayType::EPlayType PlayType = EPlayType::FromString(LightningPlayMode);
 
-    int         PlayFPS      = LightningConfig["fps"].asInt();
-    bool        IsLoop       = LightningConfig["loop"].asBool();
-
-    EPictureType::EPictureType PictureType = EPictureType::FromString(FrameType);
-    EPlayType::EPlayType PlayType = EPlayType::FromString(PlayMode);
-
-    m_pLightningPlayer = new CLightningSequencePlayer(FramePath, SequenceRows, SequenceCols, FrameCount, PictureType);
+    m_pLightningPlayer = new CLightningSequencePlayer(LightningFramePath, LightningSequenceRows, LightningSequenceCols, LightningFrameCount, PictureType);
     if(!m_pLightningPlayer->initTextureAndShaderProgram())
     {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "LightningPlayer initialization failed.");
         return;
     }
-    m_pLightningPlayer->setFrameRate(PlayFPS);
-    m_pLightningPlayer->setLoopPlayback(IsLoop);
+    m_pLightningPlayer->setFrameRate(LightningPlayFPS);
+    m_pLightningPlayer->setLoopPlayback(LightningIsLoop);
+    m_pLightningPlayer->setLightningMode(LightningInFront);
+//    m_pLightningPlayer->setRotationAngle(50.0f);
     if (PlayType == EPlayType::PARTIAL)
     {
-        glm::vec2   UVOffset     = glm::vec2(LightningConfig["position"]["x"].asFloat(),
+        glm::vec2   LightningUVOffset     = glm::vec2(LightningConfig["position"]["x"].asFloat(),
                                              LightningConfig["position"]["y"].asFloat());
-        float       Scale        = LightningConfig["scale"].asFloat();
-        glm::vec2   MoveSpeed    = glm::vec2(LightningConfig["moving_speed"][0].asFloat(),
-                                             LightningConfig["moving_speed"][1].asFloat());
+        float       LightningScale        = LightningConfig["scale"].asFloat();
 
-        m_pLightningPlayer->setIsMoving(true);
-        m_pLightningPlayer->setScreenUVOffset(UVOffset);
-        m_pLightningPlayer->setScreenUVScale(glm::vec2(Scale, Scale));
-        m_pLightningPlayer->setScreenUVMovingSpeed(MoveSpeed);
+        m_pLightningPlayer->setScreenUVOffset(LightningUVOffset);
+        m_pLightningPlayer->setScreenUVScale(glm::vec2(LightningScale, LightningScale));
     }
 
     std::string CloudTex = JsonConfig.getString("cloud");
