@@ -64,6 +64,7 @@ void CLightningRenderer::__initAlgorithm()
     EPlayType::EPlayType PlayType = EPlayType::FromString(PlayMode);
 
     m_pLightningPlayer = new CLightningSequencePlayer(FramePath, FrameCount,OneTextureFrames ,PlayFPS ,PictureType);
+   // m_pLightningPlayer = new CLightningSequencePlayer(FramePath, SequenceRows,SequenceCols ,FrameCount ,PictureType);
     if(!m_pLightningPlayer->initTextureAndShaderProgram())
     {
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "SequencePlay initialization falied.");

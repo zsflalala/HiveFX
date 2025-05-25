@@ -39,8 +39,20 @@ void CLightningSequencePlayer::draw(CScreenQuad *vQuad)
     glm::vec2 TextureUVOffset = glm::vec2(CurrentFrameU0, CurrentFrameV0);
     glm::vec2 TextureUVScale  = glm::vec2(CurrentFrameU1 - CurrentFrameU0, CurrentFrameV1 - CurrentFrameV0);
 
+    LOG_INFO(TAG_KEYWORD::TEXTURE2D_TAG,"当前帧数%d,总帧数%d",m_CurrentTexture,m_TextureCount);
+
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
+
+    float uFlashProgress = (float)m_CurrentTexture / (float)(m_TextureCount - 1);
+    uFlashProgress = glm::clamp(uFlashProgress, 0.0f, 1.0f);
+
+    // 2. 设置 Shader uniform
+    m_pSequenceShaderProgram->setUniform("uFlashProgress", uFlashProgress);
+    m_pSequenceShaderProgram->setUniform("uFlashColor", glm::vec3(1.0f));
+    m_pSequenceShaderProgram->setUniform("uFlashAlpha", 0.3f);
+
+
     m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
     m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
     m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);

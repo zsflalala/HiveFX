@@ -125,7 +125,7 @@ void CRenderer::__updateRenderArea()
     {
         m_WindowWidth  = Width;
         m_WindowHeight = Height;
-        glViewport(0, 0, Width, Height);
+        glViewport(0, ViewportY, Width, ViewportHeight);
     }
 }
 

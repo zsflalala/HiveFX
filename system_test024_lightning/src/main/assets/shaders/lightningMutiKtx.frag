@@ -9,6 +9,9 @@ uniform sampler2D lightningSequenceTexture;
 uniform sampler2D cloudTexture;
 uniform int channelIndex;
 
+uniform float uFlashProgress;    // 0～1
+uniform vec3  uFlashColor;
+uniform float uFlashAlpha;       // 控制最大透明度
 
 vec3 remap(vec3 vVector, float vOldMin, float vOldMax, float vNewMin, float vNewMax)
 {
@@ -19,39 +22,10 @@ float remap(float vData, float vOldMin, float vOldMax, float vNewMin, float vNew
 {
     return (vData - vOldMin) / (vOldMax - vOldMin) * (vNewMax - vNewMin) + vNewMin;
 }
-/*
-void main()
-{
-    // 闪电在云前
-    vec4 CloudColor = texture(cloudTexture, TexCoord);
-    vec3 CloudColorWithoutLight;
-    CloudColorWithoutLight = remap(CloudColor.rgb, 0.0, 1.0, 0.0, 0.5);
 
-    vec2 TexCoords = (TexCoord * texUVScale) + texUVOffset;
-    vec4 LightningColor = texture(lightningSequenceTexture, TexCoords);
-
-    float LightningMask = LightningColor.a;
-    CloudColor.rgb = mix(CloudColorWithoutLight, CloudColor.rgb, LightningMask);
-
-    vec4 SrcColor;
-    SrcColor.rgb = vec3(1.0);
-    SrcColor.a = LightningColor.r;
-
-    vec4 DstColor = CloudColor;
-    // Alpha Blending
-    float BlendAlpha = SrcColor.a + DstColor.a - SrcColor.a * DstColor.a;
-    if(BlendAlpha < 0.0001)
-        discard;
-    vec3 BlendColor = SrcColor.rgb * SrcColor.a + DstColor.rgb * DstColor.a * (1.0 - SrcColor.a);
-    BlendColor = BlendColor / BlendAlpha;
-
-    FragColor = vec4(BlendColor, BlendAlpha);
-}
-*/
 
 void main()
 {
-    //闪电在云后
     vec4 CloudColor = texture(cloudTexture, TexCoord);
     vec3 CloudColorWithoutLight;
     CloudColorWithoutLight = remap(CloudColor.rgb, 0.0, 1.0, 0.0, 0.5);
@@ -62,5 +36,12 @@ void main()
     float LightningMask = LightningColor[channelIndex];
     CloudColor.rgb = mix(CloudColorWithoutLight, CloudColor.rgb, LightningMask);
 
-    FragColor = CloudColor;
+    // 计算闪光强度 (先升后降)
+    float up   = smoothstep(0.0, 0.5, uFlashProgress);
+    float down = 1.0 - smoothstep(0.5, 1.0, uFlashProgress);
+    float flashIntensity = up * down;
+
+    vec3 finalColor = mix(CloudColor.rgb, uFlashColor, flashIntensity * uFlashAlpha);
+    FragColor = vec4(finalColor, 1.0);
+    //FragColor = vec4(CloudColor);
 }
