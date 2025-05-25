@@ -8,6 +8,7 @@
 #include "SingleTexturePlayer.h"
 #include "SequenceFramePlayer.h"
 #include "NightSceneSequencePlayer.h"
+#include "LightningSequencePlayer.h"
 
 using namespace hiveVG;
 
@@ -91,6 +92,27 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     std::string BigRaindropFragShader   = BigRaindropConfig["fragment_shader"].asString();
     EPictureType::EPictureType BigRaindropPicType = EPictureType::FromString(BigRaindropFrameType);
 
+    Json::Value LightningConfig = JsonReader.getObject("lightning");
+    std::string LightningFramePath        = LightningConfig["frames_path"].asString();
+    std::string LightningFrameMaskPath    = LightningConfig["frames_mask_path"].asString();
+    std::string LightningFrameType        = LightningConfig["frames_type"].asString();
+    int         LightningFrameCount       = LightningConfig["frames_count"].asInt();
+    int         LightningOneTextureFrames = LightningConfig["one_texture_frames"].asInt();
+    int         LightningSequenceRows     = LightningConfig["ranks"]["rows"].asInt();
+    int         LightningSequenceCols     = LightningConfig["ranks"]["cols"].asInt();
+    std::string LightningPlayMode         = LightningConfig["play_mode"].asString();
+    float       LightningPlayFPS          = LightningConfig["fps"].asFloat();
+    bool        LightningIsLoop           = LightningConfig["loop"].asBool();
+    bool        LightningInFront          = LightningConfig["lightning_front"].asBool();
+    std::string LightningVertexShader     = LightningConfig["vertex_shader"].asString();
+    std::string LightningFragShader       = LightningConfig["fragment_shader"].asString();
+    EPictureType::EPictureType PictureType = EPictureType::FromString(LightningFrameType);
+    EPlayType::EPlayType PlayType = EPlayType::FromString(LightningPlayMode);
+
+
+    m_pCloudPlayer = new CLightningSequencePlayer(LightningFramePath, LightningFrameCount, LightningOneTextureFrames, LightningPlayFPS, PictureType);
+    m_pCloudPlayer->initTextureAndShaderProgram(LightningVertexShader,LightningFragShader);
+
     m_pRainSeqPlayer = new CNightSceneSequencePlayer(RainPath, RainTextureCount, RainOneTextureFrames, RainFramePerSecond, RainPictureType);
     m_pRainSeqPlayer->initTextureAndShaderProgram(RainVertexShader, RainFragShader);
     m_pRainSeqPlayer->initBackground(BackImgPath, BackPicType);
@@ -98,8 +120,6 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     m_pLightingPlayer = new CSequenceFramePlayer(LightingPath, LightingFrameCount, LightingOneTextureFrames, LightingPlayFPS, LightingPicType);
     m_pLightingPlayer->initTextureAndShaderProgram(LightingVertexShader, LightingFragShader);
 
-    m_pCloudPlayer = new CSequenceFramePlayer(CloudPath, CloudFrameCount, CloudOneTextureFrames, CloudPlayFPS, CloudPicType);
-    m_pCloudPlayer->initTextureAndShaderProgram(CloudVertexShader, CloudFragShader);
 
     m_pSmallRaindropPlayer = new CSequenceFramePlayer(SmallRaindropFramePath, SmallRaindropFrameCount, SmallRaindropTextureFrames, SmallRaindropPlayFPS, SmallRaindropPicType);
     m_pSmallRaindropPlayer->initTextureAndShaderProgram(SmallRaindropVertexShader, SmallRaindropFragShader);
