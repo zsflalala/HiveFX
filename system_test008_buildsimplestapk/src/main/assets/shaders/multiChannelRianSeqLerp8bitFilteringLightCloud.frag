@@ -2,7 +2,7 @@
 precision mediump float;
 
 in vec2 TexCoordCloud;
-in vec2 TexCoordCloudCloud;
+
 uniform float Factor;
 uniform float Displacement;
 uniform int CurrentChannel;
