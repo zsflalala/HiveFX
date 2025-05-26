@@ -18,6 +18,9 @@ uniform sampler2D CurrentTexture;
 uniform sampler2D NextTexture;
 uniform sampler2D LightningSequenceTexture;
 
+uniform vec2 uScreenSize;
+uniform vec2 uTextureSize;
+uniform float uScale;
 out vec4 FragColor;
 
 float filteredChannelSpace3x3(sampler2D vTex, vec2 vUV, int vChannelIndex)
@@ -49,10 +52,15 @@ float remap(float vData, float vOldMin, float vOldMax, float vNewMin, float vNew
 
 void main()
 {
+    float vRatio = (uTextureSize.y / uScreenSize.y) * uScale;
+    if( TexCoordCloud.y > vRatio){
+        discard;
+    }
+
     float CurrentOffset = TexCoordCloud.x - Displacement * Factor;
-    vec2  CurrentUV     = vec2(CurrentOffset, TexCoordCloud.y);
+    vec2  CurrentUV     = vec2(CurrentOffset, TexCoordCloud.y / vRatio);
     float NextOffset    = TexCoordCloud.x + Displacement * (1.0 - Factor);
-    vec2  NextUV        = vec2(NextOffset,   TexCoordCloud.y);
+    vec2  NextUV        = vec2(NextOffset,   TexCoordCloud.y / vRatio);
     int   NextChannel   = (CurrentChannel + 1) % 4;
 
     float CurrentSpaceFilterColor = filteredChannelSpace3x3(CurrentTexture, CurrentUV, CurrentChannel);
@@ -69,7 +77,7 @@ void main()
     CloudColor.rgb = mix(CloudColorWithoutLight, CloudColor.rgb, LightningMask);
     vec4 ColorWhenBehind = CloudColor;
 
-    // 全屏闪电提亮
+    // 闪电提亮
     float EnableFlash = step(0.0001, FlashProgress); // FlashProgress > 0 => 1.0，否则 0.0
     float UP   = smoothstep(0.0, 0.5, FlashProgress);
     float Down = 1.0 - smoothstep(0.5, 1.0, FlashProgress);

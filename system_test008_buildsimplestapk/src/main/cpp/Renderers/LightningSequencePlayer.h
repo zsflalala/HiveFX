@@ -21,7 +21,7 @@ namespace hiveVG
         void updateFrameAndUV(double vDeltaTime);
         void updateQuantizationFrame(double vDeltaTime);
         void draw(CScreenQuad *vQuad);
-
+        void setWindowSize(glm::vec2 vWindowSize){m_WindowSize = vWindowSize;}
     private:
         void __randomizeLightningParameters();
         void __resetPlayback();
@@ -31,7 +31,7 @@ namespace hiveVG
         bool    m_IsWaiting           = false;
         double  m_WaitTime            = 0.0;
         double  m_TargetWaitTime      = 0.0;
-
+        glm::vec2 m_WindowSize        = glm::vec2 (0,0);
         int     m_CurrentCloudTexture = 0;
         int     m_NextCloudTexture    = 0;
         int     m_CurrentCloudChannel = 0;

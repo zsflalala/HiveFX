@@ -119,6 +119,7 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
         LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "LightningPlayer initialization failed.");
         return false;
     }
+    m_pLightningPlayer->setWindowSize(m_WindowSize);
     m_pLightningPlayer->setFrameRate(LightningPlayFPS);
     m_pLightningPlayer->setLoopPlayback(LightningIsLoop);
     m_pLightningPlayer->setLightningMode(LightningInFront);
