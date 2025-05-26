@@ -13,7 +13,7 @@
         "fragment_shader" : "shaders/multiChannelRianSeq8bitRainWithBackground.frag"
     },
     "Cloud": {
-        "frames_path": "textures/Cloud_ASTC12x12",
+        "frames_path": "textures/CloudSmall_ASTC12x12",
         "frames_type" : "ktx2",
         "frames_count": 34,
         "one_texture_frames": 4,

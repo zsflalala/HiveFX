@@ -36,6 +36,7 @@ namespace hiveVG
             __initSequenceParams();
         }
         void setScreenUVMovingSpeed(const glm::vec2 &vMovingSpeed) { m_MovingSpeed = vMovingSpeed; }
+        void setWindowSize(glm::vec2 vWindowSize) { m_WindowSize = vWindowSize; }
 
         [[nodiscard]] int getSingleTextureWidth() const { return m_SeqSingleTexWidth; }
         [[nodiscard]] int getSingleTextureHeight() const { return m_SeqSingleTexHeight; }
@@ -63,6 +64,7 @@ namespace hiveVG
         void drawInterpolation(CScreenQuad *vQuad);
         void drawInterpolationWithDisplacement(CScreenQuad *vQuad);
         void drawInterpolationWithFiltering(CScreenQuad *vQuad);
+        void setRatioUniform();
 
     protected:
         void __initSequenceParams();
@@ -100,5 +102,6 @@ namespace hiveVG
         EPictureType::EPictureType m_TextureType = EPictureType::PNG;
         std::vector<CTexture2D *>  m_SeqTextures;
         CShaderProgram*            m_pSequenceShaderProgram = nullptr;
+
     };
 }

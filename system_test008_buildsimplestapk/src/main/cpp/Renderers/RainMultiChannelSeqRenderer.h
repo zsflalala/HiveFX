@@ -16,6 +16,9 @@ namespace hiveVG
     {
     public:
         CRainMultiChannelSeqRenderer();
+
+        CRainMultiChannelSeqRenderer(glm::vec2 vWindowSize);
+
         ~CRainMultiChannelSeqRenderer();
 
         void renderScene(ERenderChannel vRenderChannel);
@@ -30,7 +33,7 @@ namespace hiveVG
         double                m_CurrentTime              = 0.0f;
         double                m_AccumFrameTime           = 0.0f;
         CScreenQuad*          m_pScreenQuad              = nullptr;
-
+        glm::vec2             m_WindowSize               = glm::vec2 (0,0);
         CLightningSequencePlayer*  m_pLightningPlayer     = nullptr;
         CSequenceFramePlayer*      m_pCloudPlayer         = nullptr;
         CSequenceFramePlayer*      m_pSmallRaindropPlayer = nullptr;

@@ -12,7 +12,7 @@
 
 using namespace hiveVG;
 
-CRainMultiChannelSeqRenderer::CRainMultiChannelSeqRenderer()
+CRainMultiChannelSeqRenderer::CRainMultiChannelSeqRenderer(glm::vec2 vWindowSize):m_WindowSize(vWindowSize)
 {
     __initAlgorithm();
 }
@@ -109,6 +109,9 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
 
     m_pCloudPlayer = new CSequenceFramePlayer(CloudPath, CloudFrameCount, CloudOneTextureFrames, CloudPlayFPS, CloudPicType);
     m_pCloudPlayer->initTextureAndShaderProgram(CloudVertexShader, CloudFragShader);
+    m_pCloudPlayer->setWindowSize(m_WindowSize);
+    m_pCloudPlayer->setRatioUniform();
+
 
     m_pLightningPlayer = new CLightningSequencePlayer(LightningFramePath, LightningFrameCount, LightningOneTextureFrames, LightningPlayFPS, LightningPicType);
     if(!m_pLightningPlayer->initTextureAndShaderProgram(LightningVertexShader, LightningFragShader))
@@ -156,12 +159,12 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
 
-    m_pRainSeqPlayer->setCurrentChannel(static_cast<std::uint8_t>(vRenderChannel));
+   /* m_pRainSeqPlayer->setCurrentChannel(static_cast<std::uint8_t>(vRenderChannel));
     m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
     m_pRainSeqPlayer->draw(m_pScreenQuad);
 
     m_pSmallRaindropPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
-    m_pBigRaindropPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
+    m_pBigRaindropPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);*/
 
     if (vRenderChannel == ERenderChannel::R)
     {

@@ -96,7 +96,9 @@ void CRenderer::renderScene()
     __updateRenderArea();
 
     if (m_pRainMultiChannelSeqRenderer == nullptr)
-        m_pRainMultiChannelSeqRenderer = new CRainMultiChannelSeqRenderer();
+//        m_pRainMultiChannelSeqRenderer = new CRainMultiChannelSeqRenderer();
+        m_pRainMultiChannelSeqRenderer = new CRainMultiChannelSeqRenderer(glm::vec2(m_WindowWidth,m_WindowHeight));
+
     m_pRainMultiChannelSeqRenderer->renderScene(m_RenderChannel);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
