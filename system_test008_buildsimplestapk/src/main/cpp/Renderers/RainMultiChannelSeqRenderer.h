@@ -9,6 +9,7 @@ namespace hiveVG
     class CShaderProgram;
     class CScreenQuad;
     class CSequenceFramePlayer;
+    class CLightningSequencePlayer;
     class CNightSceneSequencePlayer;
 
     class CRainMultiChannelSeqRenderer
@@ -30,12 +31,11 @@ namespace hiveVG
         double                m_AccumFrameTime           = 0.0f;
         CScreenQuad*          m_pScreenQuad              = nullptr;
 
-        CSequenceFramePlayer* m_pLightingPlayer          = nullptr;
-        CSequenceFramePlayer* m_pCloudPlayer             = nullptr;
-        CSequenceFramePlayer* m_pSmallRaindropPlayer     = nullptr;
-        CSequenceFramePlayer* m_pBigRaindropPlayer       = nullptr;
-
-        CNightSceneSequencePlayer* m_pRainSeqPlayer           = nullptr;
+        CLightningSequencePlayer*  m_pLightningPlayer     = nullptr;
+        CSequenceFramePlayer*      m_pCloudPlayer         = nullptr;
+        CSequenceFramePlayer*      m_pSmallRaindropPlayer = nullptr;
+        CSequenceFramePlayer*      m_pBigRaindropPlayer   = nullptr;
+        CNightSceneSequencePlayer* m_pRainSeqPlayer       = nullptr;
     };
 
     template<typename T>

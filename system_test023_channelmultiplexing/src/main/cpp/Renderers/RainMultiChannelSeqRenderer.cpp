@@ -26,7 +26,7 @@ CRainMultiChannelSeqRenderer::~CRainMultiChannelSeqRenderer()
     }
     __deleteSafely(m_pRainSeqPlayer);
     __deleteSafely(m_pBackgroundPlayer);
-    __deleteSafely(m_pLightingPlayer);
+    __deleteSafely(m_pLightningPlayer);
     __deleteSafely(m_pCloudPlayer);
 }
 
@@ -67,8 +67,8 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     m_pBackgroundPlayer = new CSingleTexturePlayer(BackImgPath, BackPicType);
     m_pBackgroundPlayer->initTextureAndShaderProgram(BackVertexShader, BackFragShader);
 
-    m_pLightingPlayer = new CSequenceFramePlayer(LightingPath, LightingFrameCount, LightingOneTextureFrames, LightingPlayFPS, LightingPicType);
-    m_pLightingPlayer->initTextureAndShaderProgram(LightingVertexShader, LightingFragShader);
+    m_pLightningPlayer = new CSequenceFramePlayer(LightingPath, LightingFrameCount, LightingOneTextureFrames, LightingPlayFPS, LightingPicType);
+    m_pLightningPlayer->initTextureAndShaderProgram(LightingVertexShader, LightingFragShader);
 
     m_pScreenQuad   = CScreenQuad::getOrCreate();
     m_LastFrameTime = CTimeUtils::getCurrentTime();
@@ -90,8 +90,8 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     m_pBackgroundPlayer->updateFrame();
     m_pScreenQuad->bindAndDraw();
 
-    m_pLightingPlayer->updateLerpQuantFrame(DeltaTime);
-    m_pLightingPlayer->drawInterpolation(m_pScreenQuad);
+    m_pLightningPlayer->updateLerpQuantFrame(DeltaTime);
+    m_pLightningPlayer->drawInterpolation(m_pScreenQuad);
 
     m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
     m_pRainSeqPlayer->drawQuantization(m_pScreenQuad);

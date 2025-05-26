@@ -147,8 +147,8 @@ void CSequenceFramePlayer::updateMultiChannelFrame(double vDeltaTime, ERenderCha
         m_AccumFrameTime -= FrameTime;
         m_CurrentTexture = (m_CurrentTexture + 1) % static_cast<int>(m_SeqTextures.size());
         m_CurrentChannel = static_cast<std::uint8_t>(vRenderChannel);
+//        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "RainSeqTexture: %d, RainCurrentChannel: %d" , m_CurrentTexture, m_CurrentChannel);
     }
-//    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "SeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
 }
 
 void CSequenceFramePlayer::updateInterpolationFrame(double vDeltaTime)
@@ -195,7 +195,7 @@ void CSequenceFramePlayer::updateLerpQuantFrame(double vDeltaTime)
             m_CurrentTexture = m_NextTexture;
             m_CurrentChannel = 0;
         }
-        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "Current Channel: %d, CurrentSeqTexture: %d, NextSeqTexture: %d" , m_CurrentChannel, m_CurrentTexture,  m_NextTexture);
+//        LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "Current Channel: %d, CurrentSeqTexture: %d, NextSeqTexture: %d" , m_CurrentChannel, m_CurrentTexture,  m_NextTexture);
     }
     m_InterpolationFactor = m_AccumFrameTime / FrameTime;
 }
@@ -315,10 +315,9 @@ void CSequenceFramePlayer::drawMultiChannelKTX(CScreenQuad *vQuad)
 {
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
-    m_pSequenceShaderProgram->setUniform("indexTexture", 1);
+    m_pSequenceShaderProgram->setUniform("indexTexture", 0);
     m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
-//    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "CurrentSeqTexture: %d, Current Channel: %d" , m_CurrentTexture, m_CurrentChannel);
-    glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
     vQuad->bindAndDraw();
 }

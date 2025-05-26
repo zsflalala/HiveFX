@@ -18,23 +18,18 @@ CLightningSequencePlayer::CLightningSequencePlayer(const std::string& vTextureRo
 
     std::string FileName   = "configs/RainMultiChannelSeqConfig.json";
     CJsonReader JsonReader = CJsonReader(FileName);
+
     Json::Value CloudConfig = JsonReader.getObject("Cloud");
     std::string CloudPath = CloudConfig["frames_path"].asString();
     std::string CloudType = CloudConfig["frames_type"].asString();
     int   CloudFrameCount = CloudConfig["frames_count"].asInt();
     int   CloudOneTextureFrames = CloudConfig["one_texture_frames"].asInt();
     float CloudPlayFPS    = CloudConfig["fps"].asFloat();
-    std::string CloudVertexShader = CloudConfig["vertex_shader"].asString();
-    std::string CloudFragShader   = CloudConfig["fragment_shader"].asString();
     EPictureType::EPictureType CloudPicType = EPictureType::FromString(CloudType);
 
-    m_pCloudPlayer = new CSequenceFramePlayer(CloudPath, CloudFrameCount, CloudOneTextureFrames, CloudPlayFPS, CloudPicType);
-    m_pCloudPlayer->initTextureAndShaderProgram(CloudVertexShader, CloudFragShader);
-    m_SeqCloudTextures = m_pCloudPlayer->getTextures();
-    m_CloudFPS = CloudPlayFPS;
+    __initCloudTextures(CloudPath, CloudFrameCount, CloudPicType);
+    m_CloudFPS          = CloudPlayFPS;
     m_OneCloudTexFrames = CloudOneTextureFrames;
-    m_CloudSingleTexWidth = m_pCloudPlayer->getSingleTextureWidth();
-    m_CloudSingleTexHeight = m_pCloudPlayer->getSingleTextureHeight();
 }
 
 CLightningSequencePlayer::~CLightningSequencePlayer()
@@ -86,6 +81,35 @@ void CLightningSequencePlayer::updateFrameAndUV(double vDeltaTime)
 
 void CLightningSequencePlayer::updateQuantizationFrame(double vDeltaTime)
 {
+    // === 更新云序列帧 ===
+    double CloudFrameTime = 1.0 / m_CloudFPS;
+    m_AccumCloudTime += vDeltaTime;
+    if (m_AccumCloudTime >= CloudFrameTime)
+    {
+        m_AccumCloudTime = 0.0;
+        m_CurrentCloudChannel++;
+        if (m_CurrentCloudChannel == m_OneCloudTexFrames - 1)
+        {
+            m_NextCloudTexture++;
+            if (m_NextCloudTexture == m_SeqCloudTextures.size())
+            {
+                m_NextCloudTexture = 0;
+            }
+        }
+        else if (m_CurrentCloudChannel == m_OneCloudTexFrames)
+        {
+            m_CurrentCloudTexture = m_NextCloudTexture;
+            m_CurrentCloudChannel = 0;
+        }
+//        LOG_ERROR("CloudUpdate",
+//                 "CloudCurrentTex: %d, CloudNextTex: %d, CloudCurrentChannel: %d",
+//                 m_CurrentCloudTexture,
+//                 m_NextCloudTexture,
+//                 m_CurrentCloudChannel);
+    }
+    m_CloudInterpFactor = m_AccumCloudTime / CloudFrameTime;
+
+    // === 处理等待逻辑 ===
     if (m_IsWaiting)
     {
         m_WaitTime += vDeltaTime;
@@ -96,93 +120,60 @@ void CLightningSequencePlayer::updateQuantizationFrame(double vDeltaTime)
         return;
     }
 
-    if (m_FramePerSecond <= 0.0) return;
-
+    // === 更新闪电帧 ===
     double FrameTime = 1.0 / m_FramePerSecond;
     m_AccumFrameTime += vDeltaTime;
 
     if (m_AccumFrameTime >= FrameTime)
     {
-        m_AccumFrameTime -= FrameTime;
-
+        m_AccumFrameTime = 0;
         m_CurrentChannel = (m_CurrentChannel + 1) % m_OneTextureFrames;
-
         if (m_CurrentChannel == 0)
         {
             m_CurrentTexture++;
-
             if (m_CurrentTexture >= m_SeqTextures.size() / 2)
             {
-                m_CurrentTexture = 0; // 可选：是否重置为 0 看业务逻辑
+                m_CurrentTexture = 0;
                 m_IsFinished = true;
                 m_IsWaiting = true;
                 m_TargetWaitTime = m_WaitDist(m_Rng);
                 return;
             }
         }
+//        LOG_ERROR("LightningUpdate",
+//                  "LightningCurrentTex: %d, LightningCurrentChannel: %d",
+//                  m_CurrentTexture,
+//                  m_CurrentChannel);
     }
 }
 
-void CLightningSequencePlayer::updateCloudSequence(double vDeltaTime)
-{
-    double FrameTime = 1.0 / m_CloudFPS;
-    m_AccumCloudTime += vDeltaTime;
-    if (m_AccumCloudTime >= FrameTime)
-    {
-        m_AccumCloudTime = 0.0;
-
-        m_CurrentCloudChannel++;
-        if (m_CurrentCloudChannel >= m_OneCloudTexFrames - 1)
-        {
-            m_NextCloudTexture++;
-            if (m_NextCloudTexture >= m_SeqCloudTextures.size())
-            {
-                m_NextCloudTexture = 0;
-            }
-        }
-        else if (m_CurrentCloudChannel >= m_OneCloudTexFrames)
-        {
-            m_CurrentCloudTexture = m_NextCloudTexture;
-            m_CurrentCloudChannel = 0;
-        }
-    }
-
-    m_CloudInterpFactor = m_AccumCloudTime / FrameTime;
-}
 void CLightningSequencePlayer::draw(CScreenQuad *vQuad)
 {
-    float RotationAngle = glm::radians(static_cast<float>(m_RotationAngle));
     float FlashProgress = (float)m_CurrentTexture / (float)(m_TextureCount - 1);
     FlashProgress = glm::clamp(FlashProgress, 0.0f, 1.0f);
-    int bindTextureIndex = m_CurrentTexture + (m_LightningInFront ? 0 : 8);
+    int BindTextureIndex = m_CurrentTexture + (m_LightningInFront ? 0 : 8);
 
     assert(m_pSequenceShaderProgram != nullptr);
-
-    m_pSequenceShaderProgram->setUniform("flashProgress", FlashProgress);
-    m_pSequenceShaderProgram->setUniform("flashColor", glm::vec3(1.0f));  // 你可根据需求调整
-    m_pSequenceShaderProgram->setUniform("flashAlpha", 0.3f);
-    m_pSequenceShaderProgram->setUniform("lightningInFront", m_LightningInFront ? 1 : 0);
-    m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
-
+    m_pSequenceShaderProgram->useProgram();
+    m_pSequenceShaderProgram->setUniform("CurrentTexture", 0);
+    m_pSequenceShaderProgram->setUniform("NextTexture", 1);
+    m_pSequenceShaderProgram->setUniform("LightningSequenceTexture", 2);
+    m_pSequenceShaderProgram->setUniform("FlashProgress", FlashProgress);
+    m_pSequenceShaderProgram->setUniform("FlashColor", glm::vec3(1.0f));
+    m_pSequenceShaderProgram->setUniform("FlashAlpha", 0.3f);
+    m_pSequenceShaderProgram->setUniform("LightningInFront", m_LightningInFront);
+    m_pSequenceShaderProgram->setUniform("ChannelIndex", m_CurrentChannel);
     m_pSequenceShaderProgram->setUniform("Factor", m_CloudInterpFactor);
-    m_pSequenceShaderProgram->setUniform("Displacement", 0.01f);  // 你需要定义这个值
+    m_pSequenceShaderProgram->setUniform("Displacement", 0.01f);
     m_pSequenceShaderProgram->setUniform("CurrentChannel", m_CurrentCloudChannel);
-    m_pSequenceShaderProgram->setUniform("TexelSize", glm::vec2(
-            1.0f / m_CloudSingleTexWidth, 1.0f / m_CloudSingleTexHeight
-    ));
+    m_pSequenceShaderProgram->setUniform("TexelSize", glm::vec2(1.0f / static_cast<float>(m_CloudSingleTexWidth), 1.0f / static_cast<float>(m_CloudSingleTexHeight)));
 
     glActiveTexture(GL_TEXTURE0);
     m_SeqCloudTextures[m_CurrentCloudTexture]->bindTexture();
-    m_pSequenceShaderProgram->setUniform("CurrentTexture", 0);
-
     glActiveTexture(GL_TEXTURE1);
     m_SeqCloudTextures[m_NextCloudTexture]->bindTexture();
-    m_pSequenceShaderProgram->setUniform("NextTexture", 1);
-
     glActiveTexture(GL_TEXTURE2);
-    m_SeqTextures[bindTextureIndex]->bindTexture();
-    m_pSequenceShaderProgram->setUniform("lightningSequenceTexture", 2);
-
+    m_SeqTextures[BindTextureIndex]->bindTexture();
     vQuad->bindAndDraw();
 }
 
@@ -199,9 +190,9 @@ void CLightningSequencePlayer::initBackground(const std::string &vTexturePath)
     }
 }
 
-bool CLightningSequencePlayer::initTextureAndShaderProgram()
+bool CLightningSequencePlayer::initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath)
 {
-    return CSequenceFramePlayer::initTextureAndShaderProgram("shaders/lightning.vert", "shaders/lightning.frag");
+    return CSequenceFramePlayer::initTextureAndShaderProgram(vVertexShaderPath, vFragShaderShaderPath);
 }
 
 void CLightningSequencePlayer::__resetPlayback()
@@ -223,7 +214,7 @@ void CLightningSequencePlayer::__randomizeLightningParameters()
     m_ScreenUVScale.y = m_ScaleDist(m_Rng);
 
     float maxOffsetX = std::max(0.0f, 1.0f - m_ScreenUVScale.x);
-    float maxOffsetY = std::max(0.0f, 0.8f - m_ScreenUVScale.y);
+    float maxOffsetY = std::max(0.0f, 0.2f - m_ScreenUVScale.y);
 
     std::uniform_real_distribution<float> OffsetXDist(0.0f, maxOffsetX);
     std::uniform_real_distribution<float> OffsetYDist(0.0f, maxOffsetY);
@@ -231,5 +222,31 @@ void CLightningSequencePlayer::__randomizeLightningParameters()
     m_ScreenUVOffset.x = OffsetXDist(m_Rng);
     m_ScreenUVOffset.y = OffsetYDist(m_Rng);
 
-    m_LightningInFront = m_BoolDist(m_Rng) == 1;
+//    m_LightningInFront = m_BoolDist(m_Rng) == 1;
+    m_LightningInFront = true;
+}
+
+void CLightningSequencePlayer::__initCloudTextures(const std::string& vCloudPath, int vFrameCount, EPictureType::EPictureType vCloudPicType)
+{
+    int TexWidth, TexHeight;
+    std::string CloudPath;
+
+    if (!vCloudPath.empty() && vCloudPath.back() != '/')
+        CloudPath = vCloudPath + '/';
+
+    std::string PictureSuffix = ".ktx2";
+
+    for (int i = 0; i < vFrameCount; i++)
+    {
+        std::string TexturePath = CloudPath + "frame_" + std::string(3 - std::to_string(i + 1).length(), '0') + std::to_string(i + 1) + PictureSuffix;
+        CTexture2D* pSequenceTexture = CTexture2D::loadTexture(TexturePath, TexWidth, TexHeight, vCloudPicType);
+        if (!pSequenceTexture)
+        {
+            LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "Error loading texture from path [%s].", TexturePath.c_str());
+            return ;
+        }
+        m_SeqCloudTextures.push_back(pSequenceTexture);
+    }
+    m_CloudSingleTexWidth  = TexWidth;
+    m_CloudSingleTexHeight = TexHeight;
 }

@@ -25,7 +25,7 @@ CRainMultiChannelSeqRenderer::~CRainMultiChannelSeqRenderer()
         m_pScreenQuad = nullptr;
     }
     __deleteSafely(m_pRainSeqPlayer);
-    __deleteSafely(m_pLightingPlayer);
+    __deleteSafely(m_pLightningPlayer);
     __deleteSafely(m_pCloudPlayer);
     __deleteSafely(m_pSmallRaindropPlayer);
     __deleteSafely(m_pBigRaindropPlayer);
@@ -35,6 +35,7 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
 {
     std::string FileName   = "configs/RainMultiChannelSeqConfig.json";
     CJsonReader JsonReader = CJsonReader(FileName);
+
     Json::Value RainConfig = JsonReader.getObject("Rain");
     std::string RainPath   =  RainConfig["frames_path"].asString();
     std::string RainFrameType = RainConfig["frames_type"].asString();
@@ -52,15 +53,15 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     std::string BackFragShader   = BackGroundConfig["fragment_shader"].asString();
     EPictureType::EPictureType BackPicType = EPictureType::FromString(BackFrameType);
 
-    Json::Value LightingConfig = JsonReader.getObject("Lighting");
-    std::string LightingPath = LightingConfig["frames_path"].asString();
-    std::string LightingType = LightingConfig["frames_type"].asString();
-    int   LightingFrameCount = LightingConfig["frames_count"].asInt();
-    int   LightingOneTextureFrames = LightingConfig["one_texture_frames"].asInt();
-    float LightingPlayFPS    = LightingConfig["fps"].asFloat();
-    std::string LightingVertexShader = LightingConfig["vertex_shader"].asString();
-    std::string LightingFragShader   = LightingConfig["fragment_shader"].asString();
-    EPictureType::EPictureType LightingPicType = EPictureType::FromString(LightingType);
+//    Json::Value LightingConfig = JsonReader.getObject("Lighting");
+//    std::string LightingPath = LightingConfig["frames_path"].asString();
+//    std::string LightingType = LightingConfig["frames_type"].asString();
+//    int   LightingFrameCount = LightingConfig["frames_count"].asInt();
+//    int   LightingOneTextureFrames = LightingConfig["one_texture_frames"].asInt();
+//    float LightingPlayFPS    = LightingConfig["fps"].asFloat();
+//    std::string LightingVertexShader = LightingConfig["vertex_shader"].asString();
+//    std::string LightingFragShader   = LightingConfig["fragment_shader"].asString();
+//    EPictureType::EPictureType LightingPicType = EPictureType::FromString(LightingType);
 
     Json::Value CloudConfig = JsonReader.getObject("Cloud");
     std::string CloudPath = CloudConfig["frames_path"].asString();
@@ -92,34 +93,45 @@ bool CRainMultiChannelSeqRenderer::__initAlgorithm()
     std::string BigRaindropFragShader   = BigRaindropConfig["fragment_shader"].asString();
     EPictureType::EPictureType BigRaindropPicType = EPictureType::FromString(BigRaindropFrameType);
 
-    Json::Value LightningConfig = JsonReader.getObject("lightning");
+    Json::Value LightningConfig           = JsonReader.getObject("LightningWithMask");
     std::string LightningFramePath        = LightningConfig["frames_path"].asString();
-    std::string LightningFrameMaskPath    = LightningConfig["frames_mask_path"].asString();
     std::string LightningFrameType        = LightningConfig["frames_type"].asString();
     int         LightningFrameCount       = LightningConfig["frames_count"].asInt();
     int         LightningOneTextureFrames = LightningConfig["one_texture_frames"].asInt();
-    int         LightningSequenceRows     = LightningConfig["ranks"]["rows"].asInt();
-    int         LightningSequenceCols     = LightningConfig["ranks"]["cols"].asInt();
     std::string LightningPlayMode         = LightningConfig["play_mode"].asString();
     float       LightningPlayFPS          = LightningConfig["fps"].asFloat();
     bool        LightningIsLoop           = LightningConfig["loop"].asBool();
     bool        LightningInFront          = LightningConfig["lightning_front"].asBool();
     std::string LightningVertexShader     = LightningConfig["vertex_shader"].asString();
     std::string LightningFragShader       = LightningConfig["fragment_shader"].asString();
-    EPictureType::EPictureType PictureType = EPictureType::FromString(LightningFrameType);
-    EPlayType::EPlayType PlayType = EPlayType::FromString(LightningPlayMode);
+    EPictureType::EPictureType LightningPicType = EPictureType::FromString(LightningFrameType);
+    EPlayType::EPlayType LightningPlayType = EPlayType::FromString(LightningPlayMode);
 
+    m_pCloudPlayer = new CSequenceFramePlayer(CloudPath, CloudFrameCount, CloudOneTextureFrames, CloudPlayFPS, CloudPicType);
+    m_pCloudPlayer->initTextureAndShaderProgram(CloudVertexShader, CloudFragShader);
 
-    m_pCloudPlayer = new CLightningSequencePlayer(LightningFramePath, LightningFrameCount, LightningOneTextureFrames, LightningPlayFPS, PictureType);
-    m_pCloudPlayer->initTextureAndShaderProgram(LightningVertexShader,LightningFragShader);
+    m_pLightningPlayer = new CLightningSequencePlayer(LightningFramePath, LightningFrameCount, LightningOneTextureFrames, LightningPlayFPS, LightningPicType);
+    if(!m_pLightningPlayer->initTextureAndShaderProgram(LightningVertexShader, LightningFragShader))
+    {
+        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG, "LightningPlayer initialization failed.");
+        return false;
+    }
+    m_pLightningPlayer->setFrameRate(LightningPlayFPS);
+    m_pLightningPlayer->setLoopPlayback(LightningIsLoop);
+    m_pLightningPlayer->setLightningMode(LightningInFront);
+    if (LightningPlayType == EPlayType::PARTIAL)
+    {
+        glm::vec2   LightningUVOffset     = glm::vec2(LightningConfig["position"]["x"].asFloat(),
+                                                      LightningConfig["position"]["y"].asFloat());
+        float       LightningScale        = LightningConfig["scale"].asFloat();
+
+        m_pLightningPlayer->setScreenUVOffset(LightningUVOffset);
+        m_pLightningPlayer->setScreenUVScale(glm::vec2(LightningScale, LightningScale));
+    }
 
     m_pRainSeqPlayer = new CNightSceneSequencePlayer(RainPath, RainTextureCount, RainOneTextureFrames, RainFramePerSecond, RainPictureType);
     m_pRainSeqPlayer->initTextureAndShaderProgram(RainVertexShader, RainFragShader);
     m_pRainSeqPlayer->initBackground(BackImgPath, BackPicType);
-
-    m_pLightingPlayer = new CSequenceFramePlayer(LightingPath, LightingFrameCount, LightingOneTextureFrames, LightingPlayFPS, LightingPicType);
-    m_pLightingPlayer->initTextureAndShaderProgram(LightingVertexShader, LightingFragShader);
-
 
     m_pSmallRaindropPlayer = new CSequenceFramePlayer(SmallRaindropFramePath, SmallRaindropFrameCount, SmallRaindropTextureFrames, SmallRaindropPlayFPS, SmallRaindropPicType);
     m_pSmallRaindropPlayer->initTextureAndShaderProgram(SmallRaindropVertexShader, SmallRaindropFragShader);
@@ -143,19 +155,6 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
-
-    m_pScreenQuad->bindAndDraw();
-
-    m_pCloudPlayer->updateLerpQuantFrame(DeltaTime);
-    m_pLightingPlayer->updateLerpQuantFrame(DeltaTime);
-    if (vRenderChannel == ERenderChannel::R || vRenderChannel == ERenderChannel::G)
-    {
-        m_pCloudPlayer->drawInterpolationWithFiltering(m_pScreenQuad);
-    }
-    else if (vRenderChannel == ERenderChannel::B || vRenderChannel == ERenderChannel::A)
-    {
-        m_pLightingPlayer->drawInterpolation(m_pScreenQuad);
-    }
 
     m_pRainSeqPlayer->setCurrentChannel(static_cast<std::uint8_t>(vRenderChannel));
     m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
@@ -184,4 +183,18 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
         m_pBigRaindropPlayer->setFrameRate(20);
         m_pBigRaindropPlayer->drawMultiChannelKTX(m_pScreenQuad);
     }
+
+    m_pCloudPlayer->updateLerpQuantFrame(DeltaTime);
+    m_pLightningPlayer->updateQuantizationFrame(DeltaTime);
+    if (vRenderChannel == ERenderChannel::R || vRenderChannel == ERenderChannel::G)
+    {
+        m_pCloudPlayer->drawInterpolationWithFiltering(m_pScreenQuad);
+    }
+    else if (vRenderChannel == ERenderChannel::B || vRenderChannel == ERenderChannel::A)
+    {
+        m_pLightningPlayer->draw(m_pScreenQuad);
+    }
+
+//    m_pLightningPlayer->updateQuantizationFrame(DeltaTime);
+//    m_pLightningPlayer->draw(m_pScreenQuad);
 }

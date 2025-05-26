@@ -36,10 +36,10 @@ void CNightSceneSequencePlayer::draw(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->useProgram();
     m_pSequenceShaderProgram->setUniform("channelIndex", m_CurrentChannel);
     m_pSequenceShaderProgram->setUniform("rainSequenceTexture", 0);
+    m_pSequenceShaderProgram->setUniform("backgroundTexture", 1);
+
     glActiveTexture(GL_TEXTURE0);
     m_SeqTextures[m_CurrentTexture]->bindTexture();
-
-    m_pSequenceShaderProgram->setUniform("backgroundTexture", 1);
     glActiveTexture(GL_TEXTURE1);
     m_pBackground->bindTexture();
     vQuad->bindAndDraw();

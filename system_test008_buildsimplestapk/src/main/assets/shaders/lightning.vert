@@ -24,8 +24,8 @@ void main()
     float cosTheta = cos(rotationAngle);
     float sinTheta = sin(rotationAngle);
     mat2 rotationMatrix = mat2(
-    cosTheta, -sinTheta,
-    sinTheta,  cosTheta
+        cosTheta, -sinTheta,
+        sinTheta,  cosTheta
     );
 
     vec2 rotatedCoord = rotationMatrix * scaledCoord;

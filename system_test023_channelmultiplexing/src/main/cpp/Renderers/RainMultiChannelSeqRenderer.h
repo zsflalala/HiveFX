@@ -31,7 +31,7 @@ namespace hiveVG
         CScreenQuad*          m_pScreenQuad              = nullptr;
         CSequenceFramePlayer* m_pRainSeqPlayer           = nullptr;
         CSingleTexturePlayer* m_pBackgroundPlayer        = nullptr;
-        CSequenceFramePlayer* m_pLightingPlayer          = nullptr;
+        CSequenceFramePlayer* m_pLightningPlayer          = nullptr;
         CSequenceFramePlayer* m_pCloudPlayer             = nullptr;
     };
 
