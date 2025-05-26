@@ -152,10 +152,13 @@ void CLightningSequencePlayer::draw(CScreenQuad *vQuad)
 
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
-
     m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
     m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
     m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
+    m_pSequenceShaderProgram->setUniform("cloudUVOffset", glm::vec2(0.0,0.75));
+    m_pSequenceShaderProgram->setUniform("cloudUVScale", glm::vec2(1,0.4));
+    m_pSequenceShaderProgram->setUniform("isFinish", m_IsFinished);
+
 
     m_pSequenceShaderProgram->setUniform("CurrentTexture", 0);
     m_pSequenceShaderProgram->setUniform("NextTexture", 1);
@@ -170,9 +173,9 @@ void CLightningSequencePlayer::draw(CScreenQuad *vQuad)
     m_pSequenceShaderProgram->setUniform("CurrentChannel", m_CurrentCloudChannel);
     m_pSequenceShaderProgram->setUniform("TexelSize", glm::vec2(1.0f / static_cast<float>(m_CloudSingleTexWidth), 1.0f / static_cast<float>(m_CloudSingleTexHeight)));
 
-    m_pSequenceShaderProgram->setUniform("uScreenSize", glm::vec2(m_WindowSize.x,m_WindowSize.y));
+/*    m_pSequenceShaderProgram->setUniform("uScreenSize", glm::vec2(m_WindowSize.x,m_WindowSize.y));
     m_pSequenceShaderProgram->setUniform("uTextureSize",glm::vec2(m_CloudSingleTexWidth,m_CloudSingleTexHeight));
-    m_pSequenceShaderProgram->setUniform("uScale",5.0f);
+    m_pSequenceShaderProgram->setUniform("uScale",1.0f);*/
     glActiveTexture(GL_TEXTURE0);
     m_SeqCloudTextures[m_CurrentCloudTexture]->bindTexture();
     glActiveTexture(GL_TEXTURE1);

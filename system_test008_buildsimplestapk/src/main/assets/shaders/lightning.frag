@@ -12,15 +12,13 @@ uniform float FlashProgress;
 uniform vec3  FlashColor;
 uniform float FlashAlpha;
 uniform bool  LightningInFront;
+uniform bool  isFinish;
 uniform int   ChannelIndex;
 
 uniform sampler2D CurrentTexture;
 uniform sampler2D NextTexture;
 uniform sampler2D LightningSequenceTexture;
 
-uniform vec2 uScreenSize;
-uniform vec2 uTextureSize;
-uniform float uScale;
 out vec4 FragColor;
 
 float filteredChannelSpace3x3(sampler2D vTex, vec2 vUV, int vChannelIndex)
@@ -52,17 +50,11 @@ float remap(float vData, float vOldMin, float vOldMax, float vNewMin, float vNew
 
 void main()
 {
-    float vRatio = (uTextureSize.y / uScreenSize.y) * uScale;
-    if( TexCoordCloud.y > vRatio){
-        discard;
-    }
-
     float CurrentOffset = TexCoordCloud.x - Displacement * Factor;
-    vec2  CurrentUV     = vec2(CurrentOffset, TexCoordCloud.y / vRatio);
+    vec2  CurrentUV     = vec2(CurrentOffset, TexCoordCloud.y);
     float NextOffset    = TexCoordCloud.x + Displacement * (1.0 - Factor);
-    vec2  NextUV        = vec2(NextOffset,   TexCoordCloud.y / vRatio);
+    vec2  NextUV        = vec2(NextOffset,   TexCoordCloud.y);
     int   NextChannel   = (CurrentChannel + 1) % 4;
-
     float CurrentSpaceFilterColor = filteredChannelSpace3x3(CurrentTexture, CurrentUV, CurrentChannel);
     float NextSpaceFilterColor    = filteredChannelSpace3x3(NextTexture,    NextUV,    NextChannel);
     float MixColor = mix(CurrentSpaceFilterColor, NextSpaceFilterColor, Factor);
@@ -85,6 +77,16 @@ void main()
 
     vec3 FinalLitColor = mix(CloudColor.rgb, FlashColor, FlashIntensity * FlashAlpha);
     vec4 ColorWhenInFront = vec4(FinalLitColor, MixColor + LightningMask + 0.2);
-
     FragColor = mix(ColorWhenBehind, ColorWhenInFront, float(LightningInFront) * EnableFlash);
+
+    //当闪电播放在云前的时候 变成全屏
+    if ((TexCoordCloud.x < 0.0 || TexCoordCloud.x > 1.0 ||
+        TexCoordCloud.y < 0.0 || TexCoordCloud.y > 1.0) && !LightningInFront ){
+        FragColor = vec4(0.0);
+    }else if((TexCoordCloud.x < 0.0 || TexCoordCloud.x > 1.0 ||
+                     TexCoordCloud.y < 0.0 || TexCoordCloud.y > 1.0) && isFinish){
+        FragColor = vec4(0.0);
+    }
+
+
 }

@@ -374,9 +374,8 @@ void CSequenceFramePlayer::setRatioUniform()
 {
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
-    m_pSequenceShaderProgram->setUniform("uScreenSize", glm::vec2(m_WindowSize.x,m_WindowSize.y));
-    m_pSequenceShaderProgram->setUniform("uTextureSize",glm::vec2(m_SeqSingleTexWidth,m_SeqSingleTexHeight));
-    m_pSequenceShaderProgram->setUniform("uScale",5.0f);
+    m_pSequenceShaderProgram->setUniform("cloudUVOffset", glm::vec2(0.0,1.2));
+    m_pSequenceShaderProgram->setUniform("cloudUVScale", glm::vec2(1,0.3));
 }
 void CSequenceFramePlayer::__initSequenceParams()
 {

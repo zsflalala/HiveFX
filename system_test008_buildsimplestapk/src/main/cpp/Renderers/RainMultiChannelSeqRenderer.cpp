@@ -160,12 +160,12 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
 
-   /* m_pRainSeqPlayer->setCurrentChannel(static_cast<std::uint8_t>(vRenderChannel));
+    m_pRainSeqPlayer->setCurrentChannel(static_cast<std::uint8_t>(vRenderChannel));
     m_pRainSeqPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
     m_pRainSeqPlayer->draw(m_pScreenQuad);
 
     m_pSmallRaindropPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
-    m_pBigRaindropPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);*/
+    m_pBigRaindropPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
 
     if (vRenderChannel == ERenderChannel::R)
     {

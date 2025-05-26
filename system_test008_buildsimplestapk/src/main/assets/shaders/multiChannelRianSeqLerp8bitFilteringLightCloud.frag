@@ -1,18 +1,14 @@
 #version 300 es
 precision mediump float;
 
-in vec2 TexCoord;
-
+in vec2 TexCoordCloud;
+in vec2 TexCoordCloudCloud;
 uniform float Factor;
 uniform float Displacement;
 uniform int CurrentChannel;
 uniform vec2 TexelSize;
 uniform sampler2D CurrentTexture;
 uniform sampler2D NextTexture;
-
-uniform vec2 uScreenSize;
-uniform vec2 uTextureSize;
-uniform float uScale;
 
 out vec4 FragColor;
 
@@ -39,14 +35,10 @@ float filteredChannelSpace3x3(sampler2D vTex, vec2 vUV, int vChannelIndex)
 
 void main()
 {
-    float vRatio = (uTextureSize.y / uScreenSize.y) * uScale;
-    if( TexCoord.y > vRatio){
-        discard;
-    }
-    float CurrentOffset = TexCoord.x - Displacement * Factor;
-    vec2  CurrentUV = vec2(CurrentOffset, TexCoord.y / vRatio );
-    float NextOffset = TexCoord.x + Displacement * (1.0 - Factor);
-    vec2  NextUV = vec2(NextOffset,TexCoord.y / vRatio);
+    float CurrentOffset = TexCoordCloud.x - Displacement * Factor;
+    vec2  CurrentUV = vec2(CurrentOffset, TexCoordCloud.y );
+    float NextOffset = TexCoordCloud.x + Displacement * (1.0 - Factor);
+    vec2  NextUV = vec2(NextOffset,TexCoordCloud.y);
     int   NextChannel = (CurrentChannel + 1) % 4;
 
     float CurrentSpaceFilterColor = filteredChannelSpace3x3(CurrentTexture, CurrentUV, CurrentChannel);
@@ -54,5 +46,10 @@ void main()
     float MixColor = mix(CurrentSpaceFilterColor, NextSpaceFilterColor, Factor);
 
     FragColor = vec4(1.0, 1.0, 1.0, MixColor);
+
+    if ((TexCoordCloud.x < 0.0 || TexCoordCloud.x > 1.0 ||
+         TexCoordCloud.y < 0.0 || TexCoordCloud.y > 1.0)){
+         FragColor = vec4(0.0);
+     }
 }
 
