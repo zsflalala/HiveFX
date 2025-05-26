@@ -34,11 +34,6 @@ CLightningSequencePlayer::CLightningSequencePlayer(const std::string& vTextureRo
 
 CLightningSequencePlayer::~CLightningSequencePlayer()
 {
-    if (m_pStaticCloud)
-    {
-        delete m_pStaticCloud;
-        m_pStaticCloud = nullptr;
-    }
 }
 
 void CLightningSequencePlayer::updateFrameAndUV(double vDeltaTime)
@@ -149,12 +144,19 @@ void CLightningSequencePlayer::updateQuantizationFrame(double vDeltaTime)
 
 void CLightningSequencePlayer::draw(CScreenQuad *vQuad)
 {
-    float FlashProgress = (float)m_CurrentTexture / (float)(m_TextureCount - 1);
+    float RotationAngle = glm::radians(static_cast<float>(m_RotationAngle));
+    float FlashProgress = (float)m_CurrentTexture / ((float)m_TextureCount / 2.0f - 1.0f);
     FlashProgress = glm::clamp(FlashProgress, 0.0f, 1.0f);
+    if (FlashProgress >= 0.9) FlashProgress = 0;
     int BindTextureIndex = m_CurrentTexture + (m_LightningInFront ? 0 : 8);
 
     assert(m_pSequenceShaderProgram != nullptr);
     m_pSequenceShaderProgram->useProgram();
+
+    m_pSequenceShaderProgram->setUniform("rotationAngle", RotationAngle);
+    m_pSequenceShaderProgram->setUniform("screenUVOffset", m_ScreenUVOffset);
+    m_pSequenceShaderProgram->setUniform("screenUVScale", m_ScreenUVScale);
+
     m_pSequenceShaderProgram->setUniform("CurrentTexture", 0);
     m_pSequenceShaderProgram->setUniform("NextTexture", 1);
     m_pSequenceShaderProgram->setUniform("LightningSequenceTexture", 2);
@@ -175,19 +177,6 @@ void CLightningSequencePlayer::draw(CScreenQuad *vQuad)
     glActiveTexture(GL_TEXTURE2);
     m_SeqTextures[BindTextureIndex]->bindTexture();
     vQuad->bindAndDraw();
-}
-
-void CLightningSequencePlayer::initBackground(const std::string &vTexturePath)
-{
-    int Width, Height;
-    auto PictureType = EPictureType::EPictureType::PNG;
-    m_pStaticCloud = CTexture2D::loadTexture(vTexturePath, Width, Height, PictureType);
-    if (!m_pStaticCloud)
-    {
-        LOG_ERROR(hiveVG::TAG_KEYWORD::SEQFRAME_RENDERER_TAG,
-                  "Error loading texture from path [%s].", vTexturePath.c_str());
-        return;
-    }
 }
 
 bool CLightningSequencePlayer::initTextureAndShaderProgram(const std::string &vVertexShaderPath, const std::string &vFragShaderShaderPath)
@@ -213,17 +202,17 @@ void CLightningSequencePlayer::__randomizeLightningParameters()
     m_ScreenUVScale.x = m_ScaleDist(m_Rng);
     m_ScreenUVScale.y = m_ScaleDist(m_Rng);
 
-    float maxOffsetX = std::max(0.0f, 1.0f - m_ScreenUVScale.x);
-    float maxOffsetY = std::max(0.0f, 0.2f - m_ScreenUVScale.y);
-
-    std::uniform_real_distribution<float> OffsetXDist(0.0f, maxOffsetX);
-    std::uniform_real_distribution<float> OffsetYDist(0.0f, maxOffsetY);
-
+    float MaxOffsetX = 1.0f - m_ScreenUVScale.x;
+    std::uniform_real_distribution<float> OffsetXDist(-0.8f, MaxOffsetX);
     m_ScreenUVOffset.x = OffsetXDist(m_Rng);
+
+    float MinOffsetY = std::lerp(1.2f, 0.6f, (m_ScreenUVScale.y - m_ScaleMin) / (m_ScaleMax - m_ScaleMin));
+    float MaxOffsetY = std::min(MinOffsetY + 0.1f, 1.3f);
+
+    std::uniform_real_distribution<float> OffsetYDist(MinOffsetY, MaxOffsetY);
     m_ScreenUVOffset.y = OffsetYDist(m_Rng);
 
-//    m_LightningInFront = m_BoolDist(m_Rng) == 1;
-    m_LightningInFront = true;
+    m_LightningInFront = m_BoolDist(m_Rng) == 1;
 }
 
 void CLightningSequencePlayer::__initCloudTextures(const std::string& vCloudPath, int vFrameCount, EPictureType::EPictureType vCloudPicType)

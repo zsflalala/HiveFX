@@ -93,7 +93,7 @@ namespace hiveVG
         int         m_NextTexture     = 0;
         int         m_TextureCount;
         SSequenceState m_SequenceState;
-        glm::vec2 m_ScreenUVScale  = glm::vec2(1.0f, 1.0f);
+        glm::vec2 m_ScreenUVScale  = glm::vec2(0.6f, 0.8f);
         glm::vec2 m_ScreenUVOffset = glm::vec2(0.0f, 0.0f);
         glm::vec2 m_WindowSize     = glm::vec2(0.0f, 0.0f);
         glm::vec2 m_MovingSpeed    = glm::vec2(0.1f, 0.0f);

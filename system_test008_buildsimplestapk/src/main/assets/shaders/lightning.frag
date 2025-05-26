@@ -61,7 +61,7 @@ void main()
 
     vec4 CloudColor = vec4(1.0, 1.0, 1.0, MixColor);
 
-    vec3 CloudColorWithoutLight = remap(CloudColor.rgb, 0.0, 1.0, 0.0, 0.6);
+    vec3 CloudColorWithoutLight = remap(CloudColor.rgb, 0.0, 1.0, 0.0, 0.65);
     vec4 LightningColor = texture(LightningSequenceTexture, TexCoordLightning);
     float LightningMask = LightningColor[ChannelIndex];
 
@@ -69,15 +69,14 @@ void main()
     CloudColor.rgb = mix(CloudColorWithoutLight, CloudColor.rgb, LightningMask);
     vec4 ColorWhenBehind = CloudColor;
 
-    // —— 全屏闪电提亮 ——
+    // 全屏闪电提亮
+    float EnableFlash = step(0.0001, FlashProgress); // FlashProgress > 0 => 1.0，否则 0.0
     float UP   = smoothstep(0.0, 0.5, FlashProgress);
     float Down = 1.0 - smoothstep(0.5, 1.0, FlashProgress);
     float FlashIntensity = UP * Down;
 
     vec3 FinalLitColor = mix(CloudColor.rgb, FlashColor, FlashIntensity * FlashAlpha);
-    vec4 ColorWhenInFront = vec4(FinalLitColor, 1.0);
+    vec4 ColorWhenInFront = vec4(FinalLitColor, MixColor + LightningMask + 0.2);
 
-    FragColor = ColorWhenBehind;
-//
-//    FragColor = mix(ColorWhenBehind, ColorWhenInFront, float(LightningInFront));
+    FragColor = mix(ColorWhenBehind, ColorWhenInFront, float(LightningInFront) * EnableFlash);
 }
