@@ -10,6 +10,7 @@
 #include "TimeUtils.h"
 #include "ScreenQuad.h"
 #include "SequenceFramePlayer.h"
+#include "SingleTexturePlayer.h"
 #include "SnowStylizer.h"
 #include "JsonReader.h"
 
@@ -41,6 +42,7 @@ CRenderer::~CRenderer()
         m_Display = EGL_NO_DISPLAY;
     }
     if (m_pTestPlayer)       delete m_pTestPlayer;
+    if (m_pBackgroundPlayer) delete m_pBackgroundPlayer;
 }
 
 void CRenderer::__initRenderer()
@@ -107,10 +109,15 @@ void CRenderer::__initAlgorithm()
     __generateSnowScene();
 
     m_pScreenQuad = CScreenQuad::getOrCreate();
-    int Rows = 1, Cols = 1, TextureCount = 5;
-    m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, Rows, Cols, TextureCount,EPictureType::PNG);
-    m_pTestPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayInterpolation);
+    //int Rows = 1, Cols = 1, TextureCount = 5;
+    //m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, Rows, Cols, TextureCount,EPictureType::PNG);
+    m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, 2, 4, 0.5f, EPictureType::PNG);
+    m_pTestPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayLerpQuan);
     m_pTestPlayer->setFrameRate(0.5f);
+    m_pTestPlayer->setLoopPlayback(false);
+
+    m_pBackgroundPlayer = new CSingleTexturePlayer(m_TexturePath);
+    m_pBackgroundPlayer->initTextureAndShaderProgram();
 }
 
 void CRenderer::renderScene()
@@ -126,7 +133,10 @@ void CRenderer::renderScene()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_pTestPlayer->updateInterpolationFrame(DeltaTime);
+    m_pBackgroundPlayer->updateFrame();
+    m_pScreenQuad->bindAndDraw();
+
+    m_pTestPlayer->updateLerpQuantFrame(DeltaTime);
     m_pTestPlayer->drawInterpolation(m_pScreenQuad);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
@@ -154,7 +164,7 @@ void CRenderer::__generateSnowScene()
     SnowGenerator.loadImg(m_TexturePath);
     SnowGenerator.setShapeFreq(15);
     SnowGenerator.setShapeAmplitude(5);
-    SnowGenerator.generateSnow(5);
+    SnowGenerator.generateSnowFMP(5);
 
     double TimeEnd = CTimeUtils::getCurrentTime();
     double ElapsedTime = TimeEnd - TimeStart;

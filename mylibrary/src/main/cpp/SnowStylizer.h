@@ -25,6 +25,7 @@ namespace hiveVG
         bool setSnowHighProportion(float vProportion);
         bool setShapeAmplitude(float vAmplitude);
         bool generateSnow(int vSnowLayerNum);
+        bool generateSnowFMP(int vSnowLayerNum);
         bool setOutputPath(const std::string& vOutputPath);
         bool setOutputName(const std::string& vOutputName);
 
@@ -44,6 +45,9 @@ namespace hiveVG
 
         cv::Mat				 m_OriginImage;
         cv::Mat				 m_SnowImage;
+        int                  m_ChannelIndex = 1;
+
+        std::vector<cv::Mat> m_FrameMultiplexSnow;
         std::vector<cv::Mat> m_LayerSnowImgs;
 
         void		__saveImg();
@@ -51,6 +55,7 @@ namespace hiveVG
         void		__binarizeImg(cv::Mat& vioBinaryImg);
         void		__calculatNormal(std::vector<SContourGradInfo>& vioNormalList, const cv::Mat& vBinaryImg);
         void		__generateLayerSnow(int vMaxHigh, float vShapePhase, const std::vector<SContourGradInfo>& vNormalList);
+        void		__generateLayerSnowFMP(int vMaxHigh, float vShapePhase, const std::vector<SContourGradInfo>& vNormalList);
         float		__getRandomFloat(float vMin, float vMax);
         int			__getRandomInt(int vSeed, int vMin, int vMax);
         void		__loadFileSavePath(const std::string& vFilePath);
