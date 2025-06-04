@@ -114,6 +114,7 @@ void CRenderer::__initAlgorithm()
     m_pTestPlayer = new CSequenceFramePlayer(m_P60GeneratePath, 2, 4, 0.5f, EPictureType::PNG);
     m_pTestPlayer->initTextureAndShaderProgram(SingleTexPlayVert, SeqTexPlayLerpQuan);
     m_pTestPlayer->setFrameRate(0.5f);
+    m_pTestPlayer->setLoopPlayback(false);
 
     m_pBackgroundPlayer = new CSingleTexturePlayer(m_TexturePath);
     m_pBackgroundPlayer->initTextureAndShaderProgram();

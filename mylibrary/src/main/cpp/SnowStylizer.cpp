@@ -302,7 +302,11 @@ void CSnowStylizer::__generateLayerSnowFMP(int vMaxHigh, float vShapePhase, cons
                 break;
         }
     }
-    m_FrameMultiplexSnow.push_back(m_SnowImage.clone());
+
+    cv::Mat BlurredImg;
+    cv::blur(m_SnowImage, BlurredImg, cv::Size(5, 5));
+
+    m_FrameMultiplexSnow.push_back(BlurredImg);
     m_ChannelIndex++;
 
     if(m_ChannelIndex == 4)
