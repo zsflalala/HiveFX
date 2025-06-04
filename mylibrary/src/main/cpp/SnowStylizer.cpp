@@ -43,7 +43,6 @@ bool CSnowStylizer::loadImg(const std::string& vImgPath)
     }
     m_SnowImage = cv::Mat(m_OriginImage.size(), CV_8U, cv::Scalar(0));
     __loadFileSavePath(vImgPath);
-    m_LayerSnowImgs.push_back(m_OriginImage);
     return true;
 }
 
@@ -89,7 +88,6 @@ bool CSnowStylizer::loadImg(const std::string& vImgPath, const cv::Vec3b& Backgr
 
     m_SnowImage = cv::Mat(m_OriginImage.size(), CV_8U, cv::Scalar(0));
     __loadFileSavePath(vImgPath);
-    m_LayerSnowImgs.push_back(m_OriginImage);
     return true;
 }
 
@@ -172,6 +170,8 @@ bool CSnowStylizer::generateSnow(int vSnowLayerNum)
         return false;
     }
 
+    m_LayerSnowImgs.push_back(m_OriginImage);
+
     cv::Mat BinaryImg;
     __binarizeImg(BinaryImg);
 
@@ -185,6 +185,44 @@ bool CSnowStylizer::generateSnow(int vSnowLayerNum)
         int MaxHigh = static_cast<int>(SnowMaxHigh * ((float)i / vSnowLayerNum));
         float ShapePhase = __getRandomFloat(0.0f, 2 * m_Pai);
         __generateLayerSnow(MaxHigh, ShapePhase, SurfaceNormals);
+        m_SnowShapeFreq *= m_ShapeFreqMultiplier;
+        m_SnowShapeAmplitude *= m_ShapeAmplitudeMultiplier;
+    }
+
+    __saveImg();
+    return true;
+}
+
+bool CSnowStylizer::generateSnowFMP(int vSnowLayerNum)
+{
+    assert(!m_OriginImage.empty());
+    if (m_OriginImage.empty())
+    {
+        LOG_INFO(hiveVG::TAG_KEYWORD::SNOW_STYLIZE_TAG,"No image loaded.");
+        return false;
+    }
+
+    m_FrameMultiplexSnow.push_back(m_SnowImage.clone());
+
+    cv::Mat BinaryImg;
+    __binarizeImg(BinaryImg);
+
+    std::vector<SContourGradInfo> SurfaceNormals;
+    __calculatNormal(SurfaceNormals, BinaryImg);
+
+    int SnowMaxHigh = static_cast<int>(m_OriginImage.rows * m_SnowMaxHighProportion);
+
+    vSnowLayerNum++;
+    if(vSnowLayerNum % 4 != 0)
+    {
+        vSnowLayerNum = (vSnowLayerNum / 4 + 1) * 4;
+    }
+
+    for (int i = 1; i < vSnowLayerNum; i++)
+    {
+        int MaxHigh = static_cast<int>(SnowMaxHigh * ((float)i / vSnowLayerNum));
+        float ShapePhase = __getRandomFloat(0.0f, 2 * m_Pai);
+        __generateLayerSnowFMP(MaxHigh, ShapePhase, SurfaceNormals);
         m_SnowShapeFreq *= m_ShapeFreqMultiplier;
         m_SnowShapeAmplitude *= m_ShapeAmplitudeMultiplier;
     }
@@ -243,6 +281,45 @@ void CSnowStylizer::__generateLayerSnow(int vMaxHigh, float vShapePhase, const s
     m_LayerSnowImgs.push_back(SnowImg);
 }
 
+void CSnowStylizer::__generateLayerSnowFMP(int vMaxHigh, float vShapePhase, const std::vector<SContourGradInfo>& vNormalList)
+{
+    for (auto& NormalInfo : vNormalList)
+    {
+        int SnowHigh = vMaxHigh * NormalInfo.GradY;
+        float TexCoordX = static_cast<float>(NormalInfo.CoordX) / m_OriginImage.cols;
+        int SnowHighNoise = std::sin(TexCoordX * 2 * m_Pai * m_SnowShapeFreq + vShapePhase) * m_SnowShapeAmplitude;
+        int SnowNoiseFBM = SnowHighNoise + std::sin(TexCoordX * 2 * m_SnowShapeFreq) * m_SnowShapeAmplitude * 2 / 3;
+        SnowHigh = std::min(SnowHigh, int(vMaxHigh * m_SnowHighThreshold)) + SnowNoiseFBM;
+        for (int i = 0; i < SnowHigh; i++)
+        {
+            int ActualCoordY = NormalInfo.CoordY - i;
+            if (ActualCoordY >= 0)
+            {
+                if (m_OriginImage.at<cv::Vec4b>(ActualCoordY, NormalInfo.CoordX)[3] < 200)
+                    m_SnowImage.at<uchar>(ActualCoordY, NormalInfo.CoordX) = UCHAR_MAX;
+            }
+            else
+                break;
+        }
+    }
+    m_FrameMultiplexSnow.push_back(m_SnowImage.clone());
+    m_ChannelIndex++;
+
+    if(m_ChannelIndex == 4)
+    {
+        auto ChannelR = m_FrameMultiplexSnow[0];
+        m_FrameMultiplexSnow[0] = m_FrameMultiplexSnow[2];
+        m_FrameMultiplexSnow[2] = ChannelR;
+
+        cv::Mat MergedImage;
+        cv::merge(m_FrameMultiplexSnow, MergedImage);
+        m_LayerSnowImgs.push_back(MergedImage);
+
+        m_FrameMultiplexSnow.clear();
+        m_ChannelIndex = 0;
+    }
+}
+
 float CSnowStylizer::__getRandomFloat(float vMin, float vMax)
 {
     unsigned Seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -268,12 +345,12 @@ void CSnowStylizer::__loadFileSavePath(const std::string& vFilePath)
 
 void CSnowStylizer::__saveImg()
 {
-    for (int i = 0; i < m_LayerSnowImgs.size(); i++)
+    for (int i = 1; i <= m_LayerSnowImgs.size(); i++)
     {
         std::string FileName = std::vformat(m_FileNameFormat._FileName, std::make_format_args(i));
         std::string OutputFile;
         OutputFile = hiveVG::P60SaveToPhotoPath + FileName;
-        bool SuccessFlag = cv::imwrite(OutputFile, m_LayerSnowImgs[i]);
+        bool SuccessFlag = cv::imwrite(OutputFile, m_LayerSnowImgs[i - 1]);
         if (SuccessFlag)
         {
             LOG_INFO(hiveVG::TAG_KEYWORD::SNOW_STYLIZE_TAG,"Image saved successfully as %s", FileName.c_str());

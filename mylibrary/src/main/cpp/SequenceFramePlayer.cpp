@@ -304,6 +304,8 @@ void CSequenceFramePlayer::drawInterpolation(CScreenQuad *vQuad)
     glActiveTexture(GL_TEXTURE1);
     m_SeqTextures[m_NextTexture]->bindTexture();
     vQuad->bindAndDraw();
+    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "CurrentTex: %d",m_CurrentTexture);
+    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "CurrentChannel: %d",m_CurrentChannel);
 }
 void CSequenceFramePlayer::drawDisplacementInterpolation(CScreenQuad *vQuad)
 {
