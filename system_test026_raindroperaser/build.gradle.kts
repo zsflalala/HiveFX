@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.hivefx.system_test024_lightning"
+    namespace = "com.hivefx.system_test026_raindroperaser"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.hivefx.system_test024_lightning"
+        applicationId = "com.hivefx.system_test026_raindroperaser"
         minSdk = 30
         targetSdk = 34
         versionCode = 1

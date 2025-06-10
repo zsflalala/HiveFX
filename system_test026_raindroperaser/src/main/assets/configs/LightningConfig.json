@@ -1,0 +1,22 @@
+{
+    "lightning": {
+        "frames_path": "textures/lightningKTX/lightningAndMask3",
+        "frames_type" : "ktx2",
+        "frames_count": 16,
+        "one_texture_frames": 4,
+        "play_mode": "partial",
+        "ranks": {
+            "rows" : 1,
+            "cols" : 1
+        },
+        "fps": 30,
+        "lightning_front" : true,
+        "loop": true,
+        "scale": 0.5,
+        "position": {
+            "x": 0.1,
+            "y": 0.5
+        }
+      },
+    "cloud": "textures/cloud.png"
+}
