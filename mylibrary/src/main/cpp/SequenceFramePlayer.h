@@ -55,6 +55,7 @@ namespace hiveVG
 
         virtual void draw(CScreenQuad *vQuad);
         void drawMultiChannelKTX(CScreenQuad *vQuad);
+        void drawRaindropEraser(CScreenQuad *vQuad, GLuint vMaskHandle);
         void drawInterpolation(CScreenQuad *vQuad);
         void drawDisplacementInterpolation(CScreenQuad *vQuad);
         void setRatioUniform();

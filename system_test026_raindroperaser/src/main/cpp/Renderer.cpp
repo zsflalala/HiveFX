@@ -3,8 +3,7 @@
 #include <GLES3/gl3.h>
 #include <cassert>
 #include <algorithm>
-#include "Renderers/LightningRenderer.h"
-#include "Renderers/CloudInterpolationRenderer.h"
+#include "Renderers/RaindropEraserRenderer.h"
 #include "Common.h"
 #include "AppContext.h"
 
@@ -16,8 +15,6 @@ CRenderer::CRenderer(android_app *vApp): m_pApp(vApp)
 
     CAppContext::setAssetManager(vApp->activity->assetManager);
     CAppContext::setStoragePath(vApp->activity->externalDataPath);
-    m_pLightningRenderer = new CLightningRenderer();
-//    m_pCloudInterpolationRenderer = new CCloudInterpolationRenderer();
 }
 
 CRenderer::~CRenderer()
@@ -38,15 +35,10 @@ CRenderer::~CRenderer()
         eglTerminate(m_Display);
         m_Display = EGL_NO_DISPLAY;
     }
-    if (m_pLightningRenderer)
+    if (m_pRaindropEraserRenderer)
     {
-        delete m_pLightningRenderer;
-        m_pLightningRenderer = nullptr;
-    }
-    if (m_pCloudInterpolationRenderer)
-    {
-        delete m_pCloudInterpolationRenderer;
-        m_pCloudInterpolationRenderer = nullptr;
+        delete m_pRaindropEraserRenderer;
+        m_pRaindropEraserRenderer = nullptr;
     }
 }
 
@@ -109,11 +101,17 @@ void CRenderer::__initRenderer()
 void CRenderer::renderScene()
 {
     __updateRenderArea();
-    glClearColor(0.5f,0.5f,0.5f, 1.0f);
+    glClearColor(0.345f,0.345f,0.345f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    m_pLightningRenderer->render();
-//    m_pCloudInterpolationRenderer->render();
+    if (m_pRaindropEraserRenderer == nullptr)
+        m_pRaindropEraserRenderer = new CRaindropEraserRenderer(m_WindowWidth, m_WindowHeight);
+    if (m_NeedResizeResources)
+    {
+        m_pRaindropEraserRenderer->recreateFramebufferAndTextures(m_WindowWidth, m_WindowHeight);
+        m_NeedResizeResources = false;
+    }
+    m_pRaindropEraserRenderer->render(m_RenderChannel);
 
     auto SwapResult = eglSwapBuffers(m_Display, m_Surface);
     assert(SwapResult == EGL_TRUE);
@@ -133,6 +131,7 @@ void CRenderer::__updateRenderArea()
         m_WindowWidth  = Width;
         m_WindowHeight = Height;
         glViewport(0, 0, Width, Height);
+        m_NeedResizeResources = true;
     }
 }
 
@@ -156,12 +155,39 @@ void CRenderer::handleInput()
         {
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
+                if (PointerX < m_WindowWidth / 4.0)
+                {
+                    m_RenderChannel = ERenderChannel::R;
+                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "R");
+                }
+                else if (PointerX < m_WindowWidth / 2.0)
+                {
+                    m_RenderChannel = ERenderChannel::G;
+                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "G");
+                }
+                else if (PointerX < m_WindowWidth / 4.0 * 3.0)
+                {
+                    m_RenderChannel = ERenderChannel::B;
+                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "B");
+                }
+                else
+                {
+                    m_RenderChannel = ERenderChannel::A;
+                    LOG_INFO(TAG_KEYWORD::RENDERER_TAG, "A");
+                }
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Down", Pointer.id, PointerX, PointerY);
+                if (m_pRaindropEraserRenderer)
+                {
+                    m_pRaindropEraserRenderer->resetLastPoint();
+                }
                 break;
-
             case AMOTION_EVENT_ACTION_CANCEL:
             case AMOTION_EVENT_ACTION_UP:
             case AMOTION_EVENT_ACTION_POINTER_UP:
+                if (m_pRaindropEraserRenderer)
+                {
+                    m_pRaindropEraserRenderer->resetLastPoint();
+                }
                 LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Up", Pointer.id, PointerX, PointerY);
                 break;
 
@@ -171,9 +197,10 @@ void CRenderer::handleInput()
                     Pointer = MotionEvent.pointers[Index];
                     PointerX = GameActivityPointerAxes_getX(&Pointer);
                     PointerY = GameActivityPointerAxes_getY(&Pointer);
-                    LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, "Pointer(s): (%d, %f, %f) Pointer Move", Pointer.id, PointerX, PointerY);
-
-                    if (Index != (MotionEvent.pointerCount - 1)) LOG_INFO(hiveVG::TAG_KEYWORD::RENDERER_TAG, ",");
+                    if (m_pRaindropEraserRenderer)
+                    {
+                        m_pRaindropEraserRenderer->eraseAtPosition(PointerX, PointerY);
+                    }
                 }
                 break;
             default:

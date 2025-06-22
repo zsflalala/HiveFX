@@ -1,0 +1,14 @@
+{
+  "BigRaindrop": {
+    "frames_path": "textures/BigRaindrop_ASTC12x12",
+    "frames_type" : "ktx2",
+    "frames_count": 31,
+    "one_texture_frames": 4,
+    "fps": 10,
+    "vertex_shader" : "shaders/multiChannelRianSeq.vert",
+    "fragment_shader" : "shaders/multiChannelRianSeq8bitRaindrop.frag",
+    "erase_fragment_shader" : "shaders/erase_brush.frag",
+    "fade_fragment_shader"  : "shaders/fade_mask.frag",
+    "copy_fragment_shader"  : "shaders/copy_mask.frag"
+  }
+}

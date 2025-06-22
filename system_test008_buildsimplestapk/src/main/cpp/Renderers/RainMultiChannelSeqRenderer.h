@@ -16,11 +16,9 @@ namespace hiveVG
     {
     public:
         CRainMultiChannelSeqRenderer();
-
         CRainMultiChannelSeqRenderer(glm::vec2 vWindowSize);
 
         ~CRainMultiChannelSeqRenderer();
-
         void renderScene(ERenderChannel vRenderChannel);
 
     private:

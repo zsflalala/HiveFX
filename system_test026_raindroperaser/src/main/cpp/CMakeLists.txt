@@ -14,11 +14,9 @@ include_directories(${CMAKE_SOURCE_DIR}/../../../../mylibrary/src/main/cpp)
 ########################## 第三方库 相关配置  结束################################
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
-    system_test026_raindroperaser.cpp
-    Renderer.cpp
-    Renderers/LightningRenderer.cpp
-    Renderers/LightningSequencePlayer.cpp
-    Renderers/CloudInterpolationRenderer.cpp
+        system_test026_raindroperaser.cpp
+        Renderer.cpp
+        Renderers/RaindropEraserRenderer.cpp
     )
 
 

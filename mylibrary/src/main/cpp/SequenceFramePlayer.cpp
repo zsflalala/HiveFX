@@ -290,6 +290,20 @@ void CSequenceFramePlayer::drawMultiChannelKTX(CScreenQuad *vQuad)
     vQuad->bindAndDraw();
 }
 
+void CSequenceFramePlayer::drawRaindropEraser(CScreenQuad *vQuad, GLuint vMaskHandle)
+{
+    assert(m_pSequenceShaderProgram != nullptr);
+    m_pSequenceShaderProgram->useProgram();
+    m_pSequenceShaderProgram->setUniform("uIndexTexture", 1);
+    m_pSequenceShaderProgram->setUniform("uEraseMask", 2);
+    m_pSequenceShaderProgram->setUniform("uChannelIndex", m_CurrentChannel);
+    glActiveTexture(GL_TEXTURE1);
+    m_SeqTextures[m_CurrentTexture]->bindTexture();
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, vMaskHandle);
+    vQuad->bindAndDraw();
+}
+
 void CSequenceFramePlayer::drawInterpolation(CScreenQuad *vQuad)
 {
     assert(m_pSequenceShaderProgram != nullptr);

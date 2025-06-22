@@ -7,8 +7,8 @@ struct android_app;
 
 namespace hiveVG
 {
-    class CLightningRenderer;
-    class CCloudInterpolationRenderer;
+    class CRaindropEraserRenderer;
+
     class CRenderer
     {
     public:
@@ -24,12 +24,13 @@ namespace hiveVG
 
         int          m_WindowWidth   = -1;
         int          m_WindowHeight  = -1;
+        bool         m_NeedResizeResources = false;
+        ERenderChannel m_RenderChannel = ERenderChannel::R;
         android_app* m_pApp          = nullptr;
         EGLDisplay   m_Display       = EGL_NO_DISPLAY;
         EGLSurface   m_Surface       = EGL_NO_SURFACE;
         EGLContext   m_Context       = EGL_NO_CONTEXT;
 
-        CLightningRenderer*   m_pLightningRenderer = nullptr;
-        CCloudInterpolationRenderer* m_pCloudInterpolationRenderer = nullptr;
+        CRaindropEraserRenderer*   m_pRaindropEraserRenderer = nullptr;
     };
 }
