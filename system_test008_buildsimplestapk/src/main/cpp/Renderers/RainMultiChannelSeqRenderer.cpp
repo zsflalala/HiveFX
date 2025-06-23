@@ -199,6 +199,6 @@ void CRainMultiChannelSeqRenderer::renderScene(ERenderChannel vRenderChannel)
         m_pLightningPlayer->draw(m_pScreenQuad);
     }
 
-//    m_pLightningPlayer->updateQuantizationFrame(DeltaTime);
-//    m_pLightningPlayer->draw(m_pScreenQuad);
+    m_pLightningPlayer->updateQuantizationFrame(DeltaTime);
+    m_pLightningPlayer->draw(m_pScreenQuad);
 }

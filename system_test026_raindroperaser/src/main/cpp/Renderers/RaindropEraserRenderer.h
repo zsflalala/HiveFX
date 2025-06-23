@@ -24,7 +24,7 @@ namespace hiveVG
     private:
         void __initAlgorithm();
         void __createEraseFramebuffer();
-        void __fadeEraseMask();
+        void __fadeEraseMask(float vDeltaTime);
 
         double       m_LastFrameTime = 0.0f;
         double       m_CurrentTime   = 0.0f;

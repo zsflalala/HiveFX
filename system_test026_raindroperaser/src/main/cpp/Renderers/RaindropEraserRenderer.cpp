@@ -47,7 +47,7 @@ void CRaindropEraserRenderer::render(ERenderChannel vRenderChannel)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    __fadeEraseMask();
+    __fadeEraseMask(static_cast<float>(DeltaTime) * 0.1f);
     m_pRaindropPlayer->updateMultiChannelFrame(DeltaTime, vRenderChannel);
     m_pRaindropPlayer->drawRaindropEraser(m_pScreenQuad, m_EraseMaskTex);
 }
@@ -158,7 +158,7 @@ void CRaindropEraserRenderer::__createEraseFramebuffer()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void CRaindropEraserRenderer::__fadeEraseMask()
+void CRaindropEraserRenderer::__fadeEraseMask(float vDeltaTime)
 {
     // TODO: why this method would cause 镜像笔触
 //    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_EraseFBO);
@@ -195,7 +195,7 @@ void CRaindropEraserRenderer::__fadeEraseMask()
     glBindFramebuffer(GL_FRAMEBUFFER, m_EraseFBO);
     glViewport(0, 0, m_Width, m_Height);
     m_pFadeShader->useProgram();
-    m_pFadeShader->setUniform("uFadeStrength", 0.008f);
+    m_pFadeShader->setUniform("uFadeStrength", vDeltaTime);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_EraseMaskTexCopied);
     m_pFadeShader->setUniform("uEraseMask", 0);
